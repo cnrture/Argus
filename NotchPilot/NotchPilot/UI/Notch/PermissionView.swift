@@ -52,11 +52,8 @@ struct PermissionView: View {
                     handleAllow()
                 }
 
-                // Sadece tekrarlanan tool'lar için toplu onay göster
-                if allowsAlwaysApprove {
-                    permButton("Hepsine İzin Ver", icon: "checkmark.circle.fill", shortcut: nil, color: .blue) {
-                        handleAllowAll()
-                    }
+                permButton("Hepsine İzin Ver", icon: "checkmark.circle.fill", shortcut: nil, color: .blue) {
+                    handleAllowAll()
                 }
             }
             .opacity(showButtons ? 1 : 0)
@@ -141,10 +138,6 @@ struct PermissionView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(.white.opacity(0.7))
         }
-    }
-
-    private var allowsAlwaysApprove: Bool {
-        ["Bash", "Edit", "Write", "Read", "Glob", "Grep", "NotebookEdit"].contains(permission.toolName)
     }
 
     private func handleAllow() {
