@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let hookInstaller = HookInstaller()
     private let socketServer = SocketServer()
     private let voiceManager = VoiceCommandManager()
+    private var deskPet: DeskPetWindowController?
     private var onboardingWindow: NSWindow?
 
     private static let onboardingCompletedKey = "onboardingCompleted"
@@ -42,6 +43,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Scan for existing Claude Code sessions
         scanForExistingSessions()
+
+        // Desk pet
+        deskPet = DeskPetWindowController(appState: appState, settingsStore: settingsStore)
+        deskPet?.setup()
 
         // Voice commands
         setupVoiceCommands()

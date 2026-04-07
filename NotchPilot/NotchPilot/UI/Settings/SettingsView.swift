@@ -414,7 +414,72 @@ private struct AppearanceTab: View {
                     }
                 }
             }
+
+            SettingsSection(title: "Desk Pet", icon: "cat.fill", color: .orange) {
+                Toggle("Desk Pet aktif", isOn: $store.deskPetEnabled)
+
+                if store.deskPetEnabled {
+                    HStack(spacing: 12) {
+                        Text("Boyut")
+                            .font(.system(size: 12))
+                        Slider(value: $store.deskPetSize, in: 16...64, step: 4)
+                            .tint(.orange)
+                        Text("\(Int(store.deskPetSize))px")
+                            .font(.system(size: 11, design: .monospaced))
+                            .frame(width: 36, alignment: .trailing)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+
+            if store.deskPetEnabled {
+            SettingsSection(title: "Pet Rengi", icon: "paintpalette.fill", color: .orange) {
+                HStack(spacing: 10) {
+                    ForEach(catColors, id: \.name) { cat in
+                        Button(action: { store.catColor = cat.name }) {
+                            VStack(spacing: 4) {
+                                if let url = Bundle.main.url(forResource: cat.name, withExtension: "png"),
+                                   let img = NSImage(contentsOf: url),
+                                   let cgImg = img.cgImage(forProposedRect: nil, context: nil, hints: nil),
+                                   let cropped = cgImg.cropping(to: CGRect(x: 0, y: 0, width: 32, height: 32)) {
+                                    Image(nsImage: NSImage(cgImage: cropped, size: NSSize(width: 32, height: 32)))
+                                        .interpolation(.none)
+                                        .resizable()
+                                        .frame(width: 32, height: 32)
+                                } else {
+                                    Rectangle().fill(.gray).frame(width: 32, height: 32)
+                                }
+                                Text(cat.display)
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(store.catColor == cat.name ? store.accentColor.opacity(0.15) : .clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(store.catColor == cat.name ? store.accentColor : .clear, lineWidth: 1.5)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            } // if deskPetEnabled
         }
+    }
+
+    private var catColors: [(name: String, display: String)] {
+        [
+            ("black-cat", "Siyah"),
+            ("orange-cat", "Turuncu"),
+            ("white-cat", "Beyaz"),
+            ("grey-cat", "Gri"),
+            ("calico-cat", "Calico"),
+            ("colorpoint-cat", "Colorpoint"),
+        ]
     }
 
     private var accentColors: [(name: String, color: Color)] {

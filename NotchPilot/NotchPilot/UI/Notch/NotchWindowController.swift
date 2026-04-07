@@ -104,8 +104,10 @@ final class NotchWindowController {
                 self?.collapse()
             },
             onOpenSettings: { [weak self] in
-                self?.delegate?.notchWindowControllerDidRequestSettings(self!)
                 self?.collapse()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self?.delegate?.notchWindowControllerDidRequestSettings(self!)
+                }
             },
             onQuit: {
                 NSApplication.shared.terminate(nil)

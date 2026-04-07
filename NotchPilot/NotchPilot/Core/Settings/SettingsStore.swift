@@ -62,6 +62,15 @@ final class SettingsStore {
     var showBorder: Bool {
         didSet { UserDefaults.standard.set(showBorder, forKey: "showBorder") }
     }
+    var catColor: String {
+        didSet { UserDefaults.standard.set(catColor, forKey: "catColor") }
+    }
+    var deskPetEnabled: Bool {
+        didSet { UserDefaults.standard.set(deskPetEnabled, forKey: "deskPetEnabled") }
+    }
+    var deskPetSize: Double {
+        didSet { UserDefaults.standard.set(deskPetSize, forKey: "deskPetSize") }
+    }
     var idleOpacity: Double {
         didSet { UserDefaults.standard.set(idleOpacity, forKey: "idleOpacity") }
     }
@@ -147,6 +156,9 @@ final class SettingsStore {
         accentColorName = defaults.string(forKey: "accentColor") ?? "orange"
         petStyle = PetStyle(rawValue: defaults.string(forKey: "petStyle") ?? "dot") ?? .dot
         showBorder = defaults.object(forKey: "showBorder") as? Bool ?? true
+        catColor = defaults.string(forKey: "catColor") ?? "black-cat"
+        deskPetEnabled = defaults.object(forKey: "deskPetEnabled") as? Bool ?? true
+        deskPetSize = defaults.object(forKey: "deskPetSize") as? Double ?? 32
         idleOpacity = defaults.object(forKey: "idleOpacity") as? Double ?? 0.45
         barWidth = BarWidth(rawValue: defaults.string(forKey: "barWidth") ?? "normal") ?? .normal
         barHeight = defaults.object(forKey: "barHeight") as? Double ?? 32
