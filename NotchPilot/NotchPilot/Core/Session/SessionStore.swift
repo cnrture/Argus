@@ -31,7 +31,7 @@ final class SessionStore {
         // Session yoksa otomatik oluştur (app açıkken başlamış session'lar için)
         if event.event != .sessionStart && event.event != .notification && sessions[event.sessionId] == nil {
             let title = SessionTitleResolver.resolve(cwd: event.cwd)
-            let session = Session(id: event.sessionId, title: title)
+            let session = Session(id: event.sessionId, title: title, source: event.agentSource)
             sessions[event.sessionId] = session
             appState.activeSessionId = event.sessionId
             appState.panelState = .compact
@@ -76,7 +76,7 @@ final class SessionStore {
 
     private func handleSessionStart(event: HookEvent, appState: AppState) {
         let title = SessionTitleResolver.resolve(cwd: event.cwd)
-        let session = Session(id: event.sessionId, title: title)
+        let session = Session(id: event.sessionId, title: title, source: event.agentSource)
 
         // Replace any discovered "existing-" session with the same cwd
         let existingKeys = sessions.keys.filter { $0.hasPrefix("existing-") }
@@ -291,6 +291,7 @@ final class SessionStore {
             SessionInfo(
                 id: session.id,
                 title: session.title,
+                source: session.source,
                 status: session.status,
                 startTime: session.startTime,
                 lastActivity: session.lastActivity,

@@ -42,6 +42,7 @@ final class AppState {
 struct SessionInfo: Identifiable, Equatable {
     let id: String
     var title: String
+    var source: AgentSource
     var status: SessionStatus
     let startTime: Date
     var lastActivity: Date
@@ -52,7 +53,8 @@ struct SessionInfo: Identifiable, Equatable {
     var pendingQuestion: Bool
     var pendingPlan: Bool
 
-    init(id: String, title: String, status: SessionStatus = .idle,
+    init(id: String, title: String, source: AgentSource = .claude,
+         status: SessionStatus = .idle,
          startTime: Date = Date(), lastActivity: Date = Date(),
          lastToolName: String? = nil, lastStatusText: String? = nil,
          isIdle: Bool = false,
@@ -60,6 +62,7 @@ struct SessionInfo: Identifiable, Equatable {
          pendingPlan: Bool = false) {
         self.id = id
         self.title = title
+        self.source = source
         self.status = status
         self.startTime = startTime
         self.lastActivity = lastActivity

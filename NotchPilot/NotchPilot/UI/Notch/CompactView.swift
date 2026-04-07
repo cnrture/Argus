@@ -23,6 +23,11 @@ struct CompactView: View {
         HStack(spacing: 8) {
             StatusPet(status: session.status, style: petStyle, accent: accentColor)
 
+            // Agent icon
+            Image(systemName: session.source.icon)
+                .font(.system(size: 9))
+                .foregroundStyle(session.source.color)
+
             if let statusText = session.lastStatusText {
                 Text(statusText)
                     .font(.system(size: 11))

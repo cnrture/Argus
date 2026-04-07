@@ -460,49 +460,70 @@ private struct ShortcutsTab: View {
 private struct HooksTab: View {
     @Bindable var store: SettingsStore
     let hookInstaller: HookInstaller
-    @State private var hooksInstalled: Bool = false
+    @State private var agentStatus: [AgentSource: Bool] = [:]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "Claude Code Hooks", icon: "link.circle.fill", color: .blue) {
+            SettingsSection(title: "Hook Yonetimi", icon: "link.circle.fill", color: .blue) {
                 Toggle("Hook'ları otomatik kur", isOn: $store.autoSetupHooks)
 
                 HStack(spacing: 8) {
-                    Image(systemName: hooksInstalled ? "checkmark.circle.fill" : "xmark.circle.fill")
-                        .foregroundStyle(hooksInstalled ? .green : .red)
-                        .font(.system(size: 16))
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(hooksInstalled ? "Hook'lar aktif" : "Hook'lar kurulu değil")
-                            .font(.system(size: 12, weight: .medium))
-                        Text("~/.claude/settings.json")
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundStyle(.tertiary)
-                    }
-                }
-
-                HStack(spacing: 8) {
-                    Button(action: {
-                        _ = hookInstaller.installHooks()
-                        hooksInstalled = hookInstaller.hooksAreInstalled()
-                    }) {
-                        Label("Yeniden Kur", systemImage: "arrow.clockwise")
+                    Button(action: installAll) {
+                        Label("Tumu Kur", systemImage: "arrow.clockwise")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
                     .tint(.blue)
 
-                    Button(action: {
-                        _ = hookInstaller.uninstallHooks()
-                        hooksInstalled = hookInstaller.hooksAreInstalled()
-                    }) {
-                        Label("Kaldır", systemImage: "trash")
+                    Button(action: removeAll) {
+                        Label("Tumunu Kaldir", systemImage: "trash")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
                     .tint(.red)
                 }
             }
+
+            SettingsSection(title: "Ajan Durumlari", icon: "cpu", color: .purple) {
+                ForEach(AgentSource.allCases, id: \.self) { agent in
+                    HStack(spacing: 10) {
+                        Image(systemName: agent.icon)
+                            .foregroundStyle(agent.color)
+                            .frame(width: 20)
+
+                        Text(agent.displayName)
+                            .font(.system(size: 12, weight: .medium))
+
+                        Spacer()
+
+                        let installed = agentStatus[agent] ?? false
+                        Image(systemName: installed ? "checkmark.circle.fill" : "xmark.circle")
+                            .foregroundStyle(installed ? .green : .secondary)
+
+                        Text(agent.configPath.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(1)
+                    }
+                }
+            }
         }
-        .onAppear { hooksInstalled = hookInstaller.hooksAreInstalled() }
+        .onAppear { refreshStatus() }
+    }
+
+    private func installAll() {
+        _ = hookInstaller.installHooks()
+        refreshStatus()
+    }
+
+    private func removeAll() {
+        _ = hookInstaller.uninstallHooks()
+        refreshStatus()
+    }
+
+    private func refreshStatus() {
+        for agent in AgentSource.allCases {
+            agentStatus[agent] = hookInstaller.hooksAreInstalled(for: agent)
+        }
     }
 }

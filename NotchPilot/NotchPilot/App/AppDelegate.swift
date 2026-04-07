@@ -178,14 +178,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func performHookSetup() {
-        let result = hookInstaller.installHooks()
+        let results = hookInstaller.installHooks()
         UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
 
-        switch result {
-        case .installed, .alreadyInstalled:
-            print("[NotchPilot] Hooks installed successfully")
-        case .failed(let error):
-            print("[NotchPilot] Hook installation failed: \(error)")
+        for (agent, result) in results {
+            switch result {
+            case .installed, .alreadyInstalled:
+                print("[NotchPilot] \(agent.displayName) hooks installed")
+            case .failed(let error):
+                print("[NotchPilot] \(agent.displayName) hook install failed: \(error)")
+            }
         }
 
         onboardingWindow?.close()
@@ -259,7 +261,7 @@ extension AppDelegate: NotchWindowControllerDelegate {
     private func syncAppState() {
         // Trigger a no-op sync
         sessionStore.process(
-            event: HookEvent(id: "sync", event: .notification, timestamp: nil, sessionId: appState.activeSessionId ?? "", cwd: nil, data: nil),
+            event: HookEvent(id: "sync", event: .notification, source: nil, timestamp: nil, sessionId: appState.activeSessionId ?? "", cwd: nil, data: nil),
             appState: appState,
             respond: { _ in }
         )

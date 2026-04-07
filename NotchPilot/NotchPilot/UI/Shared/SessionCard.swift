@@ -12,6 +12,10 @@ struct SessionCard: View {
             HStack {
                 StatusDot(status: session.status)
 
+                Image(systemName: session.source.icon)
+                    .font(.system(size: 10))
+                    .foregroundStyle(session.source.color)
+
                 Text(session.title)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)

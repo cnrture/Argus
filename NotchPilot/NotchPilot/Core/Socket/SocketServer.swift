@@ -7,10 +7,15 @@ protocol SocketServerDelegate: AnyObject {
 struct HookEvent: Codable, Identifiable {
     let id: String
     let event: HookEventType
+    let source: String?
     let timestamp: Date?
     let sessionId: String
     let cwd: String?
     let data: HookEventData?
+
+    var agentSource: AgentSource {
+        AgentSource(rawValue: source ?? "claude") ?? .claude
+    }
 }
 
 enum HookEventType: String, Codable {

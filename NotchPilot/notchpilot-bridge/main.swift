@@ -1,21 +1,27 @@
 import Foundation
 
-// notchpilot-bridge: Claude Code hook → NotchPilot app bridge
+// notchpilot-bridge: AI coding agent hook → NotchPilot app bridge
 //
-// Usage: notchpilot-bridge <event-type> [--session-id <id>]
+// Usage: notchpilot-bridge <event-type> [--source claude|codex|gemini|cursor] [--session-id <id>]
 // Reads JSON from stdin, sends to Unix socket, optionally waits for response.
 
 func main() -> Int32 {
     let args = CommandLine.arguments
 
     guard args.count >= 2 else {
-        fputs("Usage: notchpilot-bridge <event-type> [--session-id <id>]\n", stderr)
+        fputs("Usage: notchpilot-bridge <event-type> [--source <agent>] [--session-id <id>]\n", stderr)
         return 1
     }
 
     let eventType = args[1]
 
-    // Parse optional session-id
+    // Parse --source (default: claude)
+    var source = "claude"
+    if let idx = args.firstIndex(of: "--source"), idx + 1 < args.count {
+        source = args[idx + 1]
+    }
+
+    // Parse --session-id
     var sessionId: String?
     if let idx = args.firstIndex(of: "--session-id"), idx + 1 < args.count {
         sessionId = args[idx + 1]
@@ -28,6 +34,7 @@ func main() -> Int32 {
     // Build message
     guard let message = EventRouter.buildMessage(
         eventType: eventType,
+        source: source,
         stdinJSON: stdinJSON,
         sessionId: sessionId
     ) else {
@@ -40,7 +47,6 @@ func main() -> Int32 {
     do {
         try client.connect()
     } catch {
-        // App not running — exit silently for non-blocking events
         if EventRouter.isBlocking(eventType) {
             fputs("[notchpilot-bridge] Cannot connect to NotchPilot: \(error)\n", stderr)
         }
@@ -61,7 +67,6 @@ func main() -> Int32 {
     if EventRouter.isBlocking(eventType) {
         do {
             let response = try client.readResponse()
-            // Extract the response payload and write to stdout
             if let data = response.data(using: .utf8),
                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let responsePayload = json["response"] {

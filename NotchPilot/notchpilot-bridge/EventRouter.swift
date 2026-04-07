@@ -1,7 +1,6 @@
 import Foundation
 
 struct EventRouter {
-    // Events that require waiting for a response
     static let blockingEvents: Set<String> = [
         "permission-request"
     ]
@@ -10,7 +9,7 @@ struct EventRouter {
         blockingEvents.contains(eventType)
     }
 
-    static func buildMessage(eventType: String, stdinJSON: String, sessionId: String?) -> String? {
+    static func buildMessage(eventType: String, source: String, stdinJSON: String, sessionId: String?) -> String? {
         guard var json = try? JSONSerialization.jsonObject(with: Data(stdinJSON.utf8)) as? [String: Any] else {
             return nil
         }
@@ -20,10 +19,10 @@ struct EventRouter {
         var message: [String: Any] = [
             "id": eventId,
             "event": eventType,
+            "source": source,
             "timestamp": ISO8601DateFormatter().string(from: Date())
         ]
 
-        // Extract session_id from input data or use provided
         if let sid = json["session_id"] as? String {
             message["session_id"] = sid
         } else if let sid = sessionId {
@@ -32,7 +31,6 @@ struct EventRouter {
             message["session_id"] = "unknown"
         }
 
-        // Extract cwd
         if let cwd = json["cwd"] as? String {
             message["cwd"] = cwd
             json.removeValue(forKey: "cwd")

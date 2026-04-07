@@ -5,6 +5,7 @@ final class Session: Identifiable, Equatable {
     let id: String
     let startTime: Date
     var title: String
+    var source: AgentSource
     var status: SessionStatus
     var lastActivity: Date
     var lastToolName: String?
@@ -20,10 +21,11 @@ final class Session: Identifiable, Equatable {
         status == .idle && Date().timeIntervalSince(lastActivity) > Self.idleTimeout
     }
 
-    init(id: String, title: String) {
+    init(id: String, title: String, source: AgentSource = .claude) {
         self.id = id
         self.startTime = Date()
         self.title = title
+        self.source = source
         self.status = .idle
         self.lastActivity = Date()
     }
