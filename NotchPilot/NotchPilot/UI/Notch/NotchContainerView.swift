@@ -154,6 +154,6 @@ struct NotchContainerView: View {
             onQuit: onQuit,
             onJumpToSession: onJumpToSession
         )
-        .offset(y: notchRect.height)
+        .padding(.top, notchRect.height)
     }
 }
