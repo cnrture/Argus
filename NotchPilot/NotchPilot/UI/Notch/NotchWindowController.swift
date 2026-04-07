@@ -146,13 +146,14 @@ final class NotchWindowController {
 
         let panelPoint = convertScreenToPanel(screenPoint)
 
-        // Fullscreen trigger zone: top 5pt
+        // Fullscreen: panel hidden, only show on hover trigger zone (top 5pt)
         if appState.isFullscreen {
             let isInTriggerZone = screenPoint.y >= currentScreenFrame.maxY - 5
-            if isInTriggerZone && !appState.isExpanded {
-                showInFullscreen()
-                return
+            if isInTriggerZone {
+                showForPermissionInFullscreen()
             }
+            // Don't expand on hover in fullscreen — only show compact briefly
+            return
         }
 
         // Hover detection over compact bar area
@@ -213,8 +214,17 @@ final class NotchWindowController {
     // MARK: - Fullscreen
 
     private func setupFullscreenObserver() {
+        // Active app change
         fullscreenObserver = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.checkFullscreen()
+        }
+        // Also check on app activation changes
+        NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didActivateApplicationNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
@@ -223,18 +233,35 @@ final class NotchWindowController {
     }
 
     private func checkFullscreen() {
-        guard let screen = NSScreen.main else { return }
-        let isFS = NSWorkspace.shared.frontmostApplication?.bundleIdentifier != Bundle.main.bundleIdentifier
-            && screen.frame == screen.visibleFrame
+        let frontApp = NSWorkspace.shared.frontmostApplication
+        let isSelf = frontApp?.bundleIdentifier == Bundle.main.bundleIdentifier
+
+        // Check if the frontmost app's main window is fullscreen
+        var isFS = false
+        if !isSelf, let screen = NSScreen.main {
+            // visibleFrame excludes menu bar/dock; if equal to frame, menu bar is hidden = fullscreen
+            isFS = screen.frame.height == screen.visibleFrame.height
+        }
+
+        let wasFullscreen = appState.isFullscreen
         appState.isFullscreen = isFS
+
+        if isFS && !wasFullscreen {
+            // Entering fullscreen — hide compact bar
+            panel?.alphaValue = 0
+        } else if !isFS && wasFullscreen {
+            // Leaving fullscreen — show compact bar
+            panel?.alphaValue = 1
+        }
     }
 
-    private func showInFullscreen() {
-        expand()
+    func showForPermissionInFullscreen() {
+        // Temporarily show panel for permission/question even in fullscreen
+        panel?.alphaValue = 1
         fullscreenHideTimer?.invalidate()
         fullscreenHideTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
-            guard let self, self.appState.isFullscreen else { return }
-            self.collapse()
+            guard let self, self.appState.isFullscreen, !self.appState.isExpanded else { return }
+            self.panel?.alphaValue = 0
         }
     }
 
@@ -338,6 +365,9 @@ final class NotchWindowController {
     // MARK: - Permission Auto-Expand
 
     func expandForPermission() {
+        if appState.isFullscreen {
+            showForPermissionInFullscreen()
+        }
         expand()
     }
 
