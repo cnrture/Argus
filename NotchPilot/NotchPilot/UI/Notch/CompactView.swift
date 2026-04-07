@@ -4,11 +4,12 @@ struct CompactView: View {
     let session: SessionInfo
     let sessionCount: Int
     let notchWidth: CGFloat
+    let notchHeight: CGFloat
+    var hasPhysicalNotch: Bool = true
     var petStyle: PetStyle = .dot
     var accentColor: Color = .orange
     var showBorder: Bool = true
     var widthMultiplier: CGFloat = 1.5
-    var barHeightValue: CGFloat = 32
     var cornerRadiusValue: CGFloat = 14
     var fontSizeValue: CGFloat = 12
     var horizontalOffset: CGFloat = 0
@@ -45,14 +46,14 @@ struct CompactView: View {
             Spacer()
         }
         .padding(.horizontal, 14)
-        .frame(width: barWidth, height: barHeightValue)
+        .frame(width: barWidth, height: notchHeight)
         .background(
-            NotchShape(topCornerRadius: cornerRadiusValue * 0.43, bottomCornerRadius: cornerRadiusValue)
+            NotchShape(topCornerRadius: 0, bottomCornerRadius: cornerRadiusValue)
                 .fill(.black)
         )
         .overlay(
             showBorder
-                ? NotchShape(topCornerRadius: cornerRadiusValue * 0.43, bottomCornerRadius: cornerRadiusValue)
+                ? NotchShape(topCornerRadius: 0, bottomCornerRadius: cornerRadiusValue)
                     .stroke(accentColor.opacity(isActive ? 0.6 : 0.25), lineWidth: 1)
                 : nil
         )

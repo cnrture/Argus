@@ -32,7 +32,7 @@ struct NotchContainerView: View {
                     notchWidth: notchRect.width,
                     onDismiss: { appState.errorInfo = nil }
                 )
-                .offset(y: notchRect.height)
+                .padding(.top, notchRect.height)
                 .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
             }
             // Completion card
@@ -43,7 +43,7 @@ struct NotchContainerView: View {
                     onDismiss: { appState.completionSession = nil },
                     onJump: { onJumpToSession?(completionSession.id) }
                 )
-                .offset(y: notchRect.height)
+                .padding(.top, notchRect.height)
                 .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
             }
             // Idle prompt
@@ -57,7 +57,7 @@ struct NotchContainerView: View {
                     },
                     onDismiss: { appState.idleSessionId = nil }
                 )
-                .offset(y: notchRect.height)
+                .padding(.top, notchRect.height)
                 .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
             }
             else if appState.panelState != .hidden {
@@ -82,18 +82,17 @@ struct NotchContainerView: View {
                 session: session,
                 sessionCount: appState.sessions.count,
                 notchWidth: notchRect.width,
+                notchHeight: notchRect.height,
                 petStyle: settingsStore?.petStyle ?? .dot,
                 accentColor: settingsStore?.accentColor ?? .orange,
                 showBorder: settingsStore?.showBorder ?? true,
                 widthMultiplier: CGFloat(settingsStore?.barWidth.multiplier ?? 1.5),
-                barHeightValue: CGFloat(settingsStore?.barHeight ?? 32),
                 cornerRadiusValue: CGFloat(settingsStore?.cornerRadius ?? 14),
                 fontSizeValue: CGFloat(settingsStore?.fontSize ?? 12),
                 horizontalOffset: CGFloat((settingsStore?.barOffset ?? 0) * 100)
             )
             .opacity(appState.isHovered ? 1.0 : (settingsStore?.idleOpacity ?? 0.45))
             .animation(.easeInOut(duration: 0.2), value: appState.isHovered)
-            .offset(y: notchRect.height)
         }
     }
 
@@ -109,7 +108,7 @@ struct NotchContainerView: View {
                     onDeny: { onPermissionDeny?(permission.id) },
                     onAutoApprove: { toolName in onAutoApprove?(session.id, toolName) }
                 )
-                .offset(y: notchRect.height)
+                .padding(.top, notchRect.height)
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .scale(scale: 0.95, anchor: .top)),
                     removal: .opacity
@@ -121,7 +120,7 @@ struct NotchContainerView: View {
                     notchWidth: notchRect.width,
                     onAnswer: { answer in onQuestionAnswer?(question.id, answer) }
                 )
-                .offset(y: notchRect.height)
+                .padding(.top, notchRect.height)
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .scale(scale: 0.95, anchor: .top)),
                     removal: .opacity
@@ -134,7 +133,7 @@ struct NotchContainerView: View {
                     onApprove: { feedback in onPlanApprove?(plan.id, feedback) },
                     onReject: { feedback in onPlanReject?(plan.id, feedback) }
                 )
-                .offset(y: notchRect.height)
+                .padding(.top, notchRect.height)
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .scale(scale: 0.95, anchor: .top)),
                     removal: .opacity
