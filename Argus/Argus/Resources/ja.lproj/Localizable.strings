@@ -1,0 +1,161 @@
+/* Tabs */
+"settings.tab.general" = "一般";
+"settings.tab.appearance" = "外観";
+"settings.tab.pets" = "ペット";
+"settings.tab.sounds" = "サウンド";
+"settings.tab.shortcuts" = "ショートカット";
+"settings.tab.hooks" = "Hooks";
+
+/* General */
+"settings.section.startup" = "起動";
+"settings.general.autoLaunch" = "ログイン時に起動";
+"settings.section.language" = "言語";
+"language.system" = "システム";
+"settings.section.behavior" = "動作";
+"settings.behavior.showInFullscreen" = "フルスクリーンで表示";
+"settings.behavior.nativeNotifications" = "macOS通知を送信";
+"settings.behavior.idleTimeout" = "アイドルタイムアウト";
+"settings.behavior.timeout.5min" = "5分";
+"settings.behavior.timeout.10min" = "10分";
+"settings.behavior.timeout.15min" = "15分";
+"settings.behavior.timeout.30min" = "30分";
+"settings.section.monitor" = "モニター";
+"settings.monitor.screen" = "画面";
+"settings.monitor.auto" = "自動（内蔵ディスプレイ）";
+"settings.section.accessibility" = "アクセシビリティ";
+"settings.accessibility.enabled" = "Accessibilityアクセスが有効";
+"settings.accessibility.required" = "Accessibilityアクセスが必要";
+"settings.section.voiceCommand" = "音声コマンド";
+"settings.voiceCommand.enable" = "音声コマンドを有効にする";
+"settings.voiceCommand.description" = "\"allow\"\"deny\"\"allow all\"と話して応答します。マイクの許可が必要です。デバイス上で処理され、データは送信されません。";
+"settings.section.update" = "アップデート";
+"settings.button.checkUpdate" = "アップデートを確認";
+
+/* Appearance */
+"settings.section.theme" = "テーマ";
+"settings.section.accentColor" = "アクセントカラー";
+"settings.appearance.showBorder" = "ノッチの境界線";
+"settings.appearance.idleOpacity" = "アイドル時の不透明度";
+"settings.section.compactBar" = "Compact Bar";
+"settings.compactBar.width" = "幅";
+"settings.compactBar.height" = "高さ";
+"settings.compactBar.cornerRadius" = "角の丸み";
+"settings.compactBar.fontSize" = "フォントサイズ";
+"settings.compactBar.horizontalOffset" = "水平位置";
+"settings.compactBar.offset.center" = "中央";
+"settings.compactBar.offset.left" = "左";
+"settings.compactBar.offset.right" = "右";
+
+/* Bar Width */
+"barWidth.narrow" = "狭い";
+"barWidth.normal" = "標準";
+"barWidth.wide" = "広い";
+
+/* Pets */
+"settings.section.notchStatusIcon" = "ノッチステータスアイコン";
+"settings.section.deskPet" = "Desk Pet";
+"settings.deskPet.enabled" = "Desk Petを有効にする";
+"settings.deskPet.type" = "動物";
+"deskpet.type.cat" = "ネコ";
+"deskpet.type.dog" = "イヌ";
+"settings.deskPet.size" = "サイズ";
+"settings.section.dogBreed" = "犬種";
+"settings.section.catColor" = "猫の色";
+
+/* Sounds */
+"settings.sounds.general" = "一般";
+"settings.sounds.enabled" = "サウンドを有効にする";
+"settings.sounds.eventSounds" = "イベントサウンド";
+"settings.sounds.system" = "システム";
+"sound.sessionStarted" = "セッション開始";
+"sound.sessionEnded" = "セッション終了";
+"sound.permissionNeeded" = "許可が必要";
+"sound.questionAsked" = "質問あり";
+"sound.planReady" = "プラン準備完了";
+"sound.taskCompleted" = "タスク完了";
+"sound.error" = "エラー発生";
+"sound.idle" = "アイドル";
+
+/* Shortcuts */
+"settings.section.permissionShortcuts" = "許可ショートカット";
+"shortcuts.allow" = "許可";
+"shortcuts.deny" = "拒否";
+"settings.section.questionShortcuts" = "質問ショートカット";
+"shortcuts.option1" = "選択肢 1";
+"shortcuts.option2" = "選択肢 2";
+"shortcuts.option3" = "選択肢 3";
+"settings.section.panel" = "パネル";
+"shortcuts.togglePanel" = "パネルの表示切替";
+
+/* Hooks */
+"settings.section.hookManagement" = "Hook管理";
+"settings.hooks.autoSetup" = "Hooksを自動インストール";
+"settings.hooks.installAll" = "すべてインストール";
+"settings.hooks.removeAll" = "すべて削除";
+"settings.section.agentStatus" = "エージェントの状態";
+
+/* Permission */
+"permission.required" = "許可が必要";
+"permission.deny" = "拒否";
+"permission.allow" = "許可";
+"permission.allowAll" = "すべて許可";
+"permission.tool.bash" = "Bashツールを実行しようとしています:";
+"permission.tool.generic" = "ツールを使用しようとしています";
+
+/* Question */
+"question.label" = "質問";
+"question.placeholder" = "回答を入力...";
+"question.submit" = "送信";
+
+/* Plan */
+"plan.reviewLabel" = "プランの確認";
+"plan.feedbackPlaceholder" = "フィードバックを入力...（任意）";
+"plan.reject" = "却下";
+"plan.approve" = "承認";
+
+/* Status */
+"status.completed" = "完了";
+"status.waitingForResponse" = "応答待ち";
+
+/* Actions */
+"action.jumpToTerminal" = "ターミナルに移動";
+"action.go" = "実行";
+"action.ok" = "OK";
+"action.settings" = "設定";
+"action.quit" = "終了";
+
+/* Errors */
+"error.rateLimit" = "Rate Limit";
+"error.authFailed" = "認証失敗";
+"error.billing" = "課金エラー";
+"error.server" = "サーバーエラー";
+"error.maxTokens" = "トークン上限超過";
+"error.generic" = "エラー";
+
+/* Onboarding */
+"onboarding.welcome" = "Argusへようこそ！";
+"onboarding.setupQuestion" = "Claude Code Hooksを自動インストールしますか？";
+"onboarding.setupInfo" = "Argus Hooksが~/.claude/settings.jsonに追加されます。既存の設定は保持・バックアップされます。";
+"onboarding.skip" = "手動で設定する";
+"onboarding.install" = "インストール";
+
+/* Session */
+"session.idle" = "15分以上非アクティブ";
+
+/* Pet Names */
+"pet.dot" = "ドット";
+"pet.cat" = "ネコ";
+"pet.dog" = "イヌ";
+"pet.bird" = "トリ";
+"pet.robot" = "ロボット";
+"pet.ghost" = "オバケ";
+"pet.alien" = "エイリアン";
+
+/* Theme */
+"theme.dark" = "Dark";
+"theme.light" = "Light";
+"theme.system" = "System";
+
+/* Prompt */
+
+/* Notification */

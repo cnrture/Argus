@@ -35,39 +35,39 @@ jobs:
 
       - name: Resolve packages
         run: |
-          cd NotchPilot
+          cd Argus
           xcodebuild -resolvePackageDependencies \
-            -project NotchPilot.xcodeproj \
-            -scheme NotchPilot
+            -project Argus.xcodeproj \
+            -scheme Argus
 
       - name: Build archive
         run: |
-          cd NotchPilot
+          cd Argus
           xcodebuild archive \
-            -project NotchPilot.xcodeproj \
-            -scheme NotchPilot \
-            -archivePath $RUNNER_TEMP/NotchPilot.xcarchive \
+            -project Argus.xcodeproj \
+            -scheme Argus \
+            -archivePath $RUNNER_TEMP/Argus.xcarchive \
             -configuration Release \
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="Developer ID Application"
 
       - name: Export archive
         run: |
-          cd NotchPilot
+          cd Argus
           xcodebuild -exportArchive \
-            -archivePath $RUNNER_TEMP/NotchPilot.xcarchive \
+            -archivePath $RUNNER_TEMP/Argus.xcarchive \
             -exportPath $RUNNER_TEMP/export \
             -exportOptionsPlist ExportOptions.plist
 
       - name: Build bridge
         run: |
-          cd NotchPilot
-          xcodebuild -project NotchPilot.xcodeproj \
-            -scheme notchpilot-bridge \
+          cd Argus
+          xcodebuild -project Argus.xcodeproj \
+            -scheme argus-bridge \
             -configuration Release \
             -derivedDataPath $RUNNER_TEMP/bridge-build
-          cp $RUNNER_TEMP/bridge-build/Build/Products/Release/notchpilot-bridge \
-            $RUNNER_TEMP/export/NotchPilot.app/Contents/Resources/
+          cp $RUNNER_TEMP/bridge-build/Build/Products/Release/argus-bridge \
+            $RUNNER_TEMP/export/Argus.app/Contents/Resources/
 
       - name: Notarize
         env:
@@ -76,28 +76,28 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           ditto -c -k --keepParent \
-            $RUNNER_TEMP/export/NotchPilot.app \
-            $RUNNER_TEMP/NotchPilot.zip
+            $RUNNER_TEMP/export/Argus.app \
+            $RUNNER_TEMP/Argus.zip
 
-          xcrun notarytool submit $RUNNER_TEMP/NotchPilot.zip \
+          xcrun notarytool submit $RUNNER_TEMP/Argus.zip \
             --apple-id "$APPLE_ID" \
             --password "$APPLE_APP_PASSWORD" \
             --team-id "$APPLE_TEAM_ID" \
             --wait
 
-          xcrun stapler staple $RUNNER_TEMP/export/NotchPilot.app
+          xcrun stapler staple $RUNNER_TEMP/export/Argus.app
 
       - name: Create DMG
         run: |
-          hdiutil create -volname "NotchPilot" \
-            -srcfolder $RUNNER_TEMP/export/NotchPilot.app \
+          hdiutil create -volname "Argus" \
+            -srcfolder $RUNNER_TEMP/export/Argus.app \
             -ov -format UDZO \
-            $RUNNER_TEMP/NotchPilot.dmg
+            $RUNNER_TEMP/Argus.dmg
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ runner.temp }}/NotchPilot.dmg
+            ${{ runner.temp }}/Argus.dmg
           draft: false
           prerelease: false

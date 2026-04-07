@@ -1,0 +1,161 @@
+/* Tabs */
+"settings.tab.general" = "Genel";
+"settings.tab.appearance" = "Görünüm";
+"settings.tab.pets" = "Petler";
+"settings.tab.sounds" = "Sesler";
+"settings.tab.shortcuts" = "Kısayollar";
+"settings.tab.hooks" = "Hooks";
+
+/* General */
+"settings.section.startup" = "Başlangıç";
+"settings.general.autoLaunch" = "Giriş'te otomatik başlat";
+"settings.section.language" = "Dil";
+"language.system" = "Sistem";
+"settings.section.behavior" = "Davranış";
+"settings.behavior.showInFullscreen" = "Fullscreen uygulamalarda göster";
+"settings.behavior.nativeNotifications" = "macOS bildirimleri gönder";
+"settings.behavior.idleTimeout" = "Hareketsizlik süresi";
+"settings.behavior.timeout.5min" = "5 dk";
+"settings.behavior.timeout.10min" = "10 dk";
+"settings.behavior.timeout.15min" = "15 dk";
+"settings.behavior.timeout.30min" = "30 dk";
+"settings.section.monitor" = "Monitör";
+"settings.monitor.screen" = "Ekran";
+"settings.monitor.auto" = "Otomatik (dahili ekran)";
+"settings.section.accessibility" = "Erişilebilirlik";
+"settings.accessibility.enabled" = "Accessibility erişimi aktif";
+"settings.accessibility.required" = "Accessibility erişimi gerekli";
+"settings.section.voiceCommand" = "Sesli Komut";
+"settings.voiceCommand.enable" = "Sesli komutları etkinleştir";
+"settings.voiceCommand.description" = "\"izin ver\", \"reddet\", \"hepsine\" komutlarını sesle verin. Mikrofon izni gerektirir. Cihaz üzerinde çalışır, veri gönderilmez.";
+"settings.section.update" = "Güncelleme";
+"settings.button.checkUpdate" = "Güncelleme Kontrol Et";
+
+/* Appearance */
+"settings.section.theme" = "Tema";
+"settings.section.accentColor" = "Accent Renk";
+"settings.appearance.showBorder" = "Notch kenar çizgisi";
+"settings.appearance.idleOpacity" = "Beklemede saydamlık";
+"settings.section.compactBar" = "Compact Bar";
+"settings.compactBar.width" = "Genişlik";
+"settings.compactBar.height" = "Yükseklik";
+"settings.compactBar.cornerRadius" = "Köşe yuvarlaklığı";
+"settings.compactBar.fontSize" = "Font boyutu";
+"settings.compactBar.horizontalOffset" = "Yatay pozisyon";
+"settings.compactBar.offset.center" = "Orta";
+"settings.compactBar.offset.left" = "Sol";
+"settings.compactBar.offset.right" = "Sağ";
+
+/* Bar Width */
+"barWidth.narrow" = "Dar";
+"barWidth.normal" = "Normal";
+"barWidth.wide" = "Geniş";
+
+/* Pets */
+"settings.section.notchStatusIcon" = "Notch Durum İkonu";
+"settings.section.deskPet" = "Desk Pet";
+"settings.deskPet.enabled" = "Desk Pet aktif";
+"settings.deskPet.type" = "Hayvan";
+"deskpet.type.cat" = "Kedi";
+"deskpet.type.dog" = "Köpek";
+"settings.deskPet.size" = "Boyut";
+"settings.section.dogBreed" = "Köpek Irkı";
+"settings.section.catColor" = "Kedi Rengi";
+
+/* Sounds */
+"settings.sounds.general" = "Genel";
+"settings.sounds.enabled" = "Sesler aktif";
+"settings.sounds.eventSounds" = "Olay Sesleri";
+"settings.sounds.system" = "Sistem";
+"sound.sessionStarted" = "Oturum Başladı";
+"sound.sessionEnded" = "Oturum Bitti";
+"sound.permissionNeeded" = "İzin Bekliyor";
+"sound.questionAsked" = "Soru Soruldu";
+"sound.planReady" = "Plan Hazır";
+"sound.taskCompleted" = "Görev Tamamlandı";
+"sound.error" = "Hata Oluştu";
+"sound.idle" = "Hareketsiz";
+
+/* Shortcuts */
+"settings.section.permissionShortcuts" = "İzin Kısayolları";
+"shortcuts.allow" = "İzin Ver";
+"shortcuts.deny" = "Reddet";
+"settings.section.questionShortcuts" = "Soru Kısayolları";
+"shortcuts.option1" = "Seçenek 1";
+"shortcuts.option2" = "Seçenek 2";
+"shortcuts.option3" = "Seçenek 3";
+"settings.section.panel" = "Panel";
+"shortcuts.togglePanel" = "Panel Aç/Kapat";
+
+/* Hooks */
+"settings.section.hookManagement" = "Hook Yönetimi";
+"settings.hooks.autoSetup" = "Hook'ları otomatik kur";
+"settings.hooks.installAll" = "Tümü Kur";
+"settings.hooks.removeAll" = "Tümünü Kaldır";
+"settings.section.agentStatus" = "Ajan Durumları";
+
+/* Permission */
+"permission.required" = "İzin Gerekli";
+"permission.deny" = "Reddet";
+"permission.allow" = "İzin Ver";
+"permission.allowAll" = "Hepsine İzin Ver";
+"permission.tool.bash" = "Bash aracını çalıştırmak istiyor:";
+"permission.tool.generic" = "aracını kullanmak istiyor";
+
+/* Question */
+"question.label" = "Soru";
+"question.placeholder" = "Yanıtınızı yazın...";
+"question.submit" = "Gönder";
+
+/* Plan */
+"plan.reviewLabel" = "Plan İnceleme";
+"plan.feedbackPlaceholder" = "Geri bildirim yazın... (opsiyonel)";
+"plan.reject" = "Reddet";
+"plan.approve" = "Onayla";
+
+/* Status */
+"status.completed" = "Tamamlandı";
+"status.waitingForResponse" = "Yanıt Bekleniyor";
+
+/* Actions */
+"action.jumpToTerminal" = "Terminal'e Git";
+"action.go" = "Git";
+"action.ok" = "Tamam";
+"action.settings" = "Ayarlar";
+"action.quit" = "Çıkış";
+
+/* Errors */
+"error.rateLimit" = "Rate Limit";
+"error.authFailed" = "Kimlik Doğrulama Hatası";
+"error.billing" = "Fatura Hatası";
+"error.server" = "Sunucu Hatası";
+"error.maxTokens" = "Token Limiti Aşıldı";
+"error.generic" = "Hata";
+
+/* Onboarding */
+"onboarding.welcome" = "Argus'a Hoş Geldin!";
+"onboarding.setupQuestion" = "Claude Code hook'larını otomatik kurmak ister misin?";
+"onboarding.setupInfo" = "Bu işlem ~/.claude/settings.json dosyasına Argus hook'larını ekler. Mevcut ayarlarına dokunulmaz ve yedek alınır.";
+"onboarding.skip" = "Hayır, elle kuracağım";
+"onboarding.install" = "Kur";
+
+/* Session */
+"session.idle" = "15 dk+ hareketsiz";
+
+/* Pet Names */
+"pet.dot" = "Nokta";
+"pet.cat" = "Kedi";
+"pet.dog" = "Köpek";
+"pet.bird" = "Kuş";
+"pet.robot" = "Robot";
+"pet.ghost" = "Hayalet";
+"pet.alien" = "Uzaylı";
+
+/* Theme */
+"theme.dark" = "Dark";
+"theme.light" = "Light";
+"theme.system" = "System";
+
+/* Prompt */
+
+/* Notification */

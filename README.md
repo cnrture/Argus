@@ -1,4 +1,4 @@
-# NotchPilot
+# Argus
 
 MacBook notch'unu AI kodlama ajanları icin gercek zamanli kontrol paneline donusturen native macOS uygulamasi.
 
@@ -21,14 +21,14 @@ MacBook notch'unu AI kodlama ajanları icin gercek zamanli kontrol paneline donu
 
 ### DMG ile
 
-1. [Releases](https://github.com/cnrture/NotchPilot/releases) sayfasindan en son DMG'yi indirin
-2. NotchPilot.app'i Applications klasorune surukleyin
+1. [Releases](https://github.com/cnrture/Argus/releases) sayfasindan en son DMG'yi indirin
+2. Argus.app'i Applications klasorune surukleyin
 3. Ilk acilista hook kurulum izni verin
 
 ### Homebrew ile
 
 ```bash
-brew install --cask notchpilot
+brew install --cask argus
 ```
 
 ## Gereksinimler
@@ -39,11 +39,11 @@ brew install --cask notchpilot
 ## Mimari
 
 ```
-Claude Code Hook → notchpilot-bridge (Swift CLI) → Unix Socket → NotchPilot.app → Notch UI
+Claude Code Hook → argus-bridge (Swift CLI) → Unix Socket → Argus.app → Notch UI
 ```
 
-- **notchpilot-bridge**: Swift CLI binary — sifir dis bagimlilik
-- **Unix Socket**: `~/.notchpilot/notchpilot.sock` (chmod 600)
+- **argus-bridge**: Swift CLI binary — sifir dis bagimlilik
+- **Unix Socket**: `~/.argus/argus.sock` (chmod 600)
 - **Hook merge**: Mevcut hook'lara dokunmaz, yedek alir
 
 ## Gelistirme

@@ -1,0 +1,161 @@
+/* Tabs */
+"settings.tab.general" = "Allgemein";
+"settings.tab.appearance" = "Erscheinungsbild";
+"settings.tab.pets" = "Haustiere";
+"settings.tab.sounds" = "Töne";
+"settings.tab.shortcuts" = "Kurzbefehle";
+"settings.tab.hooks" = "Hooks";
+
+/* General */
+"settings.section.startup" = "Autostart";
+"settings.general.autoLaunch" = "Beim Anmelden starten";
+"settings.section.language" = "Sprache";
+"language.system" = "System";
+"settings.section.behavior" = "Verhalten";
+"settings.behavior.showInFullscreen" = "Im Vollbildmodus anzeigen";
+"settings.behavior.nativeNotifications" = "macOS-Mitteilungen senden";
+"settings.behavior.idleTimeout" = "Leerlauf-Timeout";
+"settings.behavior.timeout.5min" = "5 Min.";
+"settings.behavior.timeout.10min" = "10 Min.";
+"settings.behavior.timeout.15min" = "15 Min.";
+"settings.behavior.timeout.30min" = "30 Min.";
+"settings.section.monitor" = "Monitor";
+"settings.monitor.screen" = "Bildschirm";
+"settings.monitor.auto" = "Automatisch (internes Display)";
+"settings.section.accessibility" = "Bedienungshilfen";
+"settings.accessibility.enabled" = "Accessibility-Zugriff aktiviert";
+"settings.accessibility.required" = "Accessibility-Zugriff erforderlich";
+"settings.section.voiceCommand" = "Sprachbefehl";
+"settings.voiceCommand.enable" = "Sprachbefehle aktivieren";
+"settings.voiceCommand.description" = "Sagen Sie \"allow\", \"deny\" oder \"allow all\" zum Antworten. Erfordert Mikrofonberechtigung. Verarbeitung erfolgt auf dem Gerät, keine Daten werden gesendet.";
+"settings.section.update" = "Aktualisierung";
+"settings.button.checkUpdate" = "Nach Updates suchen";
+
+/* Appearance */
+"settings.section.theme" = "Erscheinungsbild";
+"settings.section.accentColor" = "Akzentfarbe";
+"settings.appearance.showBorder" = "Notch-Rahmenlinie";
+"settings.appearance.idleOpacity" = "Deckkraft im Leerlauf";
+"settings.section.compactBar" = "Compact Bar";
+"settings.compactBar.width" = "Breite";
+"settings.compactBar.height" = "Höhe";
+"settings.compactBar.cornerRadius" = "Eckenradius";
+"settings.compactBar.fontSize" = "Schriftgröße";
+"settings.compactBar.horizontalOffset" = "Horizontale Position";
+"settings.compactBar.offset.center" = "Mitte";
+"settings.compactBar.offset.left" = "Links";
+"settings.compactBar.offset.right" = "Rechts";
+
+/* Bar Width */
+"barWidth.narrow" = "Schmal";
+"barWidth.normal" = "Normal";
+"barWidth.wide" = "Breit";
+
+/* Pets */
+"settings.section.notchStatusIcon" = "Notch-Statussymbol";
+"settings.section.deskPet" = "Desk Pet";
+"settings.deskPet.enabled" = "Desk Pet aktiviert";
+"settings.deskPet.type" = "Tier";
+"deskpet.type.cat" = "Katze";
+"deskpet.type.dog" = "Hund";
+"settings.deskPet.size" = "Größe";
+"settings.section.dogBreed" = "Hunderasse";
+"settings.section.catColor" = "Katzenfarbe";
+
+/* Sounds */
+"settings.sounds.general" = "Allgemein";
+"settings.sounds.enabled" = "Töne aktiviert";
+"settings.sounds.eventSounds" = "Ereignistöne";
+"settings.sounds.system" = "System";
+"sound.sessionStarted" = "Sitzung gestartet";
+"sound.sessionEnded" = "Sitzung beendet";
+"sound.permissionNeeded" = "Berechtigung erforderlich";
+"sound.questionAsked" = "Frage gestellt";
+"sound.planReady" = "Plan bereit";
+"sound.taskCompleted" = "Aufgabe abgeschlossen";
+"sound.error" = "Fehler aufgetreten";
+"sound.idle" = "Leerlauf";
+
+/* Shortcuts */
+"settings.section.permissionShortcuts" = "Berechtigungs-Kurzbefehle";
+"shortcuts.allow" = "Erlauben";
+"shortcuts.deny" = "Ablehnen";
+"settings.section.questionShortcuts" = "Frage-Kurzbefehle";
+"shortcuts.option1" = "Option 1";
+"shortcuts.option2" = "Option 2";
+"shortcuts.option3" = "Option 3";
+"settings.section.panel" = "Panel";
+"shortcuts.togglePanel" = "Panel ein-/ausblenden";
+
+/* Hooks */
+"settings.section.hookManagement" = "Hook-Verwaltung";
+"settings.hooks.autoSetup" = "Hooks automatisch installieren";
+"settings.hooks.installAll" = "Alle installieren";
+"settings.hooks.removeAll" = "Alle entfernen";
+"settings.section.agentStatus" = "Agent-Status";
+
+/* Permission */
+"permission.required" = "Berechtigung erforderlich";
+"permission.deny" = "Ablehnen";
+"permission.allow" = "Erlauben";
+"permission.allowAll" = "Alle erlauben";
+"permission.tool.bash" = "Möchte Bash-Tool ausführen:";
+"permission.tool.generic" = "möchte Tool verwenden";
+
+/* Question */
+"question.label" = "Frage";
+"question.placeholder" = "Antwort eingeben...";
+"question.submit" = "Senden";
+
+/* Plan */
+"plan.reviewLabel" = "Plan prüfen";
+"plan.feedbackPlaceholder" = "Feedback schreiben... (optional)";
+"plan.reject" = "Ablehnen";
+"plan.approve" = "Genehmigen";
+
+/* Status */
+"status.completed" = "Abgeschlossen";
+"status.waitingForResponse" = "Warte auf Antwort";
+
+/* Actions */
+"action.jumpToTerminal" = "Zum Terminal wechseln";
+"action.go" = "Los";
+"action.ok" = "OK";
+"action.settings" = "Einstellungen";
+"action.quit" = "Beenden";
+
+/* Errors */
+"error.rateLimit" = "Rate Limit";
+"error.authFailed" = "Authentifizierung fehlgeschlagen";
+"error.billing" = "Abrechnungsfehler";
+"error.server" = "Serverfehler";
+"error.maxTokens" = "Token-Limit überschritten";
+"error.generic" = "Fehler";
+
+/* Onboarding */
+"onboarding.welcome" = "Willkommen bei Argus!";
+"onboarding.setupQuestion" = "Möchten Sie Claude Code Hooks automatisch installieren?";
+"onboarding.setupInfo" = "Dies fügt Argus Hooks zu ~/.claude/settings.json hinzu. Ihre bestehenden Einstellungen werden beibehalten und gesichert.";
+"onboarding.skip" = "Nein, ich richte es manuell ein";
+"onboarding.install" = "Installieren";
+
+/* Session */
+"session.idle" = "15+ Min. inaktiv";
+
+/* Pet Names */
+"pet.dot" = "Punkt";
+"pet.cat" = "Katze";
+"pet.dog" = "Hund";
+"pet.bird" = "Vogel";
+"pet.robot" = "Roboter";
+"pet.ghost" = "Geist";
+"pet.alien" = "Alien";
+
+/* Theme */
+"theme.dark" = "Dark";
+"theme.light" = "Light";
+"theme.system" = "System";
+
+/* Prompt */
+
+/* Notification */

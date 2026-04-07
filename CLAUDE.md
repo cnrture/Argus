@@ -4,35 +4,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-NotchPilot is a native macOS app that turns the MacBook notch into a real-time control panel for AI coding agents. It's a free, open-source alternative to Vibe Island. The app communicates with AI agents (Claude Code, Codex, Gemini CLI, Cursor, etc.) via a hook-based architecture using Unix sockets.
+Argus is a native macOS app that turns the MacBook notch into a real-time control panel for AI coding agents. It's a free, open-source alternative to Vibe Island. The app communicates with AI agents (Claude Code, Codex, Gemini CLI, Cursor, etc.) via a hook-based architecture using Unix sockets.
 
 ## Build Commands
 
 ```bash
 make build       # Debug build (xcodebuild)
-make bridge      # Build the notchpilot-bridge CLI binary (Release)
+make bridge      # Build the argus-bridge CLI binary (Release)
 make clean       # Clean build artifacts
 make archive     # Release archive
 make dmg         # Build DMG installer (runs archive + export)
 ```
 
-The Xcode project is at `NotchPilot/NotchPilot.xcodeproj` with two schemes: `NotchPilot` (main app) and `notchpilot-bridge` (CLI tool).
+The Xcode project is at `Argus/Argus.xcodeproj` with two schemes: `Argus` (main app) and `argus-bridge` (CLI tool).
 
 ## Architecture
 
 ```
-AI Agent Hook → notchpilot-bridge (CLI) → Unix Socket → NotchPilot.app → Notch UI
+AI Agent Hook → argus-bridge (CLI) → Unix Socket → Argus.app → Notch UI
 ```
 
 ### Two Build Targets
 
-1. **NotchPilot.app** — SwiftUI/AppKit menu-bar-less app that renders in the notch area
-2. **notchpilot-bridge** — Standalone Swift CLI binary (zero dependencies) that hooks install into agent configs. Reads JSON from stdin, forwards to Unix socket at `~/.notchpilot/notchpilot.sock`
+1. **Argus.app** — SwiftUI/AppKit menu-bar-less app that renders in the notch area
+2. **argus-bridge** — Standalone Swift CLI binary (zero dependencies) that hooks install into agent configs. Reads JSON from stdin, forwards to Unix socket at `~/.argus/argus.sock`
 
 ### Core Data Flow
 
 - `AppDelegate` bootstraps everything: creates `NotchWindowController`, starts `SocketServer`, installs hooks, scans for existing sessions
-- `SocketServer` listens on `~/.notchpilot/notchpilot.sock` (AF_UNIX, SOCK_STREAM), parses JSONL messages into `HookEvent`
+- `SocketServer` listens on `~/.argus/argus.sock` (AF_UNIX, SOCK_STREAM), parses JSONL messages into `HookEvent`
 - `SessionStore` processes events, manages `Session` lifecycle and state transitions (`idle → working → waiting → idle`)
 - `AppState` is the `@Observable` bridge between business logic and SwiftUI views
 - For blocking events (permission requests), the socket connection stays open until the user responds via the UI
@@ -40,14 +40,14 @@ AI Agent Hook → notchpilot-bridge (CLI) → Unix Socket → NotchPilot.app →
 ### Hook System
 
 - `HookInstaller` manages installation/uninstallation of hooks for all supported agents
-- `HookConfigMerger` handles merging NotchPilot bridge commands into each agent's config file (JSON) without touching existing hooks
+- `HookConfigMerger` handles merging Argus bridge commands into each agent's config file (JSON) without touching existing hooks
 - Three hook formats exist: `.claude` (matcher + hooks array), `.nested` (hooks array), `.flat` (direct command)
-- Hook configs are backed up before first modification (`.notchpilot-backup` suffix)
+- Hook configs are backed up before first modification (`.argus-backup` suffix)
 - Hooks are verified and repaired every 5 minutes via a timer in `AppDelegate`
 
 ### Multi-Agent Support
 
-`AgentSource` enum defines all supported agents with their config paths, event mappings, hook formats, and display properties. Each agent has different event names that map to NotchPilot's internal `HookEventType`.
+`AgentSource` enum defines all supported agents with their config paths, event mappings, hook formats, and display properties. Each agent has different event names that map to Argus's internal `HookEventType`.
 
 ### Window System
 

@@ -1,17 +1,17 @@
-# Project Index: NotchPilot
+# Project Index: Argus
 
 Generated: 2026-04-07
 
 ## Project Structure
 
 ```
-NotchPilot/
+Argus/
 ├── Makefile                          # Build automation (xcodebuild)
-├── Casks/notchpilot.rb              # Homebrew Cask formula
-├── NotchPilot/
-│   ├── NotchPilot.xcodeproj/        # Xcode project (2 schemes)
+├── Casks/argus.rb              # Homebrew Cask formula
+├── Argus/
+│   ├── Argus.xcodeproj/        # Xcode project (2 schemes)
 │   ├── ExportOptions.plist          # Archive export config
-│   ├── NotchPilot/                  # Main app target
+│   ├── Argus/                  # Main app target
 │   │   ├── App/                     # App entry, delegate, state
 │   │   ├── Core/                    # Business logic
 │   │   │   ├── Events/             # Mouse/keyboard event monitors
@@ -33,7 +33,7 @@ NotchPilot/
 │   │   │   └── Shared/            # Reusable components (StatusDot, GlowEffect, MarkdownText)
 │   │   ├── Resources/              # Localizable.strings (9 langs), pet sprites
 │   │   └── Assets.xcassets/        # App icon, accent color
-│   └── notchpilot-bridge/          # CLI bridge target (3 files)
+│   └── argus-bridge/          # CLI bridge target (3 files)
 │       ├── main.swift              # Entry point — reads stdin, sends to socket
 │       ├── EventRouter.swift       # Builds message JSON, determines blocking events
 │       └── SocketClient.swift      # Unix socket client connection
@@ -41,14 +41,14 @@ NotchPilot/
 
 ## Entry Points
 
-- **App**: `NotchPilot/App/NotchPilotApp.swift` — `@main` SwiftUI app, delegates to `AppDelegate`
-- **CLI Bridge**: `notchpilot-bridge/main.swift` — `notchpilot-bridge <event-type> [--source <agent>] [--session-id <id>]`
+- **App**: `Argus/App/ArgusApp.swift` — `@main` SwiftUI app, delegates to `AppDelegate`
+- **CLI Bridge**: `argus-bridge/main.swift` — `argus-bridge <event-type> [--source <agent>] [--session-id <id>]`
 - **Bootstrap**: `App/AppDelegate.swift` — Creates window, starts socket server, installs hooks, scans sessions
 
 ## Core Modules
 
 ### Socket Communication
-- `Core/Socket/SocketServer.swift` — AF_UNIX listener at `~/.notchpilot/notchpilot.sock`, GCD-based accept/read
+- `Core/Socket/SocketServer.swift` — AF_UNIX listener at `~/.argus/argus.sock`, GCD-based accept/read
 - `Core/Socket/JSONLParser.swift` — Parses newline-delimited JSON messages into typed events
 - Event protocol: Bridge sends `HookEvent` JSON → Server parses → `SessionStore.process()` → UI update or blocking response
 
@@ -59,7 +59,7 @@ NotchPilot/
 - `Core/Session/ToolUseIdCache.swift` — Correlates `PreToolUse` events with `PermissionRequest` via tool_use_id
 
 ### Hook System
-- `Core/Hooks/HookInstaller.swift` — Install/uninstall/verify-repair per agent, bridge binary deployment to `~/.notchpilot/bin/`
+- `Core/Hooks/HookInstaller.swift` — Install/uninstall/verify-repair per agent, bridge binary deployment to `~/.argus/bin/`
 - `Core/Hooks/HookConfigMerger.swift` — Non-destructive JSON merge supporting 3 formats: `.claude`, `.nested`, `.flat`
 
 ### Multi-Agent
@@ -100,9 +100,9 @@ NotchPilot/
 |------|---------|
 | `Makefile` | Build/archive/sign/notarize/DMG commands |
 | `Info.plist` | Microphone/speech permissions, Sparkle feed URL |
-| `NotchPilot.entitlements` | App sandbox disabled (needs filesystem + process access) |
+| `Argus.entitlements` | App sandbox disabled (needs filesystem + process access) |
 | `ExportOptions.plist` | Xcode archive export configuration |
-| `Casks/notchpilot.rb` | Homebrew Cask formula |
+| `Casks/argus.rb` | Homebrew Cask formula |
 
 ## Dependencies (SPM)
 
@@ -121,8 +121,8 @@ Runtime switching via `L10n` subscript helper — reads from language-specific b
 
 | Path | Purpose |
 |------|---------|
-| `~/.notchpilot/notchpilot.sock` | Unix socket (chmod 600) |
-| `~/.notchpilot/bin/notchpilot-bridge` | Bridge binary (chmod 755) |
+| `~/.argus/argus.sock` | Unix socket (chmod 600) |
+| `~/.argus/bin/argus-bridge` | Bridge binary (chmod 755) |
 | `~/.claude/settings.json` | Claude Code hook config |
 | `~/.codex/hooks.json` | Codex hook config |
 | `~/.gemini/settings.json` | Gemini CLI hook config |
