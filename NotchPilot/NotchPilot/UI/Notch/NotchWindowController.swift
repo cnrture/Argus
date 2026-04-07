@@ -6,6 +6,9 @@ extension KeyboardShortcuts.Name {
     static let allowPermission = Self("allowPermission", default: .init(.y, modifiers: .command))
     static let denyPermission = Self("denyPermission", default: .init(.n, modifiers: .command))
     static let togglePanel = Self("togglePanel", default: .init(.p, modifiers: [.command, .shift]))
+    static let questionOption1 = Self("questionOption1", default: .init(.one, modifiers: .command))
+    static let questionOption2 = Self("questionOption2", default: .init(.two, modifiers: .command))
+    static let questionOption3 = Self("questionOption3", default: .init(.three, modifiers: .command))
 }
 
 final class NotchWindowController {
@@ -77,6 +80,18 @@ final class NotchWindowController {
             },
             onAutoApprove: { [weak self] sessionId, toolName in
                 self?.onAutoApprove(sessionId: sessionId, toolName: toolName)
+            },
+            onQuestionAnswer: { [weak self] eventId, answer in
+                self?.delegate?.notchWindowController(self!, didAnswerQuestion: eventId, answer: answer)
+                self?.collapse()
+            },
+            onPlanApprove: { [weak self] eventId, feedback in
+                self?.delegate?.notchWindowController(self!, didRespondToPlan: eventId, approve: true, feedback: feedback)
+                self?.collapse()
+            },
+            onPlanReject: { [weak self] eventId, feedback in
+                self?.delegate?.notchWindowController(self!, didRespondToPlan: eventId, approve: false, feedback: feedback)
+                self?.collapse()
             }
         )
 
@@ -334,10 +349,27 @@ final class NotchWindowController {
                 self.expand()
             }
         }
+
+        // Cmd+1/2/3 for question options
+        for (shortcut, index) in [
+            (KeyboardShortcuts.Name.questionOption1, 0),
+            (KeyboardShortcuts.Name.questionOption2, 1),
+            (KeyboardShortcuts.Name.questionOption3, 2),
+        ] {
+            KeyboardShortcuts.onKeyUp(for: shortcut) { [weak self] in
+                guard let self,
+                      let question = self.appState.activeQuestion,
+                      index < question.options.count else { return }
+                self.delegate?.notchWindowController(self, didAnswerQuestion: question.id, answer: question.options[index])
+                self.collapse()
+            }
+        }
     }
 }
 
 protocol NotchWindowControllerDelegate: AnyObject {
     func notchWindowController(_ controller: NotchWindowController, didRespondToPermission eventId: String, allow: Bool)
     func notchWindowController(_ controller: NotchWindowController, didAutoApprove toolName: String, forSession sessionId: String)
+    func notchWindowController(_ controller: NotchWindowController, didAnswerQuestion eventId: String, answer: String)
+    func notchWindowController(_ controller: NotchWindowController, didRespondToPlan eventId: String, approve: Bool, feedback: String?)
 }

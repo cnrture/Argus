@@ -117,11 +117,38 @@ extension AppDelegate: NotchWindowControllerDelegate {
         if let activeId = appState.activeSessionId,
            let session = sessionStore.sessions[activeId] {
             sessionStore.respondToPermission(eventId: eventId, allow: allow, session: session)
-            sessionStore.process(event: HookEvent(id: "sync", event: .notification, timestamp: nil, sessionId: activeId, cwd: nil, data: nil), appState: appState, respond: { _ in })
+            syncAppState()
         }
     }
 
     func notchWindowController(_ controller: NotchWindowController, didAutoApprove toolName: String, forSession sessionId: String) {
         sessionStore.addAutoApproveRule(sessionId: sessionId, toolName: toolName)
+    }
+
+    func notchWindowController(_ controller: NotchWindowController, didAnswerQuestion eventId: String, answer: String) {
+        sessionStore.respondToQuestion(eventId: eventId, answer: answer)
+        if let activeId = appState.activeSessionId {
+            sessionStore.sessions[activeId]?.pendingQuestion = nil
+        }
+        syncAppState()
+    }
+
+    func notchWindowController(_ controller: NotchWindowController, didRespondToPlan eventId: String, approve: Bool, feedback: String?) {
+        let answer = approve ? "approve" : "deny"
+        let fullAnswer = [answer, feedback].compactMap { $0 }.joined(separator: ": ")
+        sessionStore.respondToQuestion(eventId: eventId, answer: fullAnswer)
+        if let activeId = appState.activeSessionId {
+            sessionStore.sessions[activeId]?.pendingPlan = nil
+        }
+        syncAppState()
+    }
+
+    private func syncAppState() {
+        // Trigger a no-op sync
+        sessionStore.process(
+            event: HookEvent(id: "sync", event: .notification, timestamp: nil, sessionId: appState.activeSessionId ?? "", cwd: nil, data: nil),
+            appState: appState,
+            respond: { _ in }
+        )
     }
 }
