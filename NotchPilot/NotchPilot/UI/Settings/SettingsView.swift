@@ -387,10 +387,10 @@ private struct SoundsTab: View {
 
                         Button(action: { previewSound(config) }) {
                             Image(systemName: "play.fill")
-                                .font(.system(size: 8))
+                                .font(.system(size: 11))
                         }
                         .buttonStyle(.bordered)
-                        .controlSize(.mini)
+                        .controlSize(.small)
 
                         Button(action: { selectSound(for: index) }) {
                             Image(systemName: "folder")
