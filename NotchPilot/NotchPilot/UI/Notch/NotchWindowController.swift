@@ -340,14 +340,13 @@ final class NotchWindowController {
 
     private func compactHoverRect() -> CGRect {
         let notchWidth = currentNotchRect.width
-        let barWidth = notchWidth * 1.5
-        let barHeight: CGFloat = 32
+        let barWidth = notchWidth + 72  // compact bar genişliği ile eşleş
         let centerX = currentNotchRect.midX
         return CGRect(
-            x: centerX - barWidth / 2 - 10,
-            y: currentNotchRect.height - 5,
-            width: barWidth + 20,
-            height: barHeight + 15
+            x: centerX - barWidth / 2,
+            y: 0,
+            width: barWidth,
+            height: currentNotchRect.height
         )
     }
 
