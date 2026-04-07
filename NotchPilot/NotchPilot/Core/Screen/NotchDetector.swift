@@ -7,7 +7,8 @@ extension NSScreen {
 
     var notchSize: CGSize {
         guard hasPhysicalNotch else {
-            return CGSize(width: 224, height: 38)
+            // Harici monitör: menu bar yüksekliğine yakın
+            return CGSize(width: 224, height: 25)
         }
         let notchHeight = safeAreaInsets.top
         let fullWidth = frame.width

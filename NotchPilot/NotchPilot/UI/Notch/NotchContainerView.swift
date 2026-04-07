@@ -42,6 +42,8 @@ struct NotchContainerView: View {
                 sessionCount: appState.sessions.count,
                 notchWidth: notchRect.width
             )
+            .opacity(appState.isHovered ? 1.0 : 0.45)
+            .animation(.easeInOut(duration: 0.2), value: appState.isHovered)
             .offset(y: notchRect.height)
         }
     }

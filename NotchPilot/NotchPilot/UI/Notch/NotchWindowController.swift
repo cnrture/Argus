@@ -155,6 +155,12 @@ final class NotchWindowController {
             ? expandedRect.contains(panelPoint)
             : hoverRect.contains(panelPoint)
 
+        // Compact bar hover glow
+        let isNearCompact = hoverRect.contains(panelPoint)
+        if isNearCompact != appState.isHovered {
+            appState.isHovered = isNearCompact
+        }
+
         if isInHoverArea && !appState.isExpanded {
             expand()
         } else if !isInHoverArea && appState.isExpanded {
