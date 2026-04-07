@@ -39,6 +39,8 @@ final class SessionStore {
         if event.event != .sessionStart && event.event != .notification && sessions[event.sessionId] == nil {
             let title = SessionTitleResolver.resolve(cwd: event.cwd)
             let session = Session(id: event.sessionId, title: title, source: event.agentSource)
+            session.cwd = event.cwd
+            WindowJumper.detectOwnerApp(for: session)
             sessions[event.sessionId] = session
             appState.activeSessionId = event.sessionId
             appState.panelState = .compact

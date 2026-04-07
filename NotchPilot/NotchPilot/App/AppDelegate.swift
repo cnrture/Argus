@@ -61,6 +61,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 guard let self else { return }
                 for discovered in discovered {
                     let session = Session(id: discovered.sessionId, title: discovered.title)
+                    session.cwd = discovered.cwd
+                    if let pid = discovered.pid as Int? {
+                        WindowJumper.detectOwnerApp(for: session, pid: pid)
+                    }
                     self.sessionStore.addDiscoveredSession(session)
                     if self.appState.activeSessionId == nil {
                         self.appState.activeSessionId = discovered.sessionId
