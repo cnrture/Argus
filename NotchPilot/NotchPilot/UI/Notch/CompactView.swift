@@ -35,12 +35,6 @@ struct CompactView: View {
                     .lineLimit(1)
             }
 
-            if sessionCount > 1 {
-                Text("(\(sessionCount))")
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.6))
-            }
-
             Spacer()
         }
         .padding(.horizontal, 14)
