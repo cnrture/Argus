@@ -60,7 +60,7 @@ struct SettingsView: View {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 620, height: 440)
+        .frame(width: 720, height: 500)
         .background(.background)
     }
 
