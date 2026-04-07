@@ -133,14 +133,22 @@ extension AppDelegate: SocketServerDelegate {
     func socketServer(_ server: SocketServer, didReceiveEvent event: HookEvent, respond: @escaping (SocketResponse) -> Void) {
         sessionStore.process(event: event, appState: appState, respond: respond)
 
-        // Auto-expand for permission requests
-        if event.event == .permissionRequest {
-            windowController?.expandForPermission()
-        }
+        let sound = SoundManager.shared
+        let configs = settingsStore.soundEvents
 
-        // Bounce on complete
-        if event.event == .stop {
+        switch event.event {
+        case .sessionStart:
+            sound.play(.sessionStarted, configs: configs)
+        case .sessionEnd:
+            sound.play(.sessionEnded, configs: configs)
+        case .permissionRequest:
+            sound.play(.permissionNeeded, configs: configs)
+            windowController?.expandForPermission()
+        case .stop:
+            sound.play(.taskCompleted, configs: configs)
             windowController?.bounceOnComplete()
+        default:
+            break
         }
     }
 }
