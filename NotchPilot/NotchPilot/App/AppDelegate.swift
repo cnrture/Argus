@@ -34,11 +34,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Install bridge binary
         _ = hookInstaller.installBridge()
 
-        // Onboarding or auto-setup
+        // Her zaman tüm hook'ları kur
+        _ = hookInstaller.installHooks()
+
+        // Onboarding
         if !UserDefaults.standard.bool(forKey: Self.onboardingCompletedKey) {
-            showOnboarding()
-        } else if !hookInstaller.hooksAreInstalled() {
-            _ = hookInstaller.installHooks()
+            UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
         }
 
         // Scan for existing Claude Code sessions

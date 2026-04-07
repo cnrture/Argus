@@ -679,48 +679,24 @@ private struct HooksTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: L10n["settings.section.hookManagement"], icon: "link.circle.fill", color: .blue) {
-                Toggle(L10n["settings.hooks.autoSetup"], isOn: $store.autoSetupHooks)
-
-                HStack(spacing: 8) {
-                    Button(action: installAll) {
-                        Label(L10n["settings.hooks.installAll"], systemImage: "arrow.clockwise")
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .tint(.blue)
-
-                    Button(action: removeAll) {
-                        Label(L10n["settings.hooks.removeAll"], systemImage: "trash")
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .tint(.red)
-                }
-            }
-
             SettingsSection(title: L10n["settings.section.agentStatus"], icon: "cpu", color: .purple) {
                 ForEach(AgentSource.allCases, id: \.self) { agent in
                     HStack(spacing: 10) {
-                        Toggle("", isOn: Binding(
+                        Toggle(agent.displayName, isOn: Binding(
                             get: { store.enabledAgents.contains(agent.rawValue) },
                             set: { enabled in
                                 if enabled {
                                     store.enabledAgents.insert(agent.rawValue)
+                                    _ = hookInstaller.installHooks(for: agent)
                                 } else {
                                     store.enabledAgents.remove(agent.rawValue)
+                                    _ = hookInstaller.uninstallHooks(for: agent)
                                 }
+                                refreshStatus()
                             }
                         ))
-                        .labelsHidden()
-                        .tint(agent.color)
-
-                        Image(systemName: agent.icon)
-                            .foregroundStyle(agent.color)
-                            .frame(width: 20)
-
-                        Text(agent.displayName)
-                            .font(.system(size: 12, weight: .medium))
+                        .toggleStyle(.switch)
+                        .font(.system(size: 12, weight: .medium))
 
                         Spacer()
 
@@ -732,17 +708,6 @@ private struct HooksTab: View {
             }
         }
         .onAppear { refreshStatus() }
-    }
-
-    private func installAll() {
-        let agents = AgentSource.allCases.filter { store.enabledAgents.contains($0.rawValue) }
-        _ = hookInstaller.installHooks(for: agents)
-        refreshStatus()
-    }
-
-    private func removeAll() {
-        _ = hookInstaller.uninstallHooks()
-        refreshStatus()
     }
 
     private func refreshStatus() {
