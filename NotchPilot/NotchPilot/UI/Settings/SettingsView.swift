@@ -205,6 +205,22 @@ private struct GeneralTab: View {
                 }
             }
 
+            SettingsSection(title: "Dil", icon: "globe", color: .cyan) {
+                Picker("", selection: $store.language) {
+                    Text("Sistem").tag("system")
+                    Divider()
+                    Text("Turkce").tag("tr")
+                    Text("English").tag("en")
+                    Text("Deutsch").tag("de")
+                    Text("Espanol").tag("es")
+                    Text("Francais").tag("fr")
+                    Text("日本語").tag("ja")
+                    Text("中文").tag("zh")
+                    Text("한국어").tag("ko")
+                    Text("Portugues (BR)").tag("pt-BR")
+                }
+            }
+
             SettingsSection(title: "Davranış", icon: "slider.horizontal.3", color: .blue) {
                 Toggle("Fullscreen uygulamalarda göster", isOn: $store.showInFullscreen)
                 Toggle("macOS bildirimleri gönder", isOn: $store.nativeNotificationsEnabled)

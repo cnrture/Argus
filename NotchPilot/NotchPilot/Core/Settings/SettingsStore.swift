@@ -48,6 +48,9 @@ final class SettingsStore {
     var idleTimeout: TimeInterval {
         didSet { UserDefaults.standard.set(idleTimeout, forKey: "idleTimeout") }
     }
+    var language: String {
+        didSet { UserDefaults.standard.set(language, forKey: "language") }
+    }
 
     // Appearance
     var theme: AppTheme {
@@ -162,6 +165,7 @@ final class SettingsStore {
         showInFullscreen = defaults.object(forKey: "showInFullscreen") as? Bool ?? true
         nativeNotificationsEnabled = defaults.bool(forKey: "nativeNotifications")
         idleTimeout = defaults.object(forKey: "idleTimeout") as? TimeInterval ?? 900
+        language = defaults.string(forKey: "language") ?? "system"
         theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "system") ?? .system
         accentColorName = defaults.string(forKey: "accentColor") ?? "orange"
         petStyle = PetStyle(rawValue: defaults.string(forKey: "petStyle") ?? "dot") ?? .dot
