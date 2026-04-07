@@ -17,6 +17,10 @@ final class SessionStore {
         sessions.values.filter { $0.status != .ended }
     }
 
+    func addDiscoveredSession(_ session: Session) {
+        sessions[session.id] = session
+    }
+
     // MARK: - Event Processing
 
     func process(event: HookEvent, appState: AppState, respond: @escaping (SocketResponse) -> Void) {
@@ -60,6 +64,18 @@ final class SessionStore {
     private func handleSessionStart(event: HookEvent, appState: AppState) {
         let title = SessionTitleResolver.resolve(cwd: event.cwd)
         let session = Session(id: event.sessionId, title: title)
+
+        // Replace any discovered "existing-" session with the same cwd
+        let existingKeys = sessions.keys.filter { $0.hasPrefix("existing-") }
+        for key in existingKeys {
+            if let existing = sessions[key], existing.title == title {
+                sessions.removeValue(forKey: key)
+                if appState.activeSessionId == key {
+                    appState.activeSessionId = event.sessionId
+                }
+            }
+        }
+
         sessions[event.sessionId] = session
 
         if appState.activeSessionId == nil {

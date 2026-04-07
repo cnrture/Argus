@@ -50,6 +50,7 @@ struct CompactView: View {
             )
             .fill(.black)
         )
+        .shadow(color: .black.opacity(0.5), radius: 8, y: 2)
         .animation(.spring(response: 0.42, dampingFraction: 0.8), value: isActive)
         .onAppear { startTimer() }
         .onDisappear { stopTimer() }

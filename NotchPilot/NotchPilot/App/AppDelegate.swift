@@ -39,8 +39,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             _ = hookInstaller.installHooks()
         }
 
+        // Scan for existing Claude Code sessions
+        scanForExistingSessions()
+
         // Boot animation
         windowController?.performBootAnimation()
+    }
+
+    private func scanForExistingSessions() {
+        DispatchQueue.global(qos: .userInitiated).async {
+            let discovered = SessionScanner.findExistingSessions()
+            guard !discovered.isEmpty else { return }
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                for discovered in discovered {
+                    let session = Session(id: discovered.sessionId, title: discovered.title)
+                    self.sessionStore.addDiscoveredSession(session)
+                    if self.appState.activeSessionId == nil {
+                        self.appState.activeSessionId = discovered.sessionId
+                    }
+                }
+                self.appState.panelState = .compact
+                // Sync to AppState
+                self.syncAppState()
+            }
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
