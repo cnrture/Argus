@@ -1,54 +1,47 @@
 import AppKit
 
 struct WindowJumper {
-    /// PID'den parent terminal/IDE uygulamasını bulup ön plana getirir.
     static func jumpToSession(_ session: Session) {
-        // 1. Bilinen bundleID varsa doğrudan kullan
         if let bundleID = session.ownerBundleID {
             activateApp(bundleIdentifier: bundleID)
             return
         }
-
-        // 2. PID'den parent process'i bul
-        if let pid = session.ownerPID {
-            if let app = findParentApp(pid: pid) {
-                activateApp(app: app)
-                return
-            }
-        }
-
-        // 3. CWD'den açık terminalleri/IDE'leri tara
         if let cwd = session.cwd {
             if let app = findAppByCwd(cwd) {
                 activateApp(app: app)
                 return
             }
         }
-
-        // 4. Fallback: bilinen terminal uygulamalarını dene
         activateFallbackTerminal()
     }
 
-    /// Session oluşturulurken parent app'i algıla ve kaydet
     static func detectOwnerApp(for session: Session, pid: Int? = nil) {
         let targetPID = pid ?? findClaudePID(sessionCwd: session.cwd)
         guard let targetPID else { return }
-
         session.ownerPID = targetPID
 
-        // Parent process'i bul (terminal/IDE)
+        // Parent PID zincirinde executable path'ten app bul
         var currentPID = targetPID
-        for _ in 0..<10 { // max 10 seviye yukarı
+        for _ in 0..<10 {
             let parentPID = getParentPID(currentPID)
             if parentPID <= 1 { break }
 
-            if let app = NSRunningApplication(processIdentifier: pid_t(parentPID)),
-               let bundleID = app.bundleIdentifier,
-               isKnownTerminalOrIDE(bundleID) {
+            // Executable path'ten .app bundle'ı çıkar
+            if let execPath = getProcessExecPath(parentPID),
+               let bundleID = bundleIDFromExecPath(execPath) {
                 session.ownerBundleID = bundleID
                 return
             }
             currentPID = parentPID
+        }
+
+        // Fallback: çalışan tüm bilinen app'leri kontrol et
+        for bundleID in knownBundleIDs {
+            if let app = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).first,
+               !app.isTerminated {
+                session.ownerBundleID = bundleID
+                return
+            }
         }
     }
 
@@ -64,36 +57,8 @@ struct WindowJumper {
         app.activate()
     }
 
-    private static func findParentApp(pid: Int) -> NSRunningApplication? {
-        var currentPID = pid
-        for _ in 0..<10 {
-            let parentPID = getParentPID(currentPID)
-            if parentPID <= 1 { break }
-            if let app = NSRunningApplication(processIdentifier: pid_t(parentPID)),
-               app.bundleIdentifier != nil {
-                return app
-            }
-            currentPID = parentPID
-        }
-        return nil
-    }
-
     private static func findAppByCwd(_ cwd: String) -> NSRunningApplication? {
-        // Bilinen terminal/IDE bundle'larını kontrol et
-        let knownApps = [
-            "com.apple.Terminal",
-            "com.googlecode.iterm2",
-            "com.mitchellh.ghostty",
-            "dev.warp.Warp-Stable",
-            "io.alacritty",
-            "net.kovidgoyal.kitty",
-            "com.microsoft.VSCode",
-            "com.todesktop.230313mzl4w4u92",  // Cursor
-            "com.google.android.studio",
-            "com.jetbrains.intellij",
-        ]
-
-        for bundleID in knownApps {
+        for bundleID in knownBundleIDs {
             if let app = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).first,
                !app.isTerminated {
                 return app
@@ -118,15 +83,36 @@ struct WindowJumper {
         }
     }
 
+    /// Executable path'ten .app bundle'ını bulup bundle ID'yi çıkar
+    private static func bundleIDFromExecPath(_ path: String) -> String? {
+        // "/Applications/Android Studio.app/Contents/MacOS/studio" → ".app" bul
+        var current = path
+        while !current.isEmpty {
+            if current.hasSuffix(".app") {
+                if let bundle = Bundle(path: current) {
+                    return bundle.bundleIdentifier
+                }
+            }
+            // Bir üst dizine git
+            let parent = (current as NSString).deletingLastPathComponent
+            if parent == current { break }
+            current = parent
+        }
+        return nil
+    }
+
+    private static func getProcessExecPath(_ pid: Int) -> String? {
+        guard let output = runShell("/bin/ps", args: ["-o", "comm=", "-p", "\(pid)"]) else { return nil }
+        let path = output.trimmingCharacters(in: .whitespacesAndNewlines)
+        return path.isEmpty ? nil : path
+    }
+
     private static func findClaudePID(sessionCwd: String?) -> Int? {
         guard let output = runShell("/usr/bin/pgrep", args: ["-x", "claude"]) else { return nil }
         let pids = output.split(separator: "\n").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
-
         if let cwd = sessionCwd {
             for pid in pids {
-                if let pidCwd = getProcessCwd(pid), pidCwd == cwd {
-                    return pid
-                }
+                if let pidCwd = getProcessCwd(pid), pidCwd == cwd { return pid }
             }
         }
         return pids.first
@@ -145,17 +131,6 @@ struct WindowJumper {
         return nil
     }
 
-    private static func isKnownTerminalOrIDE(_ bundleID: String) -> Bool {
-        let known: Set<String> = [
-            "com.apple.Terminal", "com.googlecode.iterm2", "com.mitchellh.ghostty",
-            "dev.warp.Warp-Stable", "io.alacritty", "net.kovidgoyal.kitty",
-            "com.microsoft.VSCode", "com.todesktop.230313mzl4w4u92",
-            "com.google.android.studio", "com.jetbrains.intellij",
-            "com.jetbrains.pycharm", "com.jetbrains.WebStorm",
-        ]
-        return known.contains(bundleID)
-    }
-
     private static func runShell(_ path: String, args: [String]) -> String? {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: path)
@@ -169,4 +144,21 @@ struct WindowJumper {
             return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)
         } catch { return nil }
     }
+
+    private static let knownBundleIDs: [String] = [
+        "com.apple.Terminal",
+        "com.googlecode.iterm2",
+        "com.mitchellh.ghostty",
+        "dev.warp.Warp-Stable",
+        "io.alacritty",
+        "net.kovidgoyal.kitty",
+        "com.microsoft.VSCode",
+        "com.todesktop.230313mzl4w4u92",  // Cursor
+        "com.google.android.studio",
+        "com.jetbrains.intellij",
+        "com.jetbrains.intellij.ce",
+        "com.jetbrains.pycharm",
+        "com.jetbrains.WebStorm",
+        "com.jetbrains.fleet",
+    ]
 }
