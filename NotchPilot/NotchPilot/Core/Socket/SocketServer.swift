@@ -32,6 +32,9 @@ struct HookEventData: Codable {
     let toolInput: [String: AnyCodableValue]?
     let toolUseId: String?
     let hookEventName: String?
+    let message: String?
+    let prompt: String?
+    let content: String?
 }
 
 struct SocketResponse: Codable {

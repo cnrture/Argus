@@ -21,6 +21,10 @@ final class SessionStore {
         sessions[session.id] = session
     }
 
+    func removeSession(id: String) {
+        sessions.removeValue(forKey: id)
+    }
+
     // MARK: - Event Processing
 
     func process(event: HookEvent, appState: AppState, respond: @escaping (SocketResponse) -> Void) {
@@ -190,10 +194,16 @@ final class SessionStore {
         transition(sessionId: event.sessionId, to: .working)
         sessions[event.sessionId]?.lastActivity = Date()
 
-        // Son prompt'u yakala
-        if let prompt = event.data?.toolInput?["prompt"]?.stringValue
-            ?? event.data?.toolInput?["message"]?.stringValue {
-            let truncated = prompt.count > 60 ? String(prompt.prefix(60)) + "..." : prompt
+        // Son prompt'u yakala — farklı field isimlerini dene
+        let prompt = event.data?.message
+            ?? event.data?.prompt
+            ?? event.data?.content
+            ?? event.data?.toolInput?["message"]?.stringValue
+            ?? event.data?.toolInput?["prompt"]?.stringValue
+
+        if let prompt, !prompt.isEmpty {
+            let clean = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
+            let truncated = clean.count > 60 ? String(clean.prefix(60)) + "..." : clean
             sessions[event.sessionId]?.lastStatusText = truncated
         }
     }

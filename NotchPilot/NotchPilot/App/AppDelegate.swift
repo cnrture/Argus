@@ -46,6 +46,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         windowController?.performBootAnimation()
     }
 
+    private var processCheckTimer: Timer?
+
     private func scanForExistingSessions() {
         DispatchQueue.global(qos: .userInitiated).async {
             let discovered = SessionScanner.findExistingSessions()
@@ -61,10 +63,50 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     }
                 }
                 self.appState.panelState = .compact
-                // Sync to AppState
                 self.syncAppState()
+                self.startProcessChecker()
             }
         }
+    }
+
+    private func startProcessChecker() {
+        guard processCheckTimer == nil else { return }
+        processCheckTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            self?.cleanupDeadSessions()
+        }
+    }
+
+    private func cleanupDeadSessions() {
+        let sessionIds = Array(sessionStore.sessions.keys)
+        var changed = false
+
+        for sessionId in sessionIds {
+            // "existing-PID" formatındaki session'ları kontrol et
+            if sessionId.hasPrefix("existing-"),
+               let pidStr = sessionId.split(separator: "-").last,
+               let pid = Int(pidStr) {
+                if !isProcessAlive(pid: pid) {
+                    sessionStore.removeSession(id: sessionId)
+                    if appState.activeSessionId == sessionId {
+                        appState.activeSessionId = sessionStore.sessions.keys.first
+                    }
+                    changed = true
+                }
+            }
+        }
+
+        if changed {
+            if sessionStore.sessions.isEmpty {
+                appState.panelState = .hidden
+                processCheckTimer?.invalidate()
+                processCheckTimer = nil
+            }
+            syncAppState()
+        }
+    }
+
+    private func isProcessAlive(pid: Int) -> Bool {
+        kill(Int32(pid), 0) == 0
     }
 
     func applicationWillTerminate(_ notification: Notification) {
