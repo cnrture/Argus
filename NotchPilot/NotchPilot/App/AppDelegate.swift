@@ -34,15 +34,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Install bridge binary
         _ = hookInstaller.installBridge()
 
-        // Sadece enabled ajanlar için hook kur, disabled olanları kaldır
-        let enabled = AgentSource.allCases.filter { settingsStore.enabledAgents.contains($0.rawValue) }
-        let disabled = AgentSource.allCases.filter { !settingsStore.enabledAgents.contains($0.rawValue) }
-        _ = hookInstaller.installHooks(for: enabled)
-        _ = hookInstaller.uninstallHooks(for: disabled)
-
-        // Onboarding
+        // İlk açılışta tüm hook'ları kur, sonrakilerde sadece kontrol et
         if !UserDefaults.standard.bool(forKey: Self.onboardingCompletedKey) {
+            // İlk açılış — tüm enabled ajanlar için hook kur
+            let enabled = AgentSource.allCases.filter { settingsStore.enabledAgents.contains($0.rawValue) }
+            _ = hookInstaller.installHooks(for: enabled)
             UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
+        } else {
+            // Sonraki açılışlar — eksik hook varsa onar
+            for agent in AgentSource.allCases {
+                let shouldBeInstalled = settingsStore.enabledAgents.contains(agent.rawValue)
+                let isInstalled = hookInstaller.hooksAreInstalled(for: agent)
+                if shouldBeInstalled && !isInstalled {
+                    _ = hookInstaller.installHooks(for: agent)
+                } else if !shouldBeInstalled && isInstalled {
+                    _ = hookInstaller.uninstallHooks(for: agent)
+                }
+            }
         }
 
         // Scan for existing Claude Code sessions
