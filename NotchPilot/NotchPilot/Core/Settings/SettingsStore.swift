@@ -49,8 +49,12 @@ final class SettingsStore {
         didSet { UserDefaults.standard.set(idleTimeout, forKey: "idleTimeout") }
     }
     var language: String {
-        didSet { UserDefaults.standard.set(language, forKey: "language") }
+        didSet {
+            UserDefaults.standard.set(language, forKey: "language")
+            languageVersion += 1
+        }
     }
+    var languageVersion: Int = 0
 
     // Appearance
     var theme: AppTheme {

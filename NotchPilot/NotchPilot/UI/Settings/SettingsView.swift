@@ -65,6 +65,7 @@ struct SettingsView: View {
         }
         .frame(width: 720, height: 500)
         .background(.background)
+        .id(settingsStore.languageVersion)
     }
 
     private var sidebar: some View {
