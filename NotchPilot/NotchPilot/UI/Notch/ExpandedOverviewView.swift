@@ -3,6 +3,8 @@ import SwiftUI
 struct ExpandedOverviewView: View {
     let appState: AppState
     let notchWidth: CGFloat
+    var onOpenSettings: (() -> Void)?
+    var onQuit: (() -> Void)?
 
     private var expandedWidth: CGFloat {
         min(notchWidth * 3, 600)
@@ -38,8 +40,8 @@ struct ExpandedOverviewView: View {
 
             // Bottom bar
             HStack {
-                Button(action: {}) {
-                    Label("Ses", systemImage: "speaker.wave.2")
+                Button(action: { onOpenSettings?() }) {
+                    Label("Ayarlar", systemImage: "gearshape")
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -47,10 +49,10 @@ struct ExpandedOverviewView: View {
 
                 Spacer()
 
-                Button(action: {}) {
-                    Label("Ayarlar", systemImage: "gearshape")
+                Button(action: { onQuit?() }) {
+                    Label("Çıkış", systemImage: "power")
                         .font(.system(size: 11))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(.white.opacity(0.4))
                 }
                 .buttonStyle(.plain)
             }

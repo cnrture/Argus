@@ -102,6 +102,13 @@ final class NotchWindowController {
             onPlanReject: { [weak self] eventId, feedback in
                 self?.delegate?.notchWindowController(self!, didRespondToPlan: eventId, approve: false, feedback: feedback)
                 self?.collapse()
+            },
+            onOpenSettings: { [weak self] in
+                self?.delegate?.notchWindowControllerDidRequestSettings(self!)
+                self?.collapse()
+            },
+            onQuit: {
+                NSApplication.shared.terminate(nil)
             }
         )
 
@@ -391,4 +398,5 @@ protocol NotchWindowControllerDelegate: AnyObject {
     func notchWindowController(_ controller: NotchWindowController, didAutoApprove toolName: String, forSession sessionId: String)
     func notchWindowController(_ controller: NotchWindowController, didAnswerQuestion eventId: String, answer: String)
     func notchWindowController(_ controller: NotchWindowController, didRespondToPlan eventId: String, approve: Bool, feedback: String?)
+    func notchWindowControllerDidRequestSettings(_ controller: NotchWindowController)
 }

@@ -12,6 +12,8 @@ struct NotchContainerView: View {
     var onQuestionAnswer: ((String, String) -> Void)?
     var onPlanApprove: ((String, String?) -> Void)?
     var onPlanReject: ((String, String?) -> Void)?
+    var onOpenSettings: (() -> Void)?
+    var onQuit: (() -> Void)?
 
     private let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
     private let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
@@ -95,18 +97,20 @@ struct NotchContainerView: View {
                     removal: .opacity
                 ))
             } else {
-                ExpandedOverviewView(
-                    appState: appState,
-                    notchWidth: notchRect.width
-                )
-                .offset(y: notchRect.height)
+                overviewView
             }
         } else {
-            ExpandedOverviewView(
-                appState: appState,
-                notchWidth: notchRect.width
-            )
-            .offset(y: notchRect.height)
+            overviewView
         }
+    }
+
+    private var overviewView: some View {
+        ExpandedOverviewView(
+            appState: appState,
+            notchWidth: notchRect.width,
+            onOpenSettings: onOpenSettings,
+            onQuit: onQuit
+        )
+        .offset(y: notchRect.height)
     }
 }

@@ -252,6 +252,10 @@ extension AppDelegate: NotchWindowControllerDelegate {
         syncAppState()
     }
 
+    func notchWindowControllerDidRequestSettings(_ controller: NotchWindowController) {
+        openSettings()
+    }
+
     private func syncAppState() {
         // Trigger a no-op sync
         sessionStore.process(
