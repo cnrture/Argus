@@ -254,6 +254,22 @@ final class SessionStore {
                 pendingPlan: session.pendingPlan != nil
             )
         }
+
+        // Sync active session's pending events
+        if let activeId = appState.activeSessionId,
+           let session = sessions[activeId] {
+            appState.activePermission = session.pendingPermission
+            appState.activeQuestion = session.pendingQuestion
+            appState.activePlan = session.pendingPlan
+        } else {
+            appState.activePermission = nil
+            appState.activeQuestion = nil
+            appState.activePlan = nil
+        }
+    }
+
+    func addAutoApproveRule(sessionId: String, toolName: String) {
+        sessions[sessionId]?.autoApproveRules.insert(toolName)
     }
 
     // MARK: - Helpers

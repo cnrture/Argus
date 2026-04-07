@@ -31,6 +31,11 @@ final class AppState {
             return a.lastActivity > b.lastActivity
         }
     }
+
+    // Permission/Question/Plan events for active session (set by SessionStore)
+    var activePermission: PermissionEvent?
+    var activeQuestion: QuestionEvent?
+    var activePlan: PlanEvent?
 }
 
 /// Lightweight snapshot of Session for UI binding

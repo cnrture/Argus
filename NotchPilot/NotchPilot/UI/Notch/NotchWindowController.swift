@@ -1,5 +1,12 @@
 import AppKit
 import SwiftUI
+import KeyboardShortcuts
+
+extension KeyboardShortcuts.Name {
+    static let allowPermission = Self("allowPermission", default: .init(.y, modifiers: .command))
+    static let denyPermission = Self("denyPermission", default: .init(.n, modifiers: .command))
+    static let togglePanel = Self("togglePanel", default: .init(.p, modifiers: [.command, .shift]))
+}
 
 final class NotchWindowController {
     private var panel: NotchWindow?
@@ -11,6 +18,7 @@ final class NotchWindowController {
     private var currentScreenFrame: NSRect = .zero
     private var fullscreenHideTimer: Timer?
     private var fullscreenObserver: NSObjectProtocol?
+    weak var delegate: NotchWindowControllerDelegate?
 
     init(appState: AppState) {
         self.appState = appState
@@ -25,6 +33,7 @@ final class NotchWindowController {
 
         setupEventMonitors()
         setupFullscreenObserver()
+        setupKeyboardShortcuts()
     }
 
     // MARK: - Panel Creation
@@ -59,6 +68,15 @@ final class NotchWindowController {
             screenSize: screenFrame.size,
             onExpandChange: { [weak self] expanded in
                 self?.onExpandChange(expanded)
+            },
+            onPermissionAllow: { [weak self] eventId in
+                self?.onPermissionResponse(eventId: eventId, allow: true)
+            },
+            onPermissionDeny: { [weak self] eventId in
+                self?.onPermissionResponse(eventId: eventId, allow: false)
+            },
+            onAutoApprove: { [weak self] sessionId, toolName in
+                self?.onAutoApprove(sessionId: sessionId, toolName: toolName)
             }
         )
 
@@ -275,4 +293,51 @@ final class NotchWindowController {
             hostingView?.hitTestRect = .zero
         }
     }
+
+    // MARK: - Permission Auto-Expand
+
+    func expandForPermission() {
+        expand()
+    }
+
+    // MARK: - Permission Handling
+
+    private func onPermissionResponse(eventId: String, allow: Bool) {
+        delegate?.notchWindowController(self, didRespondToPermission: eventId, allow: allow)
+        collapse()
+    }
+
+    private func onAutoApprove(sessionId: String, toolName: String) {
+        delegate?.notchWindowController(self, didAutoApprove: toolName, forSession: sessionId)
+    }
+
+    // MARK: - Keyboard Shortcuts
+
+    func setupKeyboardShortcuts() {
+        KeyboardShortcuts.onKeyUp(for: .allowPermission) { [weak self] in
+            guard let self,
+                  let permission = self.appState.activePermission else { return }
+            self.onPermissionResponse(eventId: permission.id, allow: true)
+        }
+
+        KeyboardShortcuts.onKeyUp(for: .denyPermission) { [weak self] in
+            guard let self,
+                  let permission = self.appState.activePermission else { return }
+            self.onPermissionResponse(eventId: permission.id, allow: false)
+        }
+
+        KeyboardShortcuts.onKeyUp(for: .togglePanel) { [weak self] in
+            guard let self else { return }
+            if self.appState.isExpanded {
+                self.collapse()
+            } else {
+                self.expand()
+            }
+        }
+    }
+}
+
+protocol NotchWindowControllerDelegate: AnyObject {
+    func notchWindowController(_ controller: NotchWindowController, didRespondToPermission eventId: String, allow: Bool)
+    func notchWindowController(_ controller: NotchWindowController, didAutoApprove toolName: String, forSession sessionId: String)
 }

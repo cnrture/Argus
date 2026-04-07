@@ -13,6 +13,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         windowController = NotchWindowController(appState: appState)
+        windowController?.delegate = self
         windowController?.setup()
 
         // Start socket server
@@ -97,9 +98,30 @@ extension AppDelegate: SocketServerDelegate {
     func socketServer(_ server: SocketServer, didReceiveEvent event: HookEvent, respond: @escaping (SocketResponse) -> Void) {
         sessionStore.process(event: event, appState: appState, respond: respond)
 
+        // Auto-expand for permission requests
+        if event.event == .permissionRequest {
+            windowController?.expandForPermission()
+        }
+
         // Bounce on complete
         if event.event == .stop {
             windowController?.bounceOnComplete()
         }
+    }
+}
+
+// MARK: - NotchWindowControllerDelegate
+
+extension AppDelegate: NotchWindowControllerDelegate {
+    func notchWindowController(_ controller: NotchWindowController, didRespondToPermission eventId: String, allow: Bool) {
+        if let activeId = appState.activeSessionId,
+           let session = sessionStore.sessions[activeId] {
+            sessionStore.respondToPermission(eventId: eventId, allow: allow, session: session)
+            sessionStore.process(event: HookEvent(id: "sync", event: .notification, timestamp: nil, sessionId: activeId, cwd: nil, data: nil), appState: appState, respond: { _ in })
+        }
+    }
+
+    func notchWindowController(_ controller: NotchWindowController, didAutoApprove toolName: String, forSession sessionId: String) {
+        sessionStore.addAutoApproveRule(sessionId: sessionId, toolName: toolName)
     }
 }
