@@ -176,7 +176,7 @@ final class NotchWindowController {
 
         if isInHoverArea && !appState.isExpanded {
             expand()
-        } else if !isInHoverArea && appState.isExpanded {
+        } else if !isInHoverArea && appState.isExpanded && !hasPendingInteraction {
             collapse()
         }
     }
@@ -264,7 +264,7 @@ final class NotchWindowController {
         panel?.alphaValue = 1
         fullscreenHideTimer?.invalidate()
         fullscreenHideTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
-            guard let self, self.appState.isFullscreen, !self.appState.isExpanded else { return }
+            guard let self, self.appState.isFullscreen, !self.hasPendingInteraction else { return }
             self.panel?.alphaValue = 0
         }
     }
@@ -364,6 +364,13 @@ final class NotchWindowController {
         } else {
             hostingView?.hitTestRect = .zero
         }
+    }
+
+    /// Kullanıcı yanıtı bekleyen permission/question/plan varsa true
+    private var hasPendingInteraction: Bool {
+        appState.activePermission != nil ||
+        appState.activeQuestion != nil ||
+        appState.activePlan != nil
     }
 
     // MARK: - Permission Auto-Expand
