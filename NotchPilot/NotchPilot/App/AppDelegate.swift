@@ -5,8 +5,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var windowController: NotchWindowController?
     let appState = AppState()
     let sessionStore = SessionStore()
+    let settingsStore = SettingsStore()
+    let hookInstaller = HookInstaller()
     private let socketServer = SocketServer()
-    private let hookInstaller = HookInstaller()
     private var onboardingWindow: NSWindow?
 
     private static let onboardingCompletedKey = "onboardingCompleted"
@@ -44,6 +45,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
+    }
+
+    func openSettings() {
+        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     // MARK: - Onboarding

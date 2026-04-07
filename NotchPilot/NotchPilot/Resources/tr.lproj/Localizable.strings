@@ -1,0 +1,52 @@
+/* General */
+"app.name" = "NotchPilot";
+"app.welcome" = "NotchPilot'a Hoş Geldin!";
+
+/* Session */
+"session.active" = "aktif oturum";
+"session.idle" = "Hareketsiz";
+"session.idle.duration" = "15 dk+ hareketsiz";
+"session.none" = "Aktif oturum yok";
+
+/* Permission */
+"permission.title" = "İzin Gerekli";
+"permission.allow" = "İzin Ver";
+"permission.deny" = "Reddet";
+"permission.auto" = "Bu oturumda %@ için hep izin ver";
+"permission.bash" = "Bash aracını çalıştırmak istiyor:";
+
+/* Question */
+"question.title" = "Soru";
+"question.placeholder" = "Yanıtınızı yazın...";
+"question.send" = "Gönder";
+
+/* Plan */
+"plan.title" = "Plan İnceleme";
+"plan.approve" = "Onayla";
+"plan.reject" = "Reddet";
+"plan.feedback" = "Geri bildirim yazın... (opsiyonel)";
+
+/* Settings */
+"settings.general" = "Genel";
+"settings.appearance" = "Görünüm";
+"settings.sounds" = "Sesler";
+"settings.shortcuts" = "Kısayollar";
+"settings.hooks" = "Hooks";
+"settings.launch" = "Giriş'te otomatik başlat";
+"settings.fullscreen" = "Fullscreen uygulamalarda göster";
+"settings.notifications" = "macOS bildirimleri gönder";
+"settings.idle.timeout" = "Hareketsizlik süresi";
+"settings.theme" = "Tema";
+"settings.accent" = "Accent Renk";
+"settings.sound.enabled" = "Sesler aktif";
+"settings.sound.volume" = "Ses seviyesi";
+"settings.hooks.auto" = "Claude Code hook'larını otomatik kur";
+"settings.hooks.active" = "Hook'lar aktif";
+"settings.hooks.reinstall" = "Hook'ları Yeniden Kur";
+"settings.hooks.remove" = "Hook'ları Kaldır";
+
+/* Menu Bar */
+"menu.sound.off" = "Sesi Kapat";
+"menu.sound.on" = "Sesi Aç";
+"menu.settings" = "Ayarlar...";
+"menu.quit" = "Çıkış";

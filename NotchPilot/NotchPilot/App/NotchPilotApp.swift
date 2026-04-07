@@ -6,13 +6,19 @@ struct NotchPilotApp: App {
 
     var body: some Scene {
         MenuBarExtra("NotchPilot", systemImage: "airplane") {
-            Text("NotchPilot")
-                .font(.headline)
-            Divider()
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
-            }
-            .keyboardShortcut("q")
+            MenuBarView(
+                appState: appDelegate.appState,
+                settingsStore: appDelegate.settingsStore,
+                onOpenSettings: { appDelegate.openSettings() },
+                onToggleSound: { appDelegate.settingsStore.soundEnabled.toggle() }
+            )
+        }
+
+        Settings {
+            SettingsView(
+                settingsStore: appDelegate.settingsStore,
+                hookInstaller: appDelegate.hookInstaller
+            )
         }
     }
 }

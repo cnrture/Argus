@@ -1,0 +1,52 @@
+/* General */
+"app.name" = "NotchPilot";
+"app.welcome" = "Welcome to NotchPilot!";
+
+/* Session */
+"session.active" = "active session";
+"session.idle" = "Idle";
+"session.idle.duration" = "15+ min inactive";
+"session.none" = "No active sessions";
+
+/* Permission */
+"permission.title" = "Permission Required";
+"permission.allow" = "Allow";
+"permission.deny" = "Deny";
+"permission.auto" = "Always allow %@ in this session";
+"permission.bash" = "Wants to run Bash tool:";
+
+/* Question */
+"question.title" = "Question";
+"question.placeholder" = "Type your answer...";
+"question.send" = "Send";
+
+/* Plan */
+"plan.title" = "Plan Review";
+"plan.approve" = "Approve";
+"plan.reject" = "Reject";
+"plan.feedback" = "Write feedback... (optional)";
+
+/* Settings */
+"settings.general" = "General";
+"settings.appearance" = "Appearance";
+"settings.sounds" = "Sounds";
+"settings.shortcuts" = "Shortcuts";
+"settings.hooks" = "Hooks";
+"settings.launch" = "Launch at login";
+"settings.fullscreen" = "Show in fullscreen apps";
+"settings.notifications" = "Send macOS notifications";
+"settings.idle.timeout" = "Idle timeout";
+"settings.theme" = "Theme";
+"settings.accent" = "Accent Color";
+"settings.sound.enabled" = "Sounds enabled";
+"settings.sound.volume" = "Volume";
+"settings.hooks.auto" = "Auto-install Claude Code hooks";
+"settings.hooks.active" = "Hooks active";
+"settings.hooks.reinstall" = "Reinstall Hooks";
+"settings.hooks.remove" = "Remove Hooks";
+
+/* Menu Bar */
+"menu.sound.off" = "Mute Sound";
+"menu.sound.on" = "Unmute Sound";
+"menu.settings" = "Settings...";
+"menu.quit" = "Quit";
