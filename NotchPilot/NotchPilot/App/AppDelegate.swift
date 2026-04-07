@@ -34,8 +34,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Install bridge binary
         _ = hookInstaller.installBridge()
 
-        // Her zaman tüm hook'ları kur
-        _ = hookInstaller.installHooks()
+        // Sadece enabled ajanlar için hook kur, disabled olanları kaldır
+        let enabled = AgentSource.allCases.filter { settingsStore.enabledAgents.contains($0.rawValue) }
+        let disabled = AgentSource.allCases.filter { !settingsStore.enabledAgents.contains($0.rawValue) }
+        _ = hookInstaller.installHooks(for: enabled)
+        _ = hookInstaller.uninstallHooks(for: disabled)
 
         // Onboarding
         if !UserDefaults.standard.bool(forKey: Self.onboardingCompletedKey) {
