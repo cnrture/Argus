@@ -19,8 +19,9 @@ struct CompactView: View {
     }
 
     private var barWidth: CGFloat {
-        let base = notchWidth * widthMultiplier
-        return isActive ? base + 40 : base
+        // Pet(16) + spacing(8) + spacing(8) + indicator(12) + padding(28) = ~72pt ekstra
+        let compact: CGFloat = notchWidth + 72
+        return isActive ? compact + 20 : compact
     }
 
     var body: some View {
