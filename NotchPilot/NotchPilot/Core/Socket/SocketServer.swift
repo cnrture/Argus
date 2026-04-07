@@ -35,6 +35,8 @@ struct HookEventData: Codable {
     let message: String?
     let prompt: String?
     let content: String?
+    let lastAssistantMessage: String?
+    let transcriptPath: String?
 }
 
 struct SocketResponse: Codable {
@@ -258,6 +260,9 @@ final class SocketServer {
     }
 
     private func processLine(_ line: String, clientFd: Int32) {
+        // Debug logging (uncomment when needed)
+        // let logLine = "[SocketServer] \(line.prefix(500))\n"
+        // if let d = logLine.data(using: .utf8) { let p = NSHomeDirectory() + "/.notchpilot/debug.log"; if FileManager.default.fileExists(atPath: p) { if let fh = FileHandle(forWritingAtPath: p) { fh.seekToEndOfFile(); fh.write(d); fh.closeFile() } } else { FileManager.default.createFile(atPath: p, contents: d) } }
         do {
             let event = try JSONLParser.parse(line, as: HookEvent.self)
 

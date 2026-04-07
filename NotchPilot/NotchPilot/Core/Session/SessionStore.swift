@@ -114,6 +114,13 @@ final class SessionStore {
     private func handleStop(event: HookEvent, appState: AppState) {
         transition(sessionId: event.sessionId, to: .idle)
         sessions[event.sessionId]?.lastActivity = Date()
+
+        // Claude'un son yanıtını kaydet
+        if let lastMsg = event.data?.lastAssistantMessage, !lastMsg.isEmpty {
+            let clean = lastMsg.trimmingCharacters(in: .whitespacesAndNewlines)
+            let truncated = clean.count > 60 ? String(clean.prefix(60)) + "..." : clean
+            sessions[event.sessionId]?.lastStatusText = truncated
+        }
     }
 
     private func handlePreToolUse(event: HookEvent, appState: AppState) {
@@ -194,12 +201,10 @@ final class SessionStore {
         transition(sessionId: event.sessionId, to: .working)
         sessions[event.sessionId]?.lastActivity = Date()
 
-        // Son prompt'u yakala — farklı field isimlerini dene
-        let prompt = event.data?.message
-            ?? event.data?.prompt
+        // Son prompt'u yakala
+        let prompt = event.data?.prompt
+            ?? event.data?.message
             ?? event.data?.content
-            ?? event.data?.toolInput?["message"]?.stringValue
-            ?? event.data?.toolInput?["prompt"]?.stringValue
 
         if let prompt, !prompt.isEmpty {
             let clean = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
