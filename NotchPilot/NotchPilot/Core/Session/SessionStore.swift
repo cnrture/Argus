@@ -41,6 +41,15 @@ final class SessionStore {
             let session = Session(id: event.sessionId, title: title, source: event.agentSource)
             session.cwd = event.cwd
             WindowJumper.detectOwnerApp(for: session)
+
+            // Aynı cwd'ye sahip discovered session'ı temizle
+            let existingKeys = sessions.keys.filter { $0.hasPrefix("existing-") }
+            for key in existingKeys {
+                if let existing = sessions[key], event.cwd != nil, existing.cwd == event.cwd {
+                    sessions.removeValue(forKey: key)
+                }
+            }
+
             sessions[event.sessionId] = session
             appState.activeSessionId = event.sessionId
             appState.panelState = .compact
@@ -102,13 +111,17 @@ final class SessionStore {
         session.cwd = event.cwd
         WindowJumper.detectOwnerApp(for: session)
 
-        // Replace any discovered "existing-" session with the same cwd
+        // Replace any discovered "existing-" session with matching cwd or title
         let existingKeys = sessions.keys.filter { $0.hasPrefix("existing-") }
         for key in existingKeys {
-            if let existing = sessions[key], existing.title == title {
-                sessions.removeValue(forKey: key)
-                if appState.activeSessionId == key {
-                    appState.activeSessionId = event.sessionId
+            if let existing = sessions[key] {
+                let cwdMatch = event.cwd != nil && existing.cwd == event.cwd
+                let titleMatch = existing.title == title
+                if cwdMatch || titleMatch {
+                    sessions.removeValue(forKey: key)
+                    if appState.activeSessionId == key {
+                        appState.activeSessionId = event.sessionId
+                    }
                 }
             }
         }
