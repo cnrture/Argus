@@ -46,6 +46,7 @@ struct SessionInfo: Identifiable, Equatable {
     let startTime: Date
     var lastActivity: Date
     var lastToolName: String?
+    var lastStatusText: String?
     var isIdle: Bool
     var pendingPermission: Bool
     var pendingQuestion: Bool
@@ -53,7 +54,8 @@ struct SessionInfo: Identifiable, Equatable {
 
     init(id: String, title: String, status: SessionStatus = .idle,
          startTime: Date = Date(), lastActivity: Date = Date(),
-         lastToolName: String? = nil, isIdle: Bool = false,
+         lastToolName: String? = nil, lastStatusText: String? = nil,
+         isIdle: Bool = false,
          pendingPermission: Bool = false, pendingQuestion: Bool = false,
          pendingPlan: Bool = false) {
         self.id = id
@@ -62,6 +64,7 @@ struct SessionInfo: Identifiable, Equatable {
         self.startTime = startTime
         self.lastActivity = lastActivity
         self.lastToolName = lastToolName
+        self.lastStatusText = lastStatusText
         self.isIdle = isIdle
         self.pendingPermission = pendingPermission
         self.pendingQuestion = pendingQuestion

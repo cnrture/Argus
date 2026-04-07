@@ -24,10 +24,17 @@ struct CompactView: View {
         HStack(spacing: 8) {
             StatusDot(status: session.status)
 
-            Text(session.title)
-                .font(.system(size: 12, weight: .medium))
-                .foregroundStyle(.white)
-                .lineLimit(1)
+            if let statusText = session.lastStatusText {
+                Text(statusText)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.white.opacity(0.7))
+                    .lineLimit(1)
+            } else {
+                Text(session.title)
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+            }
 
             if sessionCount > 1 {
                 Text("(\(sessionCount))")

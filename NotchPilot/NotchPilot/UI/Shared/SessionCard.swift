@@ -29,6 +29,11 @@ struct SessionCard: View {
                     Text("15 dk+ hareketsiz")
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.4))
+                } else if let statusText = session.lastStatusText {
+                    Text(statusText)
+                        .font(.system(size: 11))
+                        .foregroundStyle(.white.opacity(0.5))
+                        .lineLimit(1)
                 } else if let lastTool = session.lastToolName {
                     Text("Son: \(lastTool)")
                         .font(.system(size: 11))

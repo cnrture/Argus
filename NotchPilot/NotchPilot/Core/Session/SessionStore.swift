@@ -189,6 +189,13 @@ final class SessionStore {
     private func handleUserPromptSubmit(event: HookEvent, appState: AppState) {
         transition(sessionId: event.sessionId, to: .working)
         sessions[event.sessionId]?.lastActivity = Date()
+
+        // Son prompt'u yakala
+        if let prompt = event.data?.toolInput?["prompt"]?.stringValue
+            ?? event.data?.toolInput?["message"]?.stringValue {
+            let truncated = prompt.count > 60 ? String(prompt.prefix(60)) + "..." : prompt
+            sessions[event.sessionId]?.lastStatusText = truncated
+        }
     }
 
     private func handlePreCompact(event: HookEvent, appState: AppState) {
@@ -264,6 +271,7 @@ final class SessionStore {
                 startTime: session.startTime,
                 lastActivity: session.lastActivity,
                 lastToolName: session.lastToolName,
+                lastStatusText: session.lastStatusText,
                 isIdle: session.isIdle,
                 pendingPermission: session.pendingPermission != nil,
                 pendingQuestion: session.pendingQuestion != nil,
