@@ -197,7 +197,7 @@ struct DeskPetContainer: View {
 
     var body: some View {
         GeometryReader { geo in
-            if appState.hasActiveSessions && settingsStore.deskPetEnabled {
+            if appState.hasActiveSessions && settingsStore.deskPetEnabled && !(appState.isFullscreen && !settingsStore.showInFullscreen) {
                 let status = appState.activeSession?.status ?? .idle
                 DeskPet(
                     status: status,

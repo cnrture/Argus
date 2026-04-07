@@ -242,21 +242,31 @@ final class NotchWindowController {
         let frontApp = NSWorkspace.shared.frontmostApplication
         let isSelf = frontApp?.bundleIdentifier == Bundle.main.bundleIdentifier
 
-        // Check if the frontmost app's main window is fullscreen
         var isFS = false
-        if !isSelf, let screen = NSScreen.main {
-            // visibleFrame excludes menu bar/dock; if equal to frame, menu bar is hidden = fullscreen
-            isFS = screen.frame.height == screen.visibleFrame.height
+        if !isSelf {
+            // Frontmost app'in presentation options'ını kontrol et
+            if let app = frontApp {
+                // Menu bar gizliyse fullscreen'deyiz
+                let opts = NSApp.presentationOptions
+                isFS = opts.contains(.autoHideMenuBar) || opts.contains(.hideMenuBar)
+            }
+            // Fallback: visibleFrame kontrolü
+            if !isFS, let screen = NSScreen.main {
+                isFS = screen.frame.height == screen.visibleFrame.height
+                    && screen.frame.width == screen.visibleFrame.width
+            }
         }
 
         let wasFullscreen = appState.isFullscreen
         appState.isFullscreen = isFS
 
+        let showInFS = settingsStore?.showInFullscreen ?? true
+
         if isFS && !wasFullscreen {
-            // Entering fullscreen — hide compact bar
-            panel?.alphaValue = 0
+            if !showInFS {
+                panel?.alphaValue = 0
+            }
         } else if !isFS && wasFullscreen {
-            // Leaving fullscreen — show compact bar
             panel?.alphaValue = 1
         }
     }
