@@ -385,12 +385,28 @@ private struct SoundsTab: View {
                             .foregroundStyle(.tertiary)
                             .lineLimit(1)
 
-                        Button(action: { selectSound(for: index) }) {
-                            Image(systemName: "folder")
-                                .font(.system(size: 10))
+                        Button(action: { previewSound(config) }) {
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 8))
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.mini)
+
+                        Button(action: { selectSound(for: index) }) {
+                            Image(systemName: "folder")
+                                .font(.system(size: 11))
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+
+                        if config.customSoundURL != nil {
+                            Button(action: { store.soundEvents[index].customSoundURL = nil }) {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 8))
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.mini)
+                        }
                     }
 
                     if index < store.soundEvents.count - 1 {
@@ -409,6 +425,10 @@ private struct SoundsTab: View {
         if panel.runModal() == .OK {
             store.soundEvents[index].customSoundURL = panel.url
         }
+    }
+
+    private func previewSound(_ config: SoundEventConfig) {
+        SoundManager.shared.play(config.eventType, configs: [config])
     }
 }
 
