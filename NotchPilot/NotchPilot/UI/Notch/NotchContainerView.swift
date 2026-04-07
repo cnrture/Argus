@@ -14,6 +14,7 @@ struct NotchContainerView: View {
     var onPlanReject: ((String, String?) -> Void)?
     var onOpenSettings: (() -> Void)?
     var onQuit: (() -> Void)?
+    var onJumpToSession: ((String) -> Void)?
 
     private let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
     private let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
@@ -22,7 +23,16 @@ struct NotchContainerView: View {
         ZStack(alignment: .top) {
             Color.clear
 
-            if appState.panelState != .hidden {
+            if let completionSession = appState.completionSession {
+                CompletionCardView(
+                    session: completionSession,
+                    notchWidth: notchRect.width,
+                    onDismiss: { appState.completionSession = nil },
+                    onJump: { onJumpToSession?(completionSession.id) }
+                )
+                .offset(y: notchRect.height)
+                .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
+            } else if appState.panelState != .hidden {
                 if appState.isExpanded {
                     expandedContent
                         .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
@@ -109,7 +119,8 @@ struct NotchContainerView: View {
             appState: appState,
             notchWidth: notchRect.width,
             onOpenSettings: onOpenSettings,
-            onQuit: onQuit
+            onQuit: onQuit,
+            onJumpToSession: onJumpToSession
         )
         .offset(y: notchRect.height)
     }

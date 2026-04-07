@@ -5,6 +5,7 @@ struct ExpandedOverviewView: View {
     let notchWidth: CGFloat
     var onOpenSettings: (() -> Void)?
     var onQuit: (() -> Void)?
+    var onJumpToSession: ((String) -> Void)?
 
     private var expandedWidth: CGFloat {
         min(notchWidth * 3, 600)
@@ -24,6 +25,8 @@ struct ExpandedOverviewView: View {
                 VStack(spacing: 4) {
                     ForEach(appState.sortedSessions) { session in
                         SessionCard(session: session)
+                            .contentShape(Rectangle())
+                            .onTapGesture { onJumpToSession?(session.id) }
                             .transition(.asymmetric(
                                 insertion: .move(edge: .top).combined(with: .opacity),
                                 removal: .move(edge: .bottom).combined(with: .opacity)

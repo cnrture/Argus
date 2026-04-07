@@ -210,11 +210,19 @@ extension AppDelegate: SocketServerDelegate {
         case .sessionEnd:
             sound.play(.sessionEnded, configs: configs)
         case .permissionRequest:
-            sound.play(.permissionNeeded, configs: configs)
+            // Permission her zaman gösterilmeli — ses suppress edilebilir
+            let suppress = shouldSuppress(sessionId: event.sessionId)
+            if !suppress { sound.play(.permissionNeeded, configs: configs) }
             windowController?.expandForPermission()
         case .stop:
-            sound.play(.taskCompleted, configs: configs)
-            windowController?.bounceOnComplete()
+            let suppress = shouldSuppress(sessionId: event.sessionId)
+            if !suppress {
+                sound.play(.taskCompleted, configs: configs)
+                windowController?.bounceOnComplete()
+                if let sessionInfo = appState.sessions[event.sessionId] {
+                    appState.completionSession = sessionInfo
+                }
+            }
         default:
             break
         }
@@ -256,6 +264,17 @@ extension AppDelegate: NotchWindowControllerDelegate {
 
     func notchWindowControllerDidRequestSettings(_ controller: NotchWindowController) {
         openSettings()
+    }
+
+    func notchWindowController(_ controller: NotchWindowController, didRequestJumpToSession sessionId: String) {
+        if let session = sessionStore.sessions[sessionId] {
+            WindowJumper.jumpToSession(session)
+        }
+    }
+
+    private func shouldSuppress(sessionId: String) -> Bool {
+        guard let session = sessionStore.sessions[sessionId] else { return false }
+        return SmartSuppress.isUserWatchingSession(session)
     }
 
     private func syncAppState() {

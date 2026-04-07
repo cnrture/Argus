@@ -77,6 +77,8 @@ final class SessionStore {
     private func handleSessionStart(event: HookEvent, appState: AppState) {
         let title = SessionTitleResolver.resolve(cwd: event.cwd)
         let session = Session(id: event.sessionId, title: title, source: event.agentSource)
+        session.cwd = event.cwd
+        WindowJumper.detectOwnerApp(for: session)
 
         // Replace any discovered "existing-" session with the same cwd
         let existingKeys = sessions.keys.filter { $0.hasPrefix("existing-") }

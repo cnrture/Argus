@@ -55,6 +55,8 @@ struct CompactView: View {
                 : nil
         )
         .shadow(color: showBorder ? accentColor.opacity(isActive ? 0.3 : 0.1) : .black.opacity(0.5), radius: 8, y: 2)
+        .glowEffect(isActive: isActive, color: accentColor)
+        .pulseBorder(isActive: session.status == .working, color: accentColor)
         .animation(.spring(response: 0.42, dampingFraction: 0.8), value: isActive)
     }
 }

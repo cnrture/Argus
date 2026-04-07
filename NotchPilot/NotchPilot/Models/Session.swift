@@ -14,6 +14,9 @@ final class Session: Identifiable, Equatable {
     var pendingQuestion: QuestionEvent?
     var pendingPlan: PlanEvent?
     var autoApproveRules: Set<String> = []
+    var cwd: String?
+    var ownerPID: Int?
+    var ownerBundleID: String?
 
     static let idleTimeout: TimeInterval = 900
 

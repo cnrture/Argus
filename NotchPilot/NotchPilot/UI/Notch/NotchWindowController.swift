@@ -109,6 +109,10 @@ final class NotchWindowController {
             },
             onQuit: {
                 NSApplication.shared.terminate(nil)
+            },
+            onJumpToSession: { [weak self] sessionId in
+                self?.delegate?.notchWindowController(self!, didRequestJumpToSession: sessionId)
+                self?.collapse()
             }
         )
 
@@ -429,4 +433,5 @@ protocol NotchWindowControllerDelegate: AnyObject {
     func notchWindowController(_ controller: NotchWindowController, didAnswerQuestion eventId: String, answer: String)
     func notchWindowController(_ controller: NotchWindowController, didRespondToPlan eventId: String, approve: Bool, feedback: String?)
     func notchWindowControllerDidRequestSettings(_ controller: NotchWindowController)
+    func notchWindowController(_ controller: NotchWindowController, didRequestJumpToSession sessionId: String)
 }
