@@ -6,12 +6,13 @@ import KeyboardShortcuts
 // MARK: - Settings Tab Model
 
 private enum SettingsTab: String, CaseIterable {
-    case general, appearance, sounds, shortcuts, hooks
+    case general, appearance, pets, sounds, shortcuts, hooks
 
     var title: String {
         switch self {
         case .general:    "Genel"
         case .appearance: "Görünüm"
+        case .pets:       "Petler"
         case .sounds:     "Sesler"
         case .shortcuts:  "Kısayollar"
         case .hooks:      "Hooks"
@@ -22,6 +23,7 @@ private enum SettingsTab: String, CaseIterable {
         switch self {
         case .general:    "gearshape.fill"
         case .appearance: "paintbrush.fill"
+        case .pets:       "pawprint.fill"
         case .sounds:     "speaker.wave.2.fill"
         case .shortcuts:  "keyboard"
         case .hooks:      "link.circle.fill"
@@ -32,6 +34,7 @@ private enum SettingsTab: String, CaseIterable {
         switch self {
         case .general:    .gray
         case .appearance: .purple
+        case .pets:       .orange
         case .sounds:     .pink
         case .shortcuts:  .orange
         case .hooks:      .blue
@@ -106,6 +109,7 @@ struct SettingsView: View {
             switch selectedTab {
             case .general:    GeneralTab(store: settingsStore)
             case .appearance: AppearanceTab(store: settingsStore)
+            case .pets:       PetsTab(store: settingsStore)
             case .sounds:     SoundsTab(store: settingsStore)
             case .shortcuts:  ShortcutsTab()
             case .hooks:      HooksTab(store: settingsStore, hookInstaller: hookInstaller)
@@ -378,16 +382,36 @@ private struct AppearanceTab: View {
                         .foregroundStyle(.secondary)
                 }
             }
+        }
+    }
 
-            SettingsSection(title: "Durum Ikonu", icon: "pawprint.fill", color: .mint) {
+    private var accentColors: [(name: String, color: Color)] {
+        [
+            ("orange", .orange),
+            ("blue", .blue),
+            ("purple", .purple),
+            ("green", .green),
+            ("red", .red),
+            ("pink", .pink),
+            ("cyan", .cyan),
+        ]
+    }
+}
+
+// MARK: - Pets Tab
+
+private struct PetsTab: View {
+    @Bindable var store: SettingsStore
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            SettingsSection(title: "Notch Durum Ikonu", icon: "pawprint.fill", color: .mint) {
                 HStack(spacing: 10) {
                     ForEach(PetStyle.allCases, id: \.self) { pet in
                         Button(action: { store.petStyle = pet }) {
                             VStack(spacing: 4) {
                                 if pet == .dot {
-                                    Circle()
-                                        .fill(.green)
-                                        .frame(width: 16, height: 16)
+                                    Circle().fill(.green).frame(width: 16, height: 16)
                                 } else {
                                     PixelArtView(
                                         pixels: pet.pixels(for: .working),
@@ -401,14 +425,8 @@ private struct AppearanceTab: View {
                                     .foregroundStyle(.secondary)
                             }
                             .frame(width: 50, height: 50)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(store.petStyle == pet ? store.accentColor.opacity(0.15) : .clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(store.petStyle == pet ? store.accentColor : .clear, lineWidth: 1.5)
-                            )
+                            .background(RoundedRectangle(cornerRadius: 8).fill(store.petStyle == pet ? store.accentColor.opacity(0.15) : .clear))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(store.petStyle == pet ? store.accentColor : .clear, lineWidth: 1.5))
                         }
                         .buttonStyle(.plain)
                     }
@@ -419,7 +437,6 @@ private struct AppearanceTab: View {
                 Toggle("Desk Pet aktif", isOn: $store.deskPetEnabled)
 
                 if store.deskPetEnabled {
-                    // Pet tipi
                     Picker("Hayvan", selection: $store.deskPetType) {
                         Text("Kedi").tag("cat")
                         Text("Kopek").tag("dog")
@@ -440,68 +457,46 @@ private struct AppearanceTab: View {
             }
 
             if store.deskPetEnabled && store.deskPetType == "dog" {
-            SettingsSection(title: "Kopek Irki", icon: "dog.fill", color: .brown) {
-                HStack(spacing: 10) {
-                    ForEach(dogBreeds, id: \.name) { dog in
-                        Button(action: { store.dogBreed = dog.name }) {
-                            VStack(spacing: 4) {
-                                dogPreview(dog.name)
-                                Text(dog.display)
-                                    .font(.system(size: 8))
-                                    .foregroundStyle(.secondary)
+                SettingsSection(title: "Kopek Irki", icon: "dog.fill", color: .brown) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))], spacing: 8) {
+                        ForEach(dogBreeds, id: \.name) { dog in
+                            Button(action: { store.dogBreed = dog.name }) {
+                                VStack(spacing: 4) {
+                                    dogPreview(dog.name)
+                                    Text(dog.display)
+                                        .font(.system(size: 8))
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(6)
+                                .background(RoundedRectangle(cornerRadius: 8).fill(store.dogBreed == dog.name ? store.accentColor.opacity(0.15) : .clear))
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(store.dogBreed == dog.name ? store.accentColor : .clear, lineWidth: 1.5))
                             }
-                            .padding(6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(store.dogBreed == dog.name ? store.accentColor.opacity(0.15) : .clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(store.dogBreed == dog.name ? store.accentColor : .clear, lineWidth: 1.5)
-                            )
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
-            }
             }
 
             if store.deskPetEnabled && store.deskPetType == "cat" {
-            SettingsSection(title: "Kedi Rengi", icon: "cat.fill", color: .orange) {
-                HStack(spacing: 10) {
-                    ForEach(catColors, id: \.name) { cat in
-                        Button(action: { store.catColor = cat.name }) {
-                            VStack(spacing: 4) {
-                                if let url = Bundle.main.url(forResource: cat.name, withExtension: "png"),
-                                   let img = NSImage(contentsOf: url),
-                                   let cgImg = img.cgImage(forProposedRect: nil, context: nil, hints: nil),
-                                   let cropped = cgImg.cropping(to: CGRect(x: 0, y: 0, width: 32, height: 32)) {
-                                    Image(nsImage: NSImage(cgImage: cropped, size: NSSize(width: 32, height: 32)))
-                                        .interpolation(.none)
-                                        .resizable()
-                                        .frame(width: 32, height: 32)
-                                } else {
-                                    Rectangle().fill(.gray).frame(width: 32, height: 32)
+                SettingsSection(title: "Kedi Rengi", icon: "cat.fill", color: .orange) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 60))], spacing: 8) {
+                        ForEach(catColors, id: \.name) { cat in
+                            Button(action: { store.catColor = cat.name }) {
+                                VStack(spacing: 4) {
+                                    catPreview(cat.name)
+                                    Text(cat.display)
+                                        .font(.system(size: 8))
+                                        .foregroundStyle(.secondary)
                                 }
-                                Text(cat.display)
-                                    .font(.system(size: 8))
-                                    .foregroundStyle(.secondary)
+                                .padding(6)
+                                .background(RoundedRectangle(cornerRadius: 8).fill(store.catColor == cat.name ? store.accentColor.opacity(0.15) : .clear))
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(store.catColor == cat.name ? store.accentColor : .clear, lineWidth: 1.5))
                             }
-                            .padding(6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(store.catColor == cat.name ? store.accentColor.opacity(0.15) : .clear)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(store.catColor == cat.name ? store.accentColor : .clear, lineWidth: 1.5)
-                            )
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
-            } // if deskPetEnabled
         }
     }
 
@@ -513,50 +508,33 @@ private struct AppearanceTab: View {
            let cgImg = img.cgImage(forProposedRect: nil, context: nil, hints: nil),
            let cropped = cgImg.cropping(to: CGRect(x: 0, y: 0, width: 64, height: 64)) {
             Image(nsImage: NSImage(cgImage: cropped, size: NSSize(width: 64, height: 64)))
-                .interpolation(.none)
-                .resizable()
-                .frame(width: 32, height: 32)
+                .interpolation(.none).resizable().frame(width: 32, height: 32)
         } else {
-            Text("🐶")
-                .font(.system(size: 18))
-                .frame(width: 32, height: 32)
+            Text("🐶").font(.system(size: 18)).frame(width: 32, height: 32)
+        }
+    }
+
+    @ViewBuilder
+    private func catPreview(_ name: String) -> some View {
+        if let url = Bundle.main.url(forResource: name, withExtension: "png"),
+           let img = NSImage(contentsOf: url),
+           let cgImg = img.cgImage(forProposedRect: nil, context: nil, hints: nil),
+           let cropped = cgImg.cropping(to: CGRect(x: 0, y: 0, width: 32, height: 32)) {
+            Image(nsImage: NSImage(cgImage: cropped, size: NSSize(width: 32, height: 32)))
+                .interpolation(.none).resizable().frame(width: 32, height: 32)
+        } else {
+            Rectangle().fill(.gray).frame(width: 32, height: 32)
         }
     }
 
     private var dogBreeds: [(name: String, display: String)] {
-        [
-            ("golden", "Golden"),
-            ("husky", "Husky"),
-            ("dalmatian", "Dalmatian"),
-            ("rottweiler", "Rottweiler"),
-            ("canecorso", "Cane Corso"),
-            ("dogoargentino", "Dogo Argentino"),
-            ("labrador", "Labrador"),
-            ("pharaoh", "Pharaoh Hound"),
-        ]
+        [("golden", "Golden"), ("husky", "Husky"), ("dalmatian", "Dalmatian"), ("rottweiler", "Rottweiler"),
+         ("canecorso", "Cane Corso"), ("dogoargentino", "Dogo Argentino"), ("labrador", "Labrador"), ("pharaoh", "Pharaoh Hound")]
     }
 
     private var catColors: [(name: String, display: String)] {
-        [
-            ("black-cat", "Siyah"),
-            ("orange-cat", "Turuncu"),
-            ("white-cat", "Beyaz"),
-            ("grey-cat", "Gri"),
-            ("calico-cat", "Calico"),
-            ("colorpoint-cat", "Colorpoint"),
-        ]
-    }
-
-    private var accentColors: [(name: String, color: Color)] {
-        [
-            ("orange", .orange),
-            ("blue", .blue),
-            ("purple", .purple),
-            ("green", .green),
-            ("red", .red),
-            ("pink", .pink),
-            ("cyan", .cyan),
-        ]
+        [("black-cat", "Siyah"), ("orange-cat", "Turuncu"), ("white-cat", "Beyaz"),
+         ("grey-cat", "Gri"), ("calico-cat", "Calico"), ("colorpoint-cat", "Colorpoint")]
     }
 }
 
