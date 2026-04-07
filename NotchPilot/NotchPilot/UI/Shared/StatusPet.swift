@@ -33,6 +33,18 @@ enum PetStyle: String, CaseIterable, Codable {
         }
     }
 
+    func animationFrames(for status: SessionStatus) -> [[[UInt8]]] {
+        switch self {
+        case .dot: return []
+        case .cat:   return PixelPets.catFrames(status)
+        case .dog:   return PixelPets.dogFrames(status)
+        case .bird:  return PixelPets.birdFrames(status)
+        case .robot: return PixelPets.robotFrames(status)
+        case .ghost: return PixelPets.ghostFrames(status)
+        case .alien: return PixelPets.alienFrames(status)
+        }
+    }
+
     func palette(for status: SessionStatus, accent: Color) -> [Color] {
         let statusHint: Color = switch status {
         case .waiting:    .orange
@@ -52,32 +64,58 @@ struct StatusPet: View {
     let style: PetStyle
     var accent: Color = .orange
 
+    @State private var frame = 0
     @State private var bounce = false
+    @State private var timer: Timer?
 
     var body: some View {
         if style == .dot {
             StatusDot(status: status)
         } else {
             PixelArtView(
-                pixels: style.pixels(for: status),
+                pixels: currentFrame,
                 palette: style.palette(for: status, accent: accent),
                 pixelSize: 2
             )
             .frame(width: 16, height: 16)
-            .offset(y: bounce ? -1 : 0)
-            .animation(
-                shouldAnimate
-                    ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true)
-                    : .default,
-                value: bounce
-            )
-            .onAppear { bounce = shouldAnimate }
-            .onChange(of: status) { _, _ in bounce = shouldAnimate }
+            .offset(y: bounce ? -1.5 : 0)
+            .scaleEffect(status == .error ? (bounce ? 0.9 : 1.0) : 1.0)
+            .rotationEffect(status == .idle ? .degrees(bounce ? 5 : -5) : .zero)
+            .animation(animationType, value: bounce)
+            .onAppear { startAnimation() }
+            .onChange(of: status) { _, _ in startAnimation() }
+            .onDisappear { timer?.invalidate() }
         }
     }
 
-    private var shouldAnimate: Bool {
-        status == .working || status == .waiting
+    private var currentFrame: [[UInt8]] {
+        let frames = style.animationFrames(for: status)
+        let idx = frame % max(frames.count, 1)
+        return frames.isEmpty ? style.pixels(for: status) : frames[idx]
+    }
+
+    private var animationType: Animation {
+        switch status {
+        case .working:    .easeInOut(duration: 0.35).repeatForever(autoreverses: true)
+        case .waiting:    .easeInOut(duration: 0.6).repeatForever(autoreverses: true)
+        case .error:      .easeInOut(duration: 0.3).repeatForever(autoreverses: true)
+        case .idle:       .easeInOut(duration: 1.5).repeatForever(autoreverses: true)
+        default:          .default
+        }
+    }
+
+    private func startAnimation() {
+        timer?.invalidate()
+        bounce = false
+
+        let shouldAnimate = status == .working || status == .waiting || status == .error || status == .idle
+        if shouldAnimate {
+            bounce = true
+            let interval: TimeInterval = status == .working ? 0.4 : 0.8
+            timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+                frame += 1
+            }
+        }
     }
 }
 
@@ -339,6 +377,85 @@ struct PixelPets {
             [0,0,1,0,0,1,0,0],
             [0,1,0,0,0,0,1,0],
         ]
+        }
+    }
+
+    // MARK: - Animation Frames (2 frames per state for all pets)
+    // Frame animation: idle=zzz blink, working=run cycle, error=cry, waiting=look around
+
+    static func catFrames(_ s: SessionStatus) -> [[[UInt8]]] {
+        switch s {
+        case .idle: return [ // Blink/sleep
+            cat(s),
+            [[0,1,0,0,0,0,1,0],[0,1,1,0,0,1,1,0],[0,1,1,1,1,1,1,0],[0,1,2,2,2,2,1,0],[0,1,1,1,1,1,1,0],[0,0,1,1,1,1,0,0],[0,0,0,1,1,0,0,0],[0,0,1,0,0,1,0,0]]
+        ]
+        case .working: return [ // Run
+            cat(s),
+            [[0,1,0,0,0,0,1,0],[0,1,1,0,0,1,1,0],[0,1,1,1,1,1,1,0],[0,1,3,1,1,3,1,0],[0,1,1,1,1,1,1,0],[0,0,1,1,1,1,0,0],[0,0,1,0,1,0,0,0],[0,1,0,0,0,1,0,0]]
+        ]
+        case .error: return [ // Cry
+            cat(s),
+            [[0,1,0,0,0,0,1,0],[0,1,1,0,0,1,1,0],[0,1,1,1,1,1,1,0],[0,1,2,1,1,2,1,0],[0,1,4,1,1,4,1,0],[0,0,1,2,2,1,0,0],[0,0,0,1,1,0,0,0],[0,0,0,0,0,0,0,0]]
+        ]
+        default: return [cat(s)]
+        }
+    }
+
+    static func dogFrames(_ s: SessionStatus) -> [[[UInt8]]] {
+        switch s {
+        case .idle: return [
+            dog(s),
+            [[0,0,1,0,0,1,0,0],[0,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,0],[0,1,2,2,2,2,1,0],[0,1,1,1,1,1,1,0],[0,0,1,1,1,1,0,0],[0,0,1,1,1,1,0,0],[0,0,1,0,0,1,0,0]]
+        ]
+        case .working: return [
+            dog(s),
+            [[0,0,1,0,0,1,0,0],[0,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,0],[0,1,3,1,1,3,1,0],[0,1,1,2,2,1,0,0],[0,0,1,1,1,1,0,0],[0,1,0,0,0,0,1,0],[0,0,0,0,0,0,0,0]]
+        ]
+        default: return [dog(s)]
+        }
+    }
+
+    static func birdFrames(_ s: SessionStatus) -> [[[UInt8]]] {
+        switch s {
+        case .working: return [ // Flap wings
+            bird(s),
+            [[0,0,0,1,1,0,0,0],[0,0,1,1,1,1,0,0],[1,1,3,1,1,3,1,1],[0,0,1,1,1,1,0,0],[0,0,1,1,1,1,0,0],[0,0,0,1,1,0,0,0],[0,0,0,1,1,0,0,0],[0,0,1,0,0,1,0,0]]
+        ]
+        default: return [bird(s)]
+        }
+    }
+
+    static func robotFrames(_ s: SessionStatus) -> [[[UInt8]]] {
+        switch s {
+        case .working: return [ // Antenna blink
+            robot(s),
+            [[0,0,0,4,4,0,0,0],[0,1,1,1,1,1,1,0],[0,1,3,1,1,3,1,0],[0,1,1,1,1,1,1,0],[1,1,1,1,1,1,1,1],[0,1,1,2,2,1,1,0],[0,1,1,1,1,1,1,0],[0,1,0,0,0,0,1,0]]
+        ]
+        default: return [robot(s)]
+        }
+    }
+
+    static func ghostFrames(_ s: SessionStatus) -> [[[UInt8]]] {
+        switch s {
+        case .idle: return [ // Float
+            ghost(s),
+            [[0,0,0,0,0,0,0,0],[0,0,1,1,1,1,0,0],[0,1,1,1,1,1,1,0],[0,1,2,1,1,2,1,0],[0,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,0],[0,1,0,1,1,0,1,0],[0,1,0,0,0,0,1,0]]
+        ]
+        case .working: return [
+            ghost(s),
+            [[0,0,1,1,1,1,0,0],[0,1,1,1,1,1,1,0],[0,1,1,3,3,1,1,0],[0,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,0],[0,1,1,1,1,1,1,0],[0,1,0,1,1,0,1,0],[0,0,1,0,0,1,0,0]]
+        ]
+        default: return [ghost(s)]
+        }
+    }
+
+    static func alienFrames(_ s: SessionStatus) -> [[[UInt8]]] {
+        switch s {
+        case .working: return [ // Eye pulse
+            alien(s),
+            [[0,0,1,1,1,1,0,0],[0,1,1,1,1,1,1,0],[1,1,4,1,1,4,1,1],[1,1,1,1,1,1,1,1],[0,1,1,1,1,1,1,0],[0,0,1,2,2,1,0,0],[0,0,1,0,0,1,0,0],[0,1,0,0,0,0,1,0]]
+        ]
+        default: return [alien(s)]
         }
     }
 }

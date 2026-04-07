@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A0AD4B212F8483590033B8E4 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = A0AD4A922F8480020033B8E4 /* KeyboardShortcuts */; };
 		A0AD4B222F8483590033B8E4 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = A0AD4A932F8480030033B8E4 /* LaunchAtLogin */; };
+		A0AD4F9C2F8530990033B8E4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A0AD4BC12F84A0010033B8E4 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A0AD4F9C2F8530990033B8E4 /* Sparkle in Frameworks */,
 				A0AD4B222F8483590033B8E4 /* LaunchAtLogin in Frameworks */,
 				A0AD4B212F8483590033B8E4 /* KeyboardShortcuts in Frameworks */,
 			);
@@ -102,6 +104,7 @@
 			packageProductDependencies = (
 				A0AD4A922F8480020033B8E4 /* KeyboardShortcuts */,
 				A0AD4A932F8480030033B8E4 /* LaunchAtLogin */,
+				A0AD4BC12F84A0010033B8E4 /* Sparkle */,
 			);
 			productName = NotchPilot;
 			productReference = A0AD4A6D2F8477840033B8E4 /* NotchPilot.app */;
@@ -157,6 +160,7 @@
 			packageReferences = (
 				A0AD4A902F8480000033B8E4 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				A0AD4A912F8480010033B8E4 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
+				A0AD4BC02F84A0000033B8E4 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A0AD4A6E2F8477840033B8E4 /* Products */;
@@ -466,6 +470,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		A0AD4BC02F84A0000033B8E4 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -478,6 +490,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A0AD4A912F8480010033B8E4 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */;
 			productName = LaunchAtLogin;
+		};
+		A0AD4BC12F84A0010033B8E4 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A0AD4BC02F84A0000033B8E4 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -81,6 +81,11 @@ final class SettingsStore {
         didSet { UserDefaults.standard.set(barOffset, forKey: "barOffset") }
     }
 
+    // Voice
+    var voiceCommandEnabled: Bool {
+        didSet { UserDefaults.standard.set(voiceCommandEnabled, forKey: "voiceCommandEnabled") }
+    }
+
     // Hooks — hangi ajanlar icin kur
     var enabledAgents: Set<String> {
         didSet { UserDefaults.standard.set(Array(enabledAgents), forKey: "enabledAgents") }
@@ -148,6 +153,7 @@ final class SettingsStore {
         cornerRadius = defaults.object(forKey: "cornerRadius") as? Double ?? 14
         fontSize = defaults.object(forKey: "fontSize") as? Double ?? 12
         barOffset = defaults.object(forKey: "barOffset") as? Double ?? 0
+        voiceCommandEnabled = defaults.bool(forKey: "voiceCommandEnabled")
         if let agents = defaults.array(forKey: "enabledAgents") as? [String] {
             enabledAgents = Set(agents)
         } else {

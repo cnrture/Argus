@@ -8,6 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let settingsStore = SettingsStore()
     let hookInstaller = HookInstaller()
     private let socketServer = SocketServer()
+    private let voiceManager = VoiceCommandManager()
     private var onboardingWindow: NSWindow?
 
     private static let onboardingCompletedKey = "onboardingCompleted"
@@ -41,6 +42,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Scan for existing Claude Code sessions
         scanForExistingSessions()
+
+        // Voice commands
+        setupVoiceCommands()
 
         // Boot animation
         windowController?.performBootAnimation()
@@ -210,10 +214,10 @@ extension AppDelegate: SocketServerDelegate {
         case .sessionEnd:
             sound.play(.sessionEnded, configs: configs)
         case .permissionRequest:
-            // Permission her zaman gösterilmeli — ses suppress edilebilir
             let suppress = shouldSuppress(sessionId: event.sessionId)
             if !suppress { sound.play(.permissionNeeded, configs: configs) }
             windowController?.expandForPermission()
+            startVoiceListeningIfNeeded()
         case .stop:
             let suppress = shouldSuppress(sessionId: event.sessionId)
             if !suppress {
@@ -269,6 +273,33 @@ extension AppDelegate: NotchWindowControllerDelegate {
     func notchWindowController(_ controller: NotchWindowController, didRequestJumpToSession sessionId: String) {
         if let session = sessionStore.sessions[sessionId] {
             WindowJumper.jumpToSession(session)
+        }
+    }
+
+    private func setupVoiceCommands() {
+        voiceManager.setEnabled(settingsStore.voiceCommandEnabled)
+        voiceManager.onCommand = { [weak self] command in
+            guard let self, let permission = self.appState.activePermission else { return }
+            switch command {
+            case .allow:
+                self.windowController?.delegate?.notchWindowController(self.windowController!, didRespondToPermission: permission.id, allow: true)
+            case .deny:
+                self.windowController?.delegate?.notchWindowController(self.windowController!, didRespondToPermission: permission.id, allow: false)
+            case .allowAll:
+                if let activeId = self.appState.activeSessionId {
+                    self.sessionStore.addAutoApproveRule(sessionId: activeId, toolName: permission.toolName)
+                }
+                self.windowController?.delegate?.notchWindowController(self.windowController!, didRespondToPermission: permission.id, allow: true)
+            }
+        }
+
+        // Permission geldiğinde dinlemeye başla
+        // (AppDelegate SocketServerDelegate'te zaten permission event'ini yakalıyor)
+    }
+
+    func startVoiceListeningIfNeeded() {
+        if settingsStore.voiceCommandEnabled && appState.activePermission != nil {
+            voiceManager.startListening()
         }
     }
 

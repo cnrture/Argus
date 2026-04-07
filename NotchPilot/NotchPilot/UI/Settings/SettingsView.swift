@@ -249,6 +249,26 @@ private struct GeneralTab: View {
                     }
                 }
             }
+
+            SettingsSection(title: "Sesli Komut", icon: "mic.fill", color: .red) {
+                Toggle("Sesli komutlari etkinlestir", isOn: $store.voiceCommandEnabled)
+                Text("\"izin ver\", \"reddet\", \"hepsine\" komutlarini sesle verin. Mikrofon izni gerektirir. Cihaz uzerinde calisir, veri gonderilmez.")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.tertiary)
+            }
+
+            SettingsSection(title: "Guncelleme", icon: "arrow.triangle.2.circlepath", color: .green) {
+                HStack {
+                    Text("NotchPilot v1.0")
+                        .font(.system(size: 12))
+                    Spacer()
+                    Button("Guncelleme Kontrol Et") {
+                        UpdateManager().checkForUpdates()
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+            }
         }
     }
 }

@@ -13,5 +13,11 @@
 			<string>Default</string>
 		</dict>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>NotchPilot sesli komutlar icin mikrofon kullanir. "izin ver", "reddet" gibi komutlari sesle verebilirsiniz. Ses verisi cihaz uzerinde islenir, sunucuya gonderilmez.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>NotchPilot sesli komutlari algilamak icin konusma tanima kullanir. Tum islem cihaz uzerinde yapilir.</string>
+	<key>SUFeedURL</key>
+	<string>https://raw.githubusercontent.com/cnrture/NotchPilot/main/appcast.xml</string>
 </dict>
 </plist>
