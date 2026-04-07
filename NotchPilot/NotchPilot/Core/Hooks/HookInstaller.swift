@@ -33,6 +33,12 @@ final class HookInstaller {
     }
 
     func installHooks(for agent: AgentSource) -> InstallResult {
+        // CLI dizini yoksa atla — kullanıcıda o CLI kurulu değil
+        let configDir = (agent.configPath as NSString).deletingLastPathComponent
+        if !FileManager.default.fileExists(atPath: configDir) {
+            return .installed // Sessizce atla
+        }
+
         do {
             let json = try readJSON(at: agent.configPath)
 
@@ -88,6 +94,36 @@ final class HookInstaller {
     /// Convenience: check if ANY agent has hooks installed
     func hooksAreInstalled() -> Bool {
         AgentSource.allCases.contains { hooksAreInstalled(for: $0) }
+    }
+
+    // MARK: - Verify & Repair
+
+    /// Eksik hook'ları onarır, fazlaları kaldırır. Enabled agents listesine göre.
+    func verifyAndRepair(enabledAgents: Set<String>) -> [String] {
+        var repaired: [String] = []
+
+        for agent in AgentSource.allCases {
+            let shouldBeInstalled = enabledAgents.contains(agent.rawValue)
+            let configDir = (agent.configPath as NSString).deletingLastPathComponent
+
+            // CLI kurulu değilse atla
+            guard FileManager.default.fileExists(atPath: configDir) else { continue }
+
+            let isInstalled = hooksAreInstalled(for: agent)
+
+            if shouldBeInstalled && !isInstalled {
+                let result = installHooks(for: agent)
+                if case .installed = result { repaired.append(agent.displayName) }
+                if case .alreadyInstalled = result { repaired.append(agent.displayName) }
+            } else if !shouldBeInstalled && isInstalled {
+                _ = uninstallHooks(for: agent)
+            }
+        }
+
+        // Bridge binary'yi de güncelle
+        _ = installBridge()
+
+        return repaired
     }
 
     // MARK: - Bridge Binary

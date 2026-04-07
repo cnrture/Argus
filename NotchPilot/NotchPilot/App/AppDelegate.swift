@@ -11,6 +11,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let voiceManager = VoiceCommandManager()
     private var deskPet: DeskPetWindowController?
     private var onboardingWindow: NSWindow?
+    private var hookRepairTimer: Timer?
+    private var lastHookCheck: Date = .distantPast
 
     private static let onboardingCompletedKey = "onboardingCompleted"
 
@@ -34,23 +36,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Install bridge binary
         _ = hookInstaller.installBridge()
 
-        // İlk açılışta tüm hook'ları kur, sonrakilerde sadece kontrol et
+        // Hook kurulumu: ilk açılış veya verify & repair
         if !UserDefaults.standard.bool(forKey: Self.onboardingCompletedKey) {
-            // İlk açılış — tüm enabled ajanlar için hook kur
+            _ = hookInstaller.installBridge()
             let enabled = AgentSource.allCases.filter { settingsStore.enabledAgents.contains($0.rawValue) }
             _ = hookInstaller.installHooks(for: enabled)
             UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
         } else {
-            // Sonraki açılışlar — eksik hook varsa onar
-            for agent in AgentSource.allCases {
-                let shouldBeInstalled = settingsStore.enabledAgents.contains(agent.rawValue)
-                let isInstalled = hookInstaller.hooksAreInstalled(for: agent)
-                if shouldBeInstalled && !isInstalled {
-                    _ = hookInstaller.installHooks(for: agent)
-                } else if !shouldBeInstalled && isInstalled {
-                    _ = hookInstaller.uninstallHooks(for: agent)
-                }
-            }
+            checkAndRepairHooks()
+        }
+
+        // 5 dakikada bir hook'ları kontrol et
+        hookRepairTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
+            self?.checkAndRepairHooks()
         }
 
         // Scan for existing Claude Code sessions
@@ -335,6 +333,17 @@ extension AppDelegate: NotchWindowControllerDelegate {
     func startVoiceListeningIfNeeded() {
         if settingsStore.voiceCommandEnabled && appState.activePermission != nil {
             voiceManager.startListening()
+        }
+    }
+
+    private func checkAndRepairHooks() {
+        // Throttle: minimum 60 saniye arayla
+        guard Date().timeIntervalSince(lastHookCheck) > 60 else { return }
+        lastHookCheck = Date()
+
+        let repaired = hookInstaller.verifyAndRepair(enabledAgents: settingsStore.enabledAgents)
+        if !repaired.isEmpty {
+            print("[NotchPilot] Hook'lar onarıldı: \(repaired.joined(separator: ", "))")
         }
     }
 
