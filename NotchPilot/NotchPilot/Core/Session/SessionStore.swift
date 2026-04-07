@@ -6,6 +6,13 @@ final class SessionStore {
     private let toolUseIdCache = ToolUseIdCache()
     private var pendingResponders: [String: (SocketResponse) -> Void] = [:]
 
+    /// UI göstermeden otomatik onaylanan dahili tool'lar
+    private static let autoApproveTools: Set<String> = [
+        "TaskCreate", "TaskUpdate", "TaskGet", "TaskList", "TaskOutput", "TaskStop",
+        "TodoRead", "TodoWrite",
+        "EnterPlanMode", "ExitPlanMode",
+    ]
+
     var sessionsArray: [Session] {
         sessions.values.sorted { a, b in
             if a.isIdle != b.isIdle { return !a.isIdle }
@@ -168,7 +175,23 @@ final class SessionStore {
     private func handlePermissionRequest(event: HookEvent, appState: AppState, respond: @escaping (SocketResponse) -> Void) {
         guard let toolName = event.data?.toolName else { return }
 
-        // Check auto-approve rules
+        // Auto-approve internal tools (no UI needed)
+        if Self.autoApproveTools.contains(toolName) {
+            let response = SocketResponse(
+                id: event.id,
+                response: ResponsePayload(
+                    hookSpecificOutput: HookSpecificOutput(
+                        hookEventName: "PermissionRequest",
+                        decision: PermissionDecision(behavior: "allow"),
+                        selectedOption: nil
+                    )
+                )
+            )
+            respond(response)
+            return
+        }
+
+        // Check user auto-approve rules
         if let session = sessions[event.sessionId],
            session.autoApproveRules.contains(toolName) {
             let response = SocketResponse(
@@ -243,10 +266,23 @@ final class SessionStore {
 
     // MARK: - Response
 
-    func respondToPermission(eventId: String, allow: Bool, session: Session?) {
+    func respondToPermission(eventId: String, allow: Bool, always: Bool = false, session: Session?) {
+        let toolName = session?.pendingPermission?.toolName
+
+        var updatedPerms: [[String: Any]]? = nil
+        if allow && always, let toolName {
+            updatedPerms = [[
+                "type": "addRules",
+                "rules": [["toolName": toolName, "ruleContent": "*"]],
+                "behavior": "allow",
+                "destination": "session"
+            ]]
+        }
+
         let decision = PermissionDecision(
             behavior: allow ? "allow" : "deny",
-            reason: allow ? nil : "Kullanıcı tarafından reddedildi"
+            reason: allow ? nil : "Kullanıcı tarafından reddedildi",
+            updatedPermissions: updatedPerms
         )
 
         let response = SocketResponse(
@@ -263,7 +299,6 @@ final class SessionStore {
         pendingResponders[eventId]?(response)
         pendingResponders.removeValue(forKey: eventId)
 
-        // Clear pending permission
         session?.pendingPermission = nil
         if let session {
             transition(sessionId: session.id, to: .working)

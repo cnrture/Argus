@@ -246,6 +246,12 @@ extension AppDelegate: NotchWindowControllerDelegate {
 
     func notchWindowController(_ controller: NotchWindowController, didAutoApprove toolName: String, forSession sessionId: String) {
         sessionStore.addAutoApproveRule(sessionId: sessionId, toolName: toolName)
+        // "Hepsine İzin Ver" → always: true ile respond et (Claude Code'a updatedPermissions gönderir)
+        if let permission = appState.activePermission,
+           let session = sessionStore.sessions[sessionId] {
+            sessionStore.respondToPermission(eventId: permission.id, allow: true, always: true, session: session)
+            syncAppState()
+        }
     }
 
     func notchWindowController(_ controller: NotchWindowController, didAnswerQuestion eventId: String, answer: String) {

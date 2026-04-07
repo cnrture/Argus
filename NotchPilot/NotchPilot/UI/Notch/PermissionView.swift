@@ -149,7 +149,7 @@ struct PermissionView: View {
     }
 
     private func handleAllowAll() {
+        // onAutoApprove handles both the rule AND the response with updatedPermissions
         onAutoApprove(permission.toolName)
-        onAllow()
     }
 }

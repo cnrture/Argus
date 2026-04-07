@@ -62,6 +62,30 @@ struct HookSpecificOutput: Codable {
 struct PermissionDecision: Codable {
     let behavior: String  // "allow" or "deny"
     let reason: String?
+    let updatedPermissions: [[String: Any]]?
+
+    enum CodingKeys: String, CodingKey {
+        case behavior, reason
+    }
+
+    init(behavior: String, reason: String? = nil, updatedPermissions: [[String: Any]]? = nil) {
+        self.behavior = behavior
+        self.reason = reason
+        self.updatedPermissions = updatedPermissions
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        behavior = try c.decode(String.self, forKey: .behavior)
+        reason = try c.decodeIfPresent(String.self, forKey: .reason)
+        updatedPermissions = nil
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(behavior, forKey: .behavior)
+        try c.encodeIfPresent(reason, forKey: .reason)
+    }
 }
 
 // Simple any-value wrapper for JSON
@@ -295,6 +319,7 @@ final class SocketServer {
             if let decision = output.decision {
                 var d: [String: Any] = ["behavior": decision.behavior]
                 if let reason = decision.reason { d["reason"] = reason }
+                if let perms = decision.updatedPermissions { d["updatedPermissions"] = perms }
                 hookOutput["decision"] = d
             }
             if let option = output.selectedOption {
