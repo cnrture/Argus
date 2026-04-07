@@ -4,9 +4,6 @@ struct SessionCard: View {
     let session: SessionInfo
     var isCompact: Bool = false
 
-    @State private var elapsedTime: TimeInterval = 0
-    @State private var timer: Timer?
-
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
@@ -22,10 +19,6 @@ struct SessionCard: View {
                     .lineLimit(1)
 
                 Spacer()
-
-                Text(formattedTime)
-                    .font(.system(size: 11, weight: .medium, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.6))
             }
 
             if !isCompact {
@@ -53,30 +46,5 @@ struct SessionCard: View {
                 .fill(.white.opacity(session.isIdle ? 0.03 : 0.06))
         )
         .opacity(session.isIdle ? 0.6 : 1.0)
-        .onAppear { startTimer() }
-        .onDisappear { stopTimer() }
-    }
-
-    private var formattedTime: String {
-        let total = Int(elapsedTime)
-        let hours = total / 3600
-        let minutes = (total % 3600) / 60
-        let seconds = total % 60
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        }
-        return String(format: "%d:%02d", minutes, seconds)
-    }
-
-    private func startTimer() {
-        elapsedTime = Date().timeIntervalSince(session.startTime)
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            elapsedTime = Date().timeIntervalSince(session.startTime)
-        }
-    }
-
-    private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
     }
 }
