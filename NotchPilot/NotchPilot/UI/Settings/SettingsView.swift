@@ -43,6 +43,20 @@ private struct GeneralTab: View {
                 Text("30 dakika").tag(TimeInterval(1800))
             }
 
+            // Monitor selection
+            Picker("Monitör", selection: Binding(
+                get: { store.selectedScreenName ?? "auto" },
+                set: { newValue in
+                    store.selectedScreenName = newValue == "auto" ? nil : newValue
+                    store.onScreenChanged?()
+                }
+            )) {
+                Text("Otomatik (dahili ekran)").tag("auto")
+                ForEach(NSScreen.screens, id: \.displayID) { screen in
+                    Text(screen.localizedName).tag(screen.localizedName)
+                }
+            }
+
             // Accessibility status
             let trusted = AXIsProcessTrusted()
             HStack {

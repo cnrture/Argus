@@ -16,6 +16,7 @@ final class NotchWindowController {
     private var hostingView: PassThroughHostingView<AnyView>?
     private var screenObserver: ScreenObserver?
     private let appState: AppState
+    private var settingsStore: SettingsStore?
     private let eventMonitors = EventMonitors()
     private var currentNotchRect: CGRect = .zero
     private var currentScreenFrame: NSRect = .zero
@@ -23,8 +24,9 @@ final class NotchWindowController {
     private var fullscreenObserver: NSObjectProtocol?
     weak var delegate: NotchWindowControllerDelegate?
 
-    init(appState: AppState) {
+    init(appState: AppState, settingsStore: SettingsStore? = nil) {
         self.appState = appState
+        self.settingsStore = settingsStore
     }
 
     func setup() {
@@ -42,7 +44,14 @@ final class NotchWindowController {
     // MARK: - Panel Creation
 
     func createPanel() {
-        let screen = ScreenSelector.select(preference: .automatic)
+        let preference: ScreenSelection
+        if let screenName = settingsStore?.selectedScreenName {
+            let id = ScreenIdentifier(displayID: nil, localizedName: screenName)
+            preference = .specific(id)
+        } else {
+            preference = .automatic
+        }
+        let screen = ScreenSelector.select(preference: preference)
         let screenFrame = screen.frame
         currentScreenFrame = screenFrame
         let windowHeight: CGFloat = 750

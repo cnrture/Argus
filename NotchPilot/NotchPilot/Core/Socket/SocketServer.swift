@@ -193,7 +193,10 @@ final class SocketServer {
         guard clientFd >= 0 else { return }
         clientSockets.append(clientFd)
 
-        queue.async { [weak self] in
+        // Each client gets its own thread to avoid deadlock
+        // (handleClient blocks on read, sendResponse needs to write)
+        let clientQueue = DispatchQueue(label: "com.notchpilot.client.\(clientFd)", qos: .userInitiated)
+        clientQueue.async { [weak self] in
             self?.handleClient(clientFd)
         }
     }
@@ -201,14 +204,8 @@ final class SocketServer {
     private func handleClient(_ fd: Int32) {
         var buffer = Data()
         let readBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 8192)
-        defer {
-            readBuffer.deallocate()
-            close(fd)
-            queue.async { [weak self] in
-                self?.clientSockets.removeAll { $0 == fd }
-            }
-        }
 
+        // Read the initial message
         while true {
             let bytesRead = read(fd, readBuffer, 8192)
             if bytesRead <= 0 { break }
@@ -222,22 +219,38 @@ final class SocketServer {
                 guard let line = String(data: lineData, encoding: .utf8), !line.isEmpty else { continue }
 
                 processLine(line, clientFd: fd)
+                // After processing, wait for potential response write (don't close fd)
+                // The fd will be closed by the bridge disconnecting
             }
 
-            // If no newline but has data, try to process it (single message without trailing newline)
+            // If data without newline, try to read more or process as-is
             if !buffer.isEmpty, buffer.firstIndex(of: UInt8(ascii: "\n")) == nil {
-                // Wait a bit more for data
                 let moreBytesRead = read(fd, readBuffer, 8192)
                 if moreBytesRead <= 0 {
-                    // End of stream, process remaining
                     if let line = String(data: buffer, encoding: .utf8), !line.isEmpty {
                         processLine(line, clientFd: fd)
                     }
                     break
                 } else {
                     buffer.append(readBuffer, count: moreBytesRead)
+                    continue
                 }
             }
+
+            // Message processed — keep connection open for blocking events
+            // Wait until bridge disconnects (read returns 0)
+            while true {
+                let waitBytes = read(fd, readBuffer, 8192)
+                if waitBytes <= 0 { break }
+                // Bridge sent more data (unexpected), ignore
+            }
+            break
+        }
+
+        readBuffer.deallocate()
+        close(fd)
+        queue.async { [weak self] in
+            self?.clientSockets.removeAll { $0 == fd }
         }
     }
 
@@ -252,25 +265,42 @@ final class SocketServer {
                 }
             }
         } catch {
-            // Log parse error but don't crash
             print("[SocketServer] Parse error: \(error) for line: \(line.prefix(200))")
         }
     }
 
     private func sendResponse(_ response: SocketResponse, to fd: Int32) {
-        queue.async {
-            do {
-                let jsonString = try JSONLParser.encode(response) + "\n"
-                if let data = jsonString.data(using: .utf8) {
-                    data.withUnsafeBytes { ptr in
-                        if let base = ptr.baseAddress {
-                            _ = write(fd, base, data.count)
-                        }
-                    }
-                }
-            } catch {
-                print("[SocketServer] Encode error: \(error)")
+        // Build JSON with camelCase keys (Claude Code requirement)
+        var json: [String: Any] = ["id": response.id]
+
+        if let payload = response.response,
+           let output = payload.hookSpecificOutput {
+            var hookOutput: [String: Any] = [:]
+            if let name = output.hookEventName {
+                hookOutput["hookEventName"] = name
             }
+            if let decision = output.decision {
+                var d: [String: Any] = ["behavior": decision.behavior]
+                if let reason = decision.reason { d["reason"] = reason }
+                hookOutput["decision"] = d
+            }
+            if let option = output.selectedOption {
+                hookOutput["selectedOption"] = option
+            }
+            json["response"] = ["hookSpecificOutput": hookOutput]
+        }
+
+        do {
+            let data = try JSONSerialization.data(withJSONObject: json)
+            var out = data
+            out.append(UInt8(ascii: "\n"))
+            out.withUnsafeBytes { ptr in
+                if let base = ptr.baseAddress {
+                    _ = write(fd, base, out.count)
+                }
+            }
+        } catch {
+            print("[SocketServer] Response encode error: \(error)")
         }
     }
 }

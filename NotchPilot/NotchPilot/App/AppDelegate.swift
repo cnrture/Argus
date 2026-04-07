@@ -13,9 +13,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private static let onboardingCompletedKey = "onboardingCompleted"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        windowController = NotchWindowController(appState: appState)
+        windowController = NotchWindowController(appState: appState, settingsStore: settingsStore)
         windowController?.delegate = self
         windowController?.setup()
+
+        settingsStore.onScreenChanged = { [weak self] in
+            self?.windowController?.repositionPanel()
+        }
 
         // Start socket server
         socketServer.delegate = self
@@ -47,9 +51,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         false
     }
 
+    private var settingsWindow: NSWindow?
+
     func openSettings() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        if let existing = settingsWindow, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let settingsView = SettingsView(
+            settingsStore: settingsStore,
+            hookInstaller: hookInstaller
+        )
+
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 520, height: 420),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "NotchPilot Ayarları"
+        window.contentView = NSHostingView(rootView: settingsView)
+        window.center()
+        window.isReleasedWhenClosed = false
+        window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+
+        settingsWindow = window
     }
 
     // MARK: - Onboarding

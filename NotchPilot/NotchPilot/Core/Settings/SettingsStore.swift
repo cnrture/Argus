@@ -63,6 +63,14 @@ final class SettingsStore {
         didSet { UserDefaults.standard.set(autoSetupHooks, forKey: "autoSetupHooks") }
     }
 
+    // Monitor
+    var selectedScreenName: String? {
+        didSet { UserDefaults.standard.set(selectedScreenName, forKey: "selectedScreen") }
+    }
+
+    // Callback for when screen selection changes
+    var onScreenChanged: (() -> Void)?
+
     init() {
         let defaults = UserDefaults.standard
         launchAtLogin = defaults.bool(forKey: "launchAtLogin")
@@ -74,6 +82,7 @@ final class SettingsStore {
         soundEnabled = defaults.object(forKey: "soundEnabled") as? Bool ?? true
         soundVolume = defaults.object(forKey: "soundVolume") as? Float ?? 0.7
         autoSetupHooks = defaults.object(forKey: "autoSetupHooks") as? Bool ?? true
+        selectedScreenName = defaults.string(forKey: "selectedScreen")
 
         if let data = defaults.data(forKey: "soundEvents"),
            let decoded = try? JSONDecoder().decode([SoundEventConfig].self, from: data) {
