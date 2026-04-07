@@ -42,6 +42,9 @@ final class SettingsStore {
     var showBorder: Bool {
         didSet { UserDefaults.standard.set(showBorder, forKey: "showBorder") }
     }
+    var idleOpacity: Double {
+        didSet { UserDefaults.standard.set(idleOpacity, forKey: "idleOpacity") }
+    }
 
     // Sound
     var soundEnabled: Bool {
@@ -99,6 +102,7 @@ final class SettingsStore {
         accentColorName = defaults.string(forKey: "accentColor") ?? "orange"
         petStyle = PetStyle(rawValue: defaults.string(forKey: "petStyle") ?? "dot") ?? .dot
         showBorder = defaults.object(forKey: "showBorder") as? Bool ?? true
+        idleOpacity = defaults.object(forKey: "idleOpacity") as? Double ?? 0.45
         soundEnabled = defaults.object(forKey: "soundEnabled") as? Bool ?? true
         soundVolume = defaults.object(forKey: "soundVolume") as? Float ?? 0.7
         autoSetupHooks = defaults.object(forKey: "autoSetupHooks") as? Bool ?? true

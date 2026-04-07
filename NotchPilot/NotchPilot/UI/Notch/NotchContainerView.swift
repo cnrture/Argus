@@ -58,7 +58,7 @@ struct NotchContainerView: View {
                 accentColor: settingsStore?.accentColor ?? .orange,
                 showBorder: settingsStore?.showBorder ?? true
             )
-            .opacity(appState.isHovered ? 1.0 : 0.45)
+            .opacity(appState.isHovered ? 1.0 : (settingsStore?.idleOpacity ?? 0.45))
             .animation(.easeInOut(duration: 0.2), value: appState.isHovered)
             .offset(y: notchRect.height)
         }

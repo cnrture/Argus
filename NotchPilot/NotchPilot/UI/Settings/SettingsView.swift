@@ -287,6 +287,17 @@ private struct AppearanceTab: View {
                 }
 
                 Toggle("Notch kenar cizgisi", isOn: $store.showBorder)
+
+                HStack(spacing: 12) {
+                    Text("Beklemede saydamlik")
+                        .font(.system(size: 12))
+                    Slider(value: $store.idleOpacity, in: 0.1...1.0)
+                        .tint(store.accentColor)
+                    Text("\(Int(store.idleOpacity * 100))%")
+                        .font(.system(size: 11, design: .monospaced))
+                        .frame(width: 36, alignment: .trailing)
+                        .foregroundStyle(.secondary)
+                }
             }
 
             SettingsSection(title: "Durum Ikonu", icon: "pawprint.fill", color: .mint) {
