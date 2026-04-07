@@ -79,3 +79,38 @@ let catSpriteLayout = SpriteLayout(animations: [
     .init(name: "laydown", row: 5, startCol: 0, frameCount: 3),
     .init(name: "sleep",   row: 7, startCol: 0, frameCount: 2),
 ])
+
+/// Yatay strip sprite sheet'lerden frame'leri yükler (köpek formatı: animasyon başına ayrı dosya)
+final class StripSpriteAnimator {
+    let frames: [String: [NSImage]]
+
+    init?(prefix: String, frameHeight: CGFloat = 64) {
+        var result: [String: [NSImage]] = [:]
+        let animNames = ["idle", "run", "sit", "laydown", "sleep"]
+
+        for anim in animNames {
+            let fileName = "\(prefix)-\(anim)"
+            guard let url = Bundle.main.url(forResource: fileName, withExtension: "png")
+                    ?? Bundle.main.url(forResource: fileName, withExtension: "png", subdirectory: "Pets/Dog"),
+                  let source = NSImage(contentsOf: url),
+                  let cgImage = source.cgImage(forProposedRect: nil, context: nil, hints: nil) else { continue }
+
+            let frameWidth = frameHeight  // Kare frame varsayımı
+            let frameCount = Int(CGFloat(cgImage.width) / frameWidth)
+
+            var animFrames: [NSImage] = []
+            for i in 0..<frameCount {
+                let cropRect = CGRect(x: CGFloat(i) * frameWidth, y: 0, width: frameWidth, height: frameHeight)
+                if let cropped = cgImage.cropping(to: cropRect) {
+                    animFrames.append(NSImage(cgImage: cropped, size: NSSize(width: frameWidth, height: frameHeight)))
+                }
+            }
+            if !animFrames.isEmpty {
+                result[anim] = animFrames
+            }
+        }
+
+        guard !result.isEmpty else { return nil }
+        self.frames = result
+    }
+}

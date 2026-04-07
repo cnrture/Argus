@@ -83,14 +83,16 @@ final class DeskPetWindowController {
     }
 
     private var lastPetSize: Double = 32
+    private var lastPetType: String = "cat"
 
     private func updatePosition() {
         let dock = cachedDockBounds
         guard dock.width > 0 else { return }
 
-        // Pet size değişince panel yüksekliğini güncelle
-        if settingsStore.deskPetSize != lastPetSize {
+        // Pet size veya tipi değişince panel'i güncelle
+        if settingsStore.deskPetSize != lastPetSize || settingsStore.deskPetType != lastPetType {
             lastPetSize = settingsStore.deskPetSize
+            lastPetType = settingsStore.deskPetType
             updatePanelFrame()
         }
         let status = appState.activeSession?.status ?? .idle
@@ -120,9 +122,13 @@ final class DeskPetWindowController {
         guard let screen = NSScreen.main else { return .zero }
         let screenFrame = screen.frame
         let dockH = dockHeight(screen)
-        // Pet'in altı dock'un üstüne otursun — boyut ne olursa olsun
-        let panelHeight = petH + 10
-        let panelY = screenFrame.origin.y + dockH - (petH * 0.3)
+        let panelHeight = petH + 16
+
+        // Köpek sprite'ları 64px native, kedi 32px — offset oranları farklı
+        let isDog = settingsStore.deskPetType == "dog"
+        let offsetRatio: CGFloat = isDog ? 0.15 : 0.3
+        let panelY = screenFrame.origin.y + dockH - (petH * offsetRatio)
+
         return NSRect(x: dockRect.origin.x, y: panelY, width: dockRect.width, height: panelHeight)
     }
 
@@ -203,7 +209,7 @@ struct DeskPetContainer: View {
                     status: status,
                     petStyle: settingsStore.petStyle,
                     accentColor: settingsStore.accentColor,
-                    spriteSheet: settingsStore.catColor,
+                    spriteSheet: settingsStore.deskPetSpriteSheet,
                     petSize: CGFloat(settingsStore.deskPetSize)
                 )
                 .scaleEffect(x: petState.facingRight ? 1 : -1, y: 1)

@@ -5,7 +5,7 @@ struct DeskPet: View {
     let status: SessionStatus
     let petStyle: PetStyle
     let accentColor: Color
-    let spriteSheet: String
+    let spriteSheet: String  // "black-cat", "golden", "husky" etc.
     var petSize: CGFloat = 32
 
     @State private var frameIndex = 0
@@ -15,6 +15,8 @@ struct DeskPet: View {
     @State private var animFrames: [NSImage] = []
     @State private var allFrames: [String: [NSImage]] = [:]
 
+    private var isCat: Bool { spriteSheet.contains("cat") }
+
     var body: some View {
         Group {
             if frameIndex < animFrames.count {
@@ -23,8 +25,8 @@ struct DeskPet: View {
                     .resizable()
                     .frame(width: petSize, height: petSize)
             } else {
-                Text("🐱")
-                    .font(.system(size: 18))
+                Text(isCat ? "🐱" : "🐶")
+                    .font(.system(size: petSize * 0.6))
             }
         }
         .offset(y: jumpY)
@@ -45,8 +47,8 @@ struct DeskPet: View {
 
     private var currentAnimName: String {
         switch status {
-        case .working, .compacting: "idle"   // Yürüme animasyonu, hız farkı timer'da
-        case .idle:                 "idle"
+        case .working, .compacting: isCat ? "idle" : "run"
+        case .idle:                 isCat ? "idle" : "run"  // Köpekte idle=durma, run=yürüme (yavaş oynatılır)
         case .waiting:              "sit"
         case .error:                "laydown"
         case .ended:                "sleep"
@@ -54,18 +56,25 @@ struct DeskPet: View {
     }
 
     private func loadSprites() {
-        guard let animator = SpriteSheetAnimator(
-            sheetName: spriteSheet,
-            gridSize: CGSize(width: 32, height: 32),
-            layout: catSpriteLayout
-        ) else { return }
-
-        allFrames = animator.frames
+        if isCat {
+            guard let animator = SpriteSheetAnimator(
+                sheetName: spriteSheet,
+                gridSize: CGSize(width: 32, height: 32),
+                layout: catSpriteLayout
+            ) else { return }
+            allFrames = animator.frames
+        } else {
+            guard let animator = StripSpriteAnimator(
+                prefix: spriteSheet,
+                frameHeight: 64
+            ) else { return }
+            allFrames = animator.frames
+        }
         switchAnimation()
     }
 
     private func switchAnimation() {
-        animFrames = allFrames[currentAnimName] ?? []
+        animFrames = allFrames[currentAnimName] ?? allFrames["idle"] ?? []
         frameIndex = 0
     }
 

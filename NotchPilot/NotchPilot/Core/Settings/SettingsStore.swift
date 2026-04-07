@@ -65,6 +65,16 @@ final class SettingsStore {
     var catColor: String {
         didSet { UserDefaults.standard.set(catColor, forKey: "catColor") }
     }
+    var deskPetType: String {  // "cat" or "dog"
+        didSet { UserDefaults.standard.set(deskPetType, forKey: "deskPetType") }
+    }
+    var dogBreed: String {
+        didSet { UserDefaults.standard.set(dogBreed, forKey: "dogBreed") }
+    }
+
+    var deskPetSpriteSheet: String {
+        deskPetType == "dog" ? dogBreed : catColor
+    }
     var deskPetEnabled: Bool {
         didSet { UserDefaults.standard.set(deskPetEnabled, forKey: "deskPetEnabled") }
     }
@@ -157,6 +167,8 @@ final class SettingsStore {
         petStyle = PetStyle(rawValue: defaults.string(forKey: "petStyle") ?? "dot") ?? .dot
         showBorder = defaults.object(forKey: "showBorder") as? Bool ?? true
         catColor = defaults.string(forKey: "catColor") ?? "black-cat"
+        deskPetType = defaults.string(forKey: "deskPetType") ?? "cat"
+        dogBreed = defaults.string(forKey: "dogBreed") ?? "golden"
         deskPetEnabled = defaults.object(forKey: "deskPetEnabled") as? Bool ?? true
         deskPetSize = defaults.object(forKey: "deskPetSize") as? Double ?? 32
         idleOpacity = defaults.object(forKey: "idleOpacity") as? Double ?? 0.45

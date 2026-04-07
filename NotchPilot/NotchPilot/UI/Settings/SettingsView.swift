@@ -419,6 +419,13 @@ private struct AppearanceTab: View {
                 Toggle("Desk Pet aktif", isOn: $store.deskPetEnabled)
 
                 if store.deskPetEnabled {
+                    // Pet tipi
+                    Picker("Hayvan", selection: $store.deskPetType) {
+                        Text("Kedi").tag("cat")
+                        Text("Kopek").tag("dog")
+                    }
+                    .pickerStyle(.segmented)
+
                     HStack(spacing: 12) {
                         Text("Boyut")
                             .font(.system(size: 12))
@@ -432,8 +439,35 @@ private struct AppearanceTab: View {
                 }
             }
 
-            if store.deskPetEnabled {
-            SettingsSection(title: "Pet Rengi", icon: "paintpalette.fill", color: .orange) {
+            if store.deskPetEnabled && store.deskPetType == "dog" {
+            SettingsSection(title: "Kopek Irki", icon: "dog.fill", color: .brown) {
+                HStack(spacing: 10) {
+                    ForEach(dogBreeds, id: \.name) { dog in
+                        Button(action: { store.dogBreed = dog.name }) {
+                            VStack(spacing: 4) {
+                                dogPreview(dog.name)
+                                Text(dog.display)
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(store.dogBreed == dog.name ? store.accentColor.opacity(0.15) : .clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(store.dogBreed == dog.name ? store.accentColor : .clear, lineWidth: 1.5)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            }
+
+            if store.deskPetEnabled && store.deskPetType == "cat" {
+            SettingsSection(title: "Kedi Rengi", icon: "cat.fill", color: .orange) {
                 HStack(spacing: 10) {
                     ForEach(catColors, id: \.name) { cat in
                         Button(action: { store.catColor = cat.name }) {
@@ -469,6 +503,37 @@ private struct AppearanceTab: View {
             }
             } // if deskPetEnabled
         }
+    }
+
+    @ViewBuilder
+    private func dogPreview(_ breed: String) -> some View {
+        let fileName = "\(breed)-idle"
+        if let url = Bundle.main.url(forResource: fileName, withExtension: "png"),
+           let img = NSImage(contentsOf: url),
+           let cgImg = img.cgImage(forProposedRect: nil, context: nil, hints: nil),
+           let cropped = cgImg.cropping(to: CGRect(x: 0, y: 0, width: 64, height: 64)) {
+            Image(nsImage: NSImage(cgImage: cropped, size: NSSize(width: 64, height: 64)))
+                .interpolation(.none)
+                .resizable()
+                .frame(width: 32, height: 32)
+        } else {
+            Text("🐶")
+                .font(.system(size: 18))
+                .frame(width: 32, height: 32)
+        }
+    }
+
+    private var dogBreeds: [(name: String, display: String)] {
+        [
+            ("golden", "Golden"),
+            ("husky", "Husky"),
+            ("dalmatian", "Dalmatian"),
+            ("rottweiler", "Rottweiler"),
+            ("canecorso", "Cane Corso"),
+            ("dogoargentino", "Dogo Argentino"),
+            ("labrador", "Labrador"),
+            ("pharaoh", "Pharaoh Hound"),
+        ]
     }
 
     private var catColors: [(name: String, display: String)] {
