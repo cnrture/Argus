@@ -1,0 +1,161 @@
+/* Tabs */
+"settings.tab.general" = "通用";
+"settings.tab.appearance" = "外观";
+"settings.tab.pets" = "宠物";
+"settings.tab.sounds" = "声音";
+"settings.tab.shortcuts" = "快捷键";
+"settings.tab.hooks" = "Hooks";
+
+/* General */
+"settings.section.startup" = "启动";
+"settings.general.autoLaunch" = "登录时启动";
+"settings.section.language" = "语言";
+"language.system" = "系统";
+"settings.section.behavior" = "行为";
+"settings.behavior.showInFullscreen" = "在全屏应用中显示";
+"settings.behavior.nativeNotifications" = "发送 macOS 通知";
+"settings.behavior.idleTimeout" = "空闲超时";
+"settings.behavior.timeout.5min" = "5 分钟";
+"settings.behavior.timeout.10min" = "10 分钟";
+"settings.behavior.timeout.15min" = "15 分钟";
+"settings.behavior.timeout.30min" = "30 分钟";
+"settings.section.monitor" = "显示器";
+"settings.monitor.screen" = "屏幕";
+"settings.monitor.auto" = "自动（内置显示屏）";
+"settings.section.accessibility" = "辅助功能";
+"settings.accessibility.enabled" = "Accessibility 访问已启用";
+"settings.accessibility.required" = "需要 Accessibility 访问权限";
+"settings.section.voiceCommand" = "语音命令";
+"settings.voiceCommand.enable" = "启用语音命令";
+"settings.voiceCommand.description" = "说\"allow\"、\"deny\"或\"allow all\"来回应。需要麦克风权限。在设备上处理，不发送任何数据。";
+"settings.section.update" = "更新";
+"settings.button.checkUpdate" = "检查更新";
+
+/* Appearance */
+"settings.section.theme" = "主题";
+"settings.section.accentColor" = "强调色";
+"settings.appearance.showBorder" = "刘海边框线";
+"settings.appearance.idleOpacity" = "空闲时不透明度";
+"settings.section.compactBar" = "Compact Bar";
+"settings.compactBar.width" = "宽度";
+"settings.compactBar.height" = "高度";
+"settings.compactBar.cornerRadius" = "圆角半径";
+"settings.compactBar.fontSize" = "字体大小";
+"settings.compactBar.horizontalOffset" = "水平位置";
+"settings.compactBar.offset.center" = "居中";
+"settings.compactBar.offset.left" = "靠左";
+"settings.compactBar.offset.right" = "靠右";
+
+/* Bar Width */
+"barWidth.narrow" = "窄";
+"barWidth.normal" = "正常";
+"barWidth.wide" = "宽";
+
+/* Pets */
+"settings.section.notchStatusIcon" = "刘海状态图标";
+"settings.section.deskPet" = "Desk Pet";
+"settings.deskPet.enabled" = "启用 Desk Pet";
+"settings.deskPet.type" = "动物";
+"deskpet.type.cat" = "猫";
+"deskpet.type.dog" = "狗";
+"settings.deskPet.size" = "大小";
+"settings.section.dogBreed" = "犬种";
+"settings.section.catColor" = "猫的颜色";
+
+/* Sounds */
+"settings.sounds.general" = "通用";
+"settings.sounds.enabled" = "启用声音";
+"settings.sounds.eventSounds" = "事件声音";
+"settings.sounds.system" = "系统";
+"sound.sessionStarted" = "会话已开始";
+"sound.sessionEnded" = "会话已结束";
+"sound.permissionNeeded" = "需要权限";
+"sound.questionAsked" = "收到提问";
+"sound.planReady" = "计划就绪";
+"sound.taskCompleted" = "任务完成";
+"sound.error" = "发生错误";
+"sound.idle" = "空闲";
+
+/* Shortcuts */
+"settings.section.permissionShortcuts" = "权限快捷键";
+"shortcuts.allow" = "允许";
+"shortcuts.deny" = "拒绝";
+"settings.section.questionShortcuts" = "问题快捷键";
+"shortcuts.option1" = "选项 1";
+"shortcuts.option2" = "选项 2";
+"shortcuts.option3" = "选项 3";
+"settings.section.panel" = "面板";
+"shortcuts.togglePanel" = "切换面板";
+
+/* Hooks */
+"settings.section.hookManagement" = "Hook 管理";
+"settings.hooks.autoSetup" = "自动安装 Hooks";
+"settings.hooks.installAll" = "全部安装";
+"settings.hooks.removeAll" = "全部移除";
+"settings.section.agentStatus" = "代理状态";
+
+/* Permission */
+"permission.required" = "需要权限";
+"permission.deny" = "拒绝";
+"permission.allow" = "允许";
+"permission.allowAll" = "全部允许";
+"permission.tool.bash" = "想要运行 Bash 工具：";
+"permission.tool.generic" = "想要使用工具";
+
+/* Question */
+"question.label" = "问题";
+"question.placeholder" = "输入你的回答...";
+"question.submit" = "发送";
+
+/* Plan */
+"plan.reviewLabel" = "计划审查";
+"plan.feedbackPlaceholder" = "写反馈...（可选）";
+"plan.reject" = "拒绝";
+"plan.approve" = "批准";
+
+/* Status */
+"status.completed" = "已完成";
+"status.waitingForResponse" = "等待响应";
+
+/* Actions */
+"action.jumpToTerminal" = "跳转到终端";
+"action.go" = "执行";
+"action.ok" = "好";
+"action.settings" = "设置";
+"action.quit" = "退出";
+
+/* Errors */
+"error.rateLimit" = "Rate Limit";
+"error.authFailed" = "认证失败";
+"error.billing" = "计费错误";
+"error.server" = "服务器错误";
+"error.maxTokens" = "超出 Token 限制";
+"error.generic" = "错误";
+
+/* Onboarding */
+"onboarding.welcome" = "欢迎使用 NotchPilot！";
+"onboarding.setupQuestion" = "是否自动安装 Claude Code Hooks？";
+"onboarding.setupInfo" = "这将把 NotchPilot Hooks 添加到 ~/.claude/settings.json。您现有的设置将被保留并备份。";
+"onboarding.skip" = "不，我手动设置";
+"onboarding.install" = "安装";
+
+/* Session */
+"session.idle" = "15+ 分钟未活动";
+
+/* Pet Names */
+"pet.dot" = "小点";
+"pet.cat" = "猫";
+"pet.dog" = "狗";
+"pet.bird" = "鸟";
+"pet.robot" = "机器人";
+"pet.ghost" = "幽灵";
+"pet.alien" = "外星人";
+
+/* Theme */
+"theme.dark" = "Dark";
+"theme.light" = "Light";
+"theme.system" = "System";
+
+/* Prompt */
+
+/* Notification */

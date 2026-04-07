@@ -49,7 +49,7 @@ struct CompletionCardView: View {
             }
 
             // Duration
-            Text("Tamamlandi")
+            Text(L10n["status.completed"])
                 .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(.green.opacity(0.7))
 
@@ -58,7 +58,7 @@ struct CompletionCardView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.up.forward.square")
                         .font(.system(size: 10))
-                    Text("Terminal'e Git")
+                    Text(L10n["action.jumpToTerminal"])
                         .font(.system(size: 11, weight: .medium))
                 }
                 .foregroundStyle(.white.opacity(0.7))

@@ -43,7 +43,7 @@ struct ErrorCardView: View {
                 .padding(.horizontal, 16)
 
             Button(action: { onDismiss?() }) {
-                Text("Tamam")
+                Text(L10n["action.ok"])
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.white.opacity(0.7))
                     .padding(.horizontal, 16)
@@ -84,12 +84,12 @@ struct ErrorCardView: View {
 
     private var errorTitle: String {
         switch errorType {
-        case "rate_limit":             "Rate Limit"
-        case "authentication_failed":  "Kimlik Dogrulama Hatasi"
-        case "billing_error":          "Fatura Hatasi"
-        case "server_error":           "Sunucu Hatasi"
-        case "max_output_tokens":      "Token Limiti Asildi"
-        default:                       "Hata"
+        case "rate_limit":             L10n["error.rateLimit"]
+        case "authentication_failed":  L10n["error.authFailed"]
+        case "billing_error":          L10n["error.billing"]
+        case "server_error":           L10n["error.server"]
+        case "max_output_tokens":      L10n["error.maxTokens"]
+        default:                       L10n["error.generic"]
         }
     }
 }

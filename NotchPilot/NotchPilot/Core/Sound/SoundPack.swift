@@ -12,14 +12,14 @@ enum SoundTrigger: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .sessionStarted:   "Oturum Başladı"
-        case .sessionEnded:     "Oturum Bitti"
-        case .permissionNeeded: "İzin Bekliyor"
-        case .questionAsked:    "Soru Soruldu"
-        case .planReady:        "Plan Hazır"
-        case .taskCompleted:    "Görev Tamamlandı"
-        case .error:            "Hata Oluştu"
-        case .idle:             "Hareketsiz"
+        case .sessionStarted:   L10n["sound.sessionStarted"]
+        case .sessionEnded:     L10n["sound.sessionEnded"]
+        case .permissionNeeded: L10n["sound.permissionNeeded"]
+        case .questionAsked:    L10n["sound.questionAsked"]
+        case .planReady:        L10n["sound.planReady"]
+        case .taskCompleted:    L10n["sound.taskCompleted"]
+        case .error:            L10n["sound.error"]
+        case .idle:             L10n["sound.idle"]
         }
     }
 

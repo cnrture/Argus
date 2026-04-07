@@ -39,7 +39,7 @@ struct QuestionView: View {
                 Text(session.title)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
-                Text("— Soru")
+                Text("— \(L10n["question.label"])")
                     .font(.system(size: 13))
                     .foregroundStyle(.orange)
                 Spacer()
@@ -91,7 +91,7 @@ struct QuestionView: View {
 
     private var freeTextView: some View {
         HStack(spacing: 8) {
-            TextField("Yanıtınızı yazın...", text: $freeTextAnswer)
+            TextField(L10n["question.placeholder"], text: $freeTextAnswer)
                 .textFieldStyle(.plain)
                 .font(.system(size: 12))
                 .foregroundStyle(.white)
@@ -102,7 +102,7 @@ struct QuestionView: View {
                 .onSubmit { submitFreeText() }
 
             Button(action: submitFreeText) {
-                Text("Gönder")
+                Text(L10n["question.submit"])
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)

@@ -44,7 +44,7 @@ struct ExpandedOverviewView: View {
             // Bottom bar
             HStack {
                 Button(action: { onOpenSettings?() }) {
-                    Label("Ayarlar", systemImage: "gearshape")
+                    Label(L10n["action.settings"], systemImage: "gearshape")
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.6))
                 }
@@ -53,7 +53,7 @@ struct ExpandedOverviewView: View {
                 Spacer()
 
                 Button(action: { onQuit?() }) {
-                    Label("Çıkış", systemImage: "power")
+                    Label(L10n["action.quit"], systemImage: "power")
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.4))
                 }

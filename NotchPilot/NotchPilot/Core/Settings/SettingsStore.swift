@@ -6,9 +6,9 @@ enum BarWidth: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .narrow: "Dar"
-        case .normal: "Normal"
-        case .wide:   "Genis"
+        case .narrow: L10n["barWidth.narrow"]
+        case .normal: L10n["barWidth.normal"]
+        case .wide:   L10n["barWidth.wide"]
         }
     }
 
@@ -26,9 +26,9 @@ enum AppTheme: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .dark:   "Dark"
-        case .light:  "Light"
-        case .system: "System"
+        case .dark:   L10n["theme.dark"]
+        case .light:  L10n["theme.light"]
+        case .system: L10n["theme.system"]
         }
     }
 }

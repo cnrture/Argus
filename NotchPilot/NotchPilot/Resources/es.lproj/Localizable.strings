@@ -1,0 +1,161 @@
+/* Tabs */
+"settings.tab.general" = "General";
+"settings.tab.appearance" = "Apariencia";
+"settings.tab.pets" = "Mascotas";
+"settings.tab.sounds" = "Sonidos";
+"settings.tab.shortcuts" = "Atajos";
+"settings.tab.hooks" = "Hooks";
+
+/* General */
+"settings.section.startup" = "Inicio";
+"settings.general.autoLaunch" = "Abrir al iniciar sesión";
+"settings.section.language" = "Idioma";
+"language.system" = "Sistema";
+"settings.section.behavior" = "Comportamiento";
+"settings.behavior.showInFullscreen" = "Mostrar en pantalla completa";
+"settings.behavior.nativeNotifications" = "Enviar notificaciones de macOS";
+"settings.behavior.idleTimeout" = "Tiempo de inactividad";
+"settings.behavior.timeout.5min" = "5 min";
+"settings.behavior.timeout.10min" = "10 min";
+"settings.behavior.timeout.15min" = "15 min";
+"settings.behavior.timeout.30min" = "30 min";
+"settings.section.monitor" = "Monitor";
+"settings.monitor.screen" = "Pantalla";
+"settings.monitor.auto" = "Automático (pantalla integrada)";
+"settings.section.accessibility" = "Accesibilidad";
+"settings.accessibility.enabled" = "Acceso de Accessibility activado";
+"settings.accessibility.required" = "Acceso de Accessibility requerido";
+"settings.section.voiceCommand" = "Comando de voz";
+"settings.voiceCommand.enable" = "Activar comandos de voz";
+"settings.voiceCommand.description" = "Diga \"allow\", \"deny\" o \"allow all\" para responder. Requiere permiso de micrófono. Se procesa en el dispositivo, no se envían datos.";
+"settings.section.update" = "Actualización";
+"settings.button.checkUpdate" = "Buscar actualizaciones";
+
+/* Appearance */
+"settings.section.theme" = "Tema";
+"settings.section.accentColor" = "Color de acento";
+"settings.appearance.showBorder" = "Línea de borde del notch";
+"settings.appearance.idleOpacity" = "Opacidad en inactividad";
+"settings.section.compactBar" = "Compact Bar";
+"settings.compactBar.width" = "Ancho";
+"settings.compactBar.height" = "Alto";
+"settings.compactBar.cornerRadius" = "Radio de esquina";
+"settings.compactBar.fontSize" = "Tamaño de fuente";
+"settings.compactBar.horizontalOffset" = "Posición horizontal";
+"settings.compactBar.offset.center" = "Centro";
+"settings.compactBar.offset.left" = "Izquierda";
+"settings.compactBar.offset.right" = "Derecha";
+
+/* Bar Width */
+"barWidth.narrow" = "Estrecho";
+"barWidth.normal" = "Normal";
+"barWidth.wide" = "Ancho";
+
+/* Pets */
+"settings.section.notchStatusIcon" = "Icono de estado del notch";
+"settings.section.deskPet" = "Desk Pet";
+"settings.deskPet.enabled" = "Desk Pet activado";
+"settings.deskPet.type" = "Animal";
+"deskpet.type.cat" = "Gato";
+"deskpet.type.dog" = "Perro";
+"settings.deskPet.size" = "Tamaño";
+"settings.section.dogBreed" = "Raza de perro";
+"settings.section.catColor" = "Color del gato";
+
+/* Sounds */
+"settings.sounds.general" = "General";
+"settings.sounds.enabled" = "Sonidos activados";
+"settings.sounds.eventSounds" = "Sonidos de eventos";
+"settings.sounds.system" = "Sistema";
+"sound.sessionStarted" = "Sesión iniciada";
+"sound.sessionEnded" = "Sesión finalizada";
+"sound.permissionNeeded" = "Permiso necesario";
+"sound.questionAsked" = "Pregunta realizada";
+"sound.planReady" = "Plan listo";
+"sound.taskCompleted" = "Tarea completada";
+"sound.error" = "Error ocurrido";
+"sound.idle" = "Inactivo";
+
+/* Shortcuts */
+"settings.section.permissionShortcuts" = "Atajos de permisos";
+"shortcuts.allow" = "Permitir";
+"shortcuts.deny" = "Denegar";
+"settings.section.questionShortcuts" = "Atajos de preguntas";
+"shortcuts.option1" = "Opción 1";
+"shortcuts.option2" = "Opción 2";
+"shortcuts.option3" = "Opción 3";
+"settings.section.panel" = "Panel";
+"shortcuts.togglePanel" = "Mostrar/ocultar panel";
+
+/* Hooks */
+"settings.section.hookManagement" = "Gestión de Hooks";
+"settings.hooks.autoSetup" = "Instalar hooks automáticamente";
+"settings.hooks.installAll" = "Instalar todos";
+"settings.hooks.removeAll" = "Eliminar todos";
+"settings.section.agentStatus" = "Estado del agente";
+
+/* Permission */
+"permission.required" = "Permiso requerido";
+"permission.deny" = "Denegar";
+"permission.allow" = "Permitir";
+"permission.allowAll" = "Permitir todo";
+"permission.tool.bash" = "Quiere ejecutar Bash:";
+"permission.tool.generic" = "quiere usar herramienta";
+
+/* Question */
+"question.label" = "Pregunta";
+"question.placeholder" = "Escribe tu respuesta...";
+"question.submit" = "Enviar";
+
+/* Plan */
+"plan.reviewLabel" = "Revisar plan";
+"plan.feedbackPlaceholder" = "Escribir comentarios... (opcional)";
+"plan.reject" = "Rechazar";
+"plan.approve" = "Aprobar";
+
+/* Status */
+"status.completed" = "Completado";
+"status.waitingForResponse" = "Esperando respuesta";
+
+/* Actions */
+"action.jumpToTerminal" = "Ir al Terminal";
+"action.go" = "Ir";
+"action.ok" = "OK";
+"action.settings" = "Ajustes";
+"action.quit" = "Salir";
+
+/* Errors */
+"error.rateLimit" = "Rate Limit";
+"error.authFailed" = "Autenticación fallida";
+"error.billing" = "Error de facturación";
+"error.server" = "Error del servidor";
+"error.maxTokens" = "Límite de tokens excedido";
+"error.generic" = "Error";
+
+/* Onboarding */
+"onboarding.welcome" = "¡Bienvenido a NotchPilot!";
+"onboarding.setupQuestion" = "¿Desea instalar automáticamente los hooks de Claude Code?";
+"onboarding.setupInfo" = "Esto agregará los hooks de NotchPilot a ~/.claude/settings.json. Sus ajustes existentes se conservarán y se hará una copia de seguridad.";
+"onboarding.skip" = "No, lo configuraré manualmente";
+"onboarding.install" = "Instalar";
+
+/* Session */
+"session.idle" = "15+ min inactivo";
+
+/* Pet Names */
+"pet.dot" = "Punto";
+"pet.cat" = "Gato";
+"pet.dog" = "Perro";
+"pet.bird" = "Pájaro";
+"pet.robot" = "Robot";
+"pet.ghost" = "Fantasma";
+"pet.alien" = "Alien";
+
+/* Theme */
+"theme.dark" = "Dark";
+"theme.light" = "Light";
+"theme.system" = "System";
+
+/* Prompt */
+
+/* Notification */

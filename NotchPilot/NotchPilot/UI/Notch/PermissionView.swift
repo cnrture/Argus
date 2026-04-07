@@ -22,7 +22,7 @@ struct PermissionView: View {
                 Text(session.title)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
-                Text("— İzin Gerekli")
+                Text("— \(L10n["permission.required"])")
                     .font(.system(size: 13))
                     .foregroundStyle(.orange)
                 Spacer()
@@ -44,15 +44,15 @@ struct PermissionView: View {
             HStack(spacing: 8) {
                 Spacer()
 
-                permButton("Reddet", icon: "xmark", shortcut: "⌘N", color: .red) {
+                permButton(L10n["permission.deny"], icon: "xmark", shortcut: "⌘N", color: .red) {
                     handleDeny()
                 }
 
-                permButton("İzin Ver", icon: "checkmark", shortcut: "⌘Y", color: .green) {
+                permButton(L10n["permission.allow"], icon: "checkmark", shortcut: "⌘Y", color: .green) {
                     handleAllow()
                 }
 
-                permButton("Hepsine İzin Ver", icon: "checkmark.circle.fill", shortcut: nil, color: .blue) {
+                permButton(L10n["permission.allowAll"], icon: "checkmark.circle.fill", shortcut: nil, color: .blue) {
                     handleAllowAll()
                 }
             }
@@ -104,7 +104,7 @@ struct PermissionView: View {
         switch permission.toolName {
         case "Bash":
             VStack(alignment: .leading, spacing: 6) {
-                Text("Bash aracını çalıştırmak istiyor:")
+                Text(L10n["permission.tool.bash"])
                     .font(.system(size: 12))
                     .foregroundStyle(.white.opacity(0.7))
 
@@ -134,7 +134,7 @@ struct PermissionView: View {
                 .foregroundStyle(.white.opacity(0.8))
 
         default:
-            Text("\(permission.toolName) aracını kullanmak istiyor")
+            Text("\(permission.toolName) \(L10n["permission.tool.generic"])")
                 .font(.system(size: 12))
                 .foregroundStyle(.white.opacity(0.7))
         }

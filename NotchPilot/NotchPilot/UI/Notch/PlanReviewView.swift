@@ -23,7 +23,7 @@ struct PlanReviewView: View {
                 Text(session.title)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.white)
-                Text("— Plan İnceleme")
+                Text("— \(L10n["plan.reviewLabel"])")
                     .font(.system(size: 13))
                     .foregroundStyle(.orange)
                 Spacer()
@@ -39,7 +39,7 @@ struct PlanReviewView: View {
             .frame(maxHeight: 300)
 
             // Feedback field
-            TextField("Geri bildirim yazın... (opsiyonel)", text: $feedback)
+            TextField(L10n["plan.feedbackPlaceholder"], text: $feedback)
                 .textFieldStyle(.plain)
                 .font(.system(size: 12))
                 .foregroundStyle(.white)
@@ -65,7 +65,7 @@ struct PlanReviewView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "xmark")
                             .font(.system(size: 10, weight: .bold))
-                        Text("Reddet")
+                        Text(L10n["plan.reject"])
                             .font(.system(size: 12, weight: .medium))
                         Text("(⌘N)")
                             .font(.system(size: 10))
@@ -93,7 +93,7 @@ struct PlanReviewView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "checkmark")
                             .font(.system(size: 10, weight: .bold))
-                        Text("Onayla")
+                        Text(L10n["plan.approve"])
                             .font(.system(size: 12, weight: .medium))
                         Text("(⌘Y)")
                             .font(.system(size: 10))

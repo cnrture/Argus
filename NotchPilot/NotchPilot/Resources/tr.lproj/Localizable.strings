@@ -157,8 +157,5 @@
 "theme.system" = "System";
 
 /* Prompt */
-"prompt.description" = "Prompt yaz, mevcut terminal'e gönderilecek";
-"prompt.placeholder" = "Prompt...";
 
 /* Notification */
-"notification.claude.thinking" = "Claude düşünüyor...";

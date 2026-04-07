@@ -14,15 +14,15 @@ struct OnboardingView: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.orange)
 
-            Text("NotchPilot'a Hoş Geldin!")
+            Text(L10n["onboarding.welcome"])
                 .font(.title2.bold())
 
-            Text("Claude Code hook'larını otomatik kurmak ister misin?")
+            Text(L10n["onboarding.setupQuestion"])
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
-            Text("Bu işlem ~/.claude/settings.json dosyasına NotchPilot hook'larını ekler. Mevcut ayarlarına dokunulmaz ve yedek alınır.")
+            Text(L10n["onboarding.setupInfo"])
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
@@ -35,7 +35,7 @@ struct OnboardingView: View {
             }
 
             HStack(spacing: 16) {
-                Button("Hayır, elle kuracağım") {
+                Button(L10n["onboarding.skip"]) {
                     onSkip()
                 }
                 .buttonStyle(.bordered)
@@ -49,7 +49,7 @@ struct OnboardingView: View {
                             .controlSize(.small)
                             .frame(width: 60)
                     } else {
-                        Text("Kur")
+                        Text(L10n["onboarding.install"])
                             .frame(width: 60)
                     }
                 }

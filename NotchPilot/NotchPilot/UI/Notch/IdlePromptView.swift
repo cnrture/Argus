@@ -23,7 +23,7 @@ struct IdlePromptView: View {
                 .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: pulse)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("Yanit Bekleniyor")
+                Text(L10n["status.waitingForResponse"])
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(.orange)
                 Text(sessionTitle)
@@ -37,7 +37,7 @@ struct IdlePromptView: View {
                 HStack(spacing: 3) {
                     Image(systemName: "arrow.up.forward.square")
                         .font(.system(size: 9))
-                    Text("Git")
+                    Text(L10n["action.go"])
                         .font(.system(size: 10, weight: .medium))
                 }
                 .foregroundStyle(.orange)

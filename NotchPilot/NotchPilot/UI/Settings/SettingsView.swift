@@ -199,15 +199,15 @@ private struct GeneralTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "Başlangıç", icon: "power", color: .green) {
+            SettingsSection(title: L10n["settings.section.startup"], icon: "power", color: .green) {
                 LaunchAtLogin.Toggle {
-                    Text("Giriş'te otomatik başlat")
+                    Text(L10n["settings.general.autoLaunch"])
                 }
             }
 
-            SettingsSection(title: "Dil", icon: "globe", color: .cyan) {
+            SettingsSection(title: L10n["settings.section.language"], icon: "globe", color: .cyan) {
                 Picker("", selection: $store.language) {
-                    Text("Sistem").tag("system")
+                    Text(L10n["language.system"]).tag("system")
                     Divider()
                     Text("Turkce").tag("tr")
                     Text("English").tag("en")
@@ -221,44 +221,44 @@ private struct GeneralTab: View {
                 }
             }
 
-            SettingsSection(title: "Davranış", icon: "slider.horizontal.3", color: .blue) {
-                Toggle("Fullscreen uygulamalarda göster", isOn: $store.showInFullscreen)
-                Toggle("macOS bildirimleri gönder", isOn: $store.nativeNotificationsEnabled)
+            SettingsSection(title: L10n["settings.section.behavior"], icon: "slider.horizontal.3", color: .blue) {
+                Toggle(L10n["settings.behavior.showInFullscreen"], isOn: $store.showInFullscreen)
+                Toggle(L10n["settings.behavior.nativeNotifications"], isOn: $store.nativeNotificationsEnabled)
 
                 HStack {
-                    Text("Hareketsizlik süresi")
+                    Text(L10n["settings.behavior.idleTimeout"])
                     Spacer()
                     Picker("", selection: $store.idleTimeout) {
-                        Text("5 dk").tag(TimeInterval(300))
-                        Text("10 dk").tag(TimeInterval(600))
-                        Text("15 dk").tag(TimeInterval(900))
-                        Text("30 dk").tag(TimeInterval(1800))
+                        Text(L10n["settings.behavior.timeout.5min"]).tag(TimeInterval(300))
+                        Text(L10n["settings.behavior.timeout.10min"]).tag(TimeInterval(600))
+                        Text(L10n["settings.behavior.timeout.15min"]).tag(TimeInterval(900))
+                        Text(L10n["settings.behavior.timeout.30min"]).tag(TimeInterval(1800))
                     }
                     .frame(width: 100)
                 }
             }
 
-            SettingsSection(title: "Monitör", icon: "display", color: .cyan) {
-                Picker("Ekran", selection: Binding(
+            SettingsSection(title: L10n["settings.section.monitor"], icon: "display", color: .cyan) {
+                Picker(L10n["settings.monitor.screen"], selection: Binding(
                     get: { store.selectedScreenName ?? "auto" },
                     set: { newValue in
                         store.selectedScreenName = newValue == "auto" ? nil : newValue
                         store.onScreenChanged?()
                     }
                 )) {
-                    Text("Otomatik (dahili ekran)").tag("auto")
+                    Text(L10n["settings.monitor.auto"]).tag("auto")
                     ForEach(NSScreen.screens, id: \.displayID) { screen in
                         Text(screen.localizedName).tag(screen.localizedName)
                     }
                 }
             }
 
-            SettingsSection(title: "Erişilebilirlik", icon: "hand.raised.fill", color: .orange) {
+            SettingsSection(title: L10n["settings.section.accessibility"], icon: "hand.raised.fill", color: .orange) {
                 let trusted = AXIsProcessTrusted()
                 HStack {
                     Image(systemName: trusted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                         .foregroundStyle(trusted ? .green : .orange)
-                    Text(trusted ? "Accessibility erişimi aktif" : "Accessibility erişimi gerekli")
+                    Text(trusted ? L10n["settings.accessibility.enabled"] : L10n["settings.accessibility.required"])
                     Spacer()
                     if !trusted {
                         Button("System Preferences") {
@@ -270,19 +270,19 @@ private struct GeneralTab: View {
                 }
             }
 
-            SettingsSection(title: "Sesli Komut", icon: "mic.fill", color: .red) {
-                Toggle("Sesli komutlari etkinlestir", isOn: $store.voiceCommandEnabled)
-                Text("\"izin ver\", \"reddet\", \"hepsine\" komutlarini sesle verin. Mikrofon izni gerektirir. Cihaz uzerinde calisir, veri gonderilmez.")
+            SettingsSection(title: L10n["settings.section.voiceCommand"], icon: "mic.fill", color: .red) {
+                Toggle(L10n["settings.voiceCommand.enable"], isOn: $store.voiceCommandEnabled)
+                Text(L10n["settings.voiceCommand.description"])
                     .font(.system(size: 10))
                     .foregroundStyle(.tertiary)
             }
 
-            SettingsSection(title: "Guncelleme", icon: "arrow.triangle.2.circlepath", color: .green) {
+            SettingsSection(title: L10n["settings.section.update"], icon: "arrow.triangle.2.circlepath", color: .green) {
                 HStack {
                     Text("NotchPilot v1.0")
                         .font(.system(size: 12))
                     Spacer()
-                    Button("Guncelleme Kontrol Et") {
+                    Button(L10n["settings.button.checkUpdate"]) {
                         UpdateManager().checkForUpdates()
                     }
                     .buttonStyle(.bordered)
@@ -300,7 +300,7 @@ private struct AppearanceTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "Tema", icon: "moon.fill", color: .indigo) {
+            SettingsSection(title: L10n["settings.section.theme"], icon: "moon.fill", color: .indigo) {
                 Picker("", selection: $store.theme) {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
                         Text(theme.displayName).tag(theme)
@@ -309,7 +309,7 @@ private struct AppearanceTab: View {
                 .pickerStyle(.segmented)
             }
 
-            SettingsSection(title: "Accent Renk", icon: "paintpalette.fill", color: .purple) {
+            SettingsSection(title: L10n["settings.section.accentColor"], icon: "paintpalette.fill", color: .purple) {
                 HStack(spacing: 12) {
                     ForEach(accentColors, id: \.name) { item in
                         Button(action: { store.accentColorName = item.name }) {
@@ -326,10 +326,10 @@ private struct AppearanceTab: View {
                     }
                 }
 
-                Toggle("Notch kenar cizgisi", isOn: $store.showBorder)
+                Toggle(L10n["settings.appearance.showBorder"], isOn: $store.showBorder)
 
                 HStack(spacing: 12) {
-                    Text("Beklemede saydamlik")
+                    Text(L10n["settings.appearance.idleOpacity"])
                         .font(.system(size: 12))
                     Slider(value: $store.idleOpacity, in: 0.1...1.0)
                         .tint(store.accentColor)
@@ -340,9 +340,9 @@ private struct AppearanceTab: View {
                 }
             }
 
-            SettingsSection(title: "Compact Bar", icon: "rectangle.topthird.inset.filled", color: .teal) {
+            SettingsSection(title: L10n["settings.section.compactBar"], icon: "rectangle.topthird.inset.filled", color: .teal) {
                 HStack {
-                    Text("Genislik")
+                    Text(L10n["settings.compactBar.width"])
                         .font(.system(size: 12))
                     Spacer()
                     Picker("", selection: $store.barWidth) {
@@ -355,7 +355,7 @@ private struct AppearanceTab: View {
                 }
 
                 HStack(spacing: 12) {
-                    Text("Yukseklik")
+                    Text(L10n["settings.compactBar.height"])
                         .font(.system(size: 12))
                     Slider(value: $store.barHeight, in: 24...44, step: 2)
                         .tint(.teal)
@@ -366,7 +366,7 @@ private struct AppearanceTab: View {
                 }
 
                 HStack(spacing: 12) {
-                    Text("Kose yuvarlakligi")
+                    Text(L10n["settings.compactBar.cornerRadius"])
                         .font(.system(size: 12))
                     Slider(value: $store.cornerRadius, in: 4...24, step: 1)
                         .tint(.teal)
@@ -377,7 +377,7 @@ private struct AppearanceTab: View {
                 }
 
                 HStack(spacing: 12) {
-                    Text("Font boyutu")
+                    Text(L10n["settings.compactBar.fontSize"])
                         .font(.system(size: 12))
                     Slider(value: $store.fontSize, in: 9...16, step: 0.5)
                         .tint(.teal)
@@ -388,11 +388,11 @@ private struct AppearanceTab: View {
                 }
 
                 HStack(spacing: 12) {
-                    Text("Yatay pozisyon")
+                    Text(L10n["settings.compactBar.horizontalOffset"])
                         .font(.system(size: 12))
                     Slider(value: $store.barOffset, in: -1...1, step: 0.05)
                         .tint(.teal)
-                    Text(store.barOffset == 0 ? "Orta" : store.barOffset < 0 ? "Sol" : "Sag")
+                    Text(store.barOffset == 0 ? L10n["settings.compactBar.offset.center"] : store.barOffset < 0 ? L10n["settings.compactBar.offset.left"] : L10n["settings.compactBar.offset.right"])
                         .font(.system(size: 11))
                         .frame(width: 36, alignment: .trailing)
                         .foregroundStyle(.secondary)
@@ -421,7 +421,7 @@ private struct PetsTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "Notch Durum Ikonu", icon: "pawprint.fill", color: .mint) {
+            SettingsSection(title: L10n["settings.section.notchStatusIcon"], icon: "pawprint.fill", color: .mint) {
                 HStack(spacing: 10) {
                     ForEach(PetStyle.allCases, id: \.self) { pet in
                         Button(action: { store.petStyle = pet }) {
@@ -449,18 +449,18 @@ private struct PetsTab: View {
                 }
             }
 
-            SettingsSection(title: "Desk Pet", icon: "cat.fill", color: .orange) {
-                Toggle("Desk Pet aktif", isOn: $store.deskPetEnabled)
+            SettingsSection(title: L10n["settings.section.deskPet"], icon: "cat.fill", color: .orange) {
+                Toggle(L10n["settings.deskPet.enabled"], isOn: $store.deskPetEnabled)
 
                 if store.deskPetEnabled {
-                    Picker("Hayvan", selection: $store.deskPetType) {
-                        Text("Kedi").tag("cat")
-                        Text("Kopek").tag("dog")
+                    Picker(L10n["settings.deskPet.type"], selection: $store.deskPetType) {
+                        Text(L10n["deskpet.type.cat"]).tag("cat")
+                        Text(L10n["deskpet.type.dog"]).tag("dog")
                     }
                     .pickerStyle(.segmented)
 
                     HStack(spacing: 12) {
-                        Text("Boyut")
+                        Text(L10n["settings.deskPet.size"])
                             .font(.system(size: 12))
                         Slider(value: $store.deskPetSize, in: 16...64, step: 4)
                             .tint(.orange)
@@ -473,7 +473,7 @@ private struct PetsTab: View {
             }
 
             if store.deskPetEnabled && store.deskPetType == "dog" {
-                SettingsSection(title: "Kopek Irki", icon: "dog.fill", color: .brown) {
+                SettingsSection(title: L10n["settings.section.dogBreed"], icon: "dog.fill", color: .brown) {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))], spacing: 8) {
                         ForEach(dogBreeds, id: \.name) { dog in
                             Button(action: { store.dogBreed = dog.name }) {
@@ -494,7 +494,7 @@ private struct PetsTab: View {
             }
 
             if store.deskPetEnabled && store.deskPetType == "cat" {
-                SettingsSection(title: "Kedi Rengi", icon: "cat.fill", color: .orange) {
+                SettingsSection(title: L10n["settings.section.catColor"], icon: "cat.fill", color: .orange) {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 60))], spacing: 8) {
                         ForEach(catColors, id: \.name) { cat in
                             Button(action: { store.catColor = cat.name }) {
@@ -561,8 +561,8 @@ private struct SoundsTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "Genel", icon: "speaker.wave.2.fill", color: .pink) {
-                Toggle("Sesler aktif", isOn: $store.soundEnabled)
+            SettingsSection(title: L10n["settings.sounds.general"], icon: "speaker.wave.2.fill", color: .pink) {
+                Toggle(L10n["settings.sounds.enabled"], isOn: $store.soundEnabled)
 
                 HStack(spacing: 12) {
                     Image(systemName: "speaker.fill")
@@ -580,7 +580,7 @@ private struct SoundsTab: View {
                 }
             }
 
-            SettingsSection(title: "Olay Sesleri", icon: "bell.badge.fill", color: .yellow) {
+            SettingsSection(title: L10n["settings.sounds.eventSounds"], icon: "bell.badge.fill", color: .yellow) {
                 ForEach(Array(store.soundEvents.enumerated()), id: \.element.id) { index, config in
                     HStack(spacing: 10) {
                         Toggle("", isOn: Binding(
@@ -594,7 +594,7 @@ private struct SoundsTab: View {
                             .font(.system(size: 12))
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Text(config.customSoundURL?.lastPathComponent ?? "Sistem")
+                        Text(config.customSoundURL?.lastPathComponent ?? L10n["settings.sounds.system"])
                             .font(.system(size: 11))
                             .foregroundStyle(.tertiary)
                             .lineLimit(1)
@@ -651,19 +651,19 @@ private struct SoundsTab: View {
 private struct ShortcutsTab: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "İzin Kısayolları", icon: "shield.fill", color: .green) {
-                KeyboardShortcuts.Recorder("İzin Ver", name: .allowPermission)
-                KeyboardShortcuts.Recorder("Reddet", name: .denyPermission)
+            SettingsSection(title: L10n["settings.section.permissionShortcuts"], icon: "shield.fill", color: .green) {
+                KeyboardShortcuts.Recorder(L10n["shortcuts.allow"], name: .allowPermission)
+                KeyboardShortcuts.Recorder(L10n["shortcuts.deny"], name: .denyPermission)
             }
 
-            SettingsSection(title: "Soru Kısayolları", icon: "questionmark.circle.fill", color: .blue) {
-                KeyboardShortcuts.Recorder("Seçenek 1", name: .questionOption1)
-                KeyboardShortcuts.Recorder("Seçenek 2", name: .questionOption2)
-                KeyboardShortcuts.Recorder("Seçenek 3", name: .questionOption3)
+            SettingsSection(title: L10n["settings.section.questionShortcuts"], icon: "questionmark.circle.fill", color: .blue) {
+                KeyboardShortcuts.Recorder(L10n["shortcuts.option1"], name: .questionOption1)
+                KeyboardShortcuts.Recorder(L10n["shortcuts.option2"], name: .questionOption2)
+                KeyboardShortcuts.Recorder(L10n["shortcuts.option3"], name: .questionOption3)
             }
 
-            SettingsSection(title: "Panel", icon: "rectangle.topthird.inset.filled", color: .orange) {
-                KeyboardShortcuts.Recorder("Panel Aç/Kapat", name: .togglePanel)
+            SettingsSection(title: L10n["settings.section.panel"], icon: "rectangle.topthird.inset.filled", color: .orange) {
+                KeyboardShortcuts.Recorder(L10n["shortcuts.togglePanel"], name: .togglePanel)
             }
         }
     }
@@ -678,19 +678,19 @@ private struct HooksTab: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            SettingsSection(title: "Hook Yonetimi", icon: "link.circle.fill", color: .blue) {
-                Toggle("Hook'ları otomatik kur", isOn: $store.autoSetupHooks)
+            SettingsSection(title: L10n["settings.section.hookManagement"], icon: "link.circle.fill", color: .blue) {
+                Toggle(L10n["settings.hooks.autoSetup"], isOn: $store.autoSetupHooks)
 
                 HStack(spacing: 8) {
                     Button(action: installAll) {
-                        Label("Tumu Kur", systemImage: "arrow.clockwise")
+                        Label(L10n["settings.hooks.installAll"], systemImage: "arrow.clockwise")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
                     .tint(.blue)
 
                     Button(action: removeAll) {
-                        Label("Tumunu Kaldir", systemImage: "trash")
+                        Label(L10n["settings.hooks.removeAll"], systemImage: "trash")
                     }
                     .buttonStyle(.bordered)
                     .controlSize(.small)
@@ -698,7 +698,7 @@ private struct HooksTab: View {
                 }
             }
 
-            SettingsSection(title: "Ajan Durumlari", icon: "cpu", color: .purple) {
+            SettingsSection(title: L10n["settings.section.agentStatus"], icon: "cpu", color: .purple) {
                 ForEach(AgentSource.allCases, id: \.self) { agent in
                     HStack(spacing: 10) {
                         Toggle("", isOn: Binding(

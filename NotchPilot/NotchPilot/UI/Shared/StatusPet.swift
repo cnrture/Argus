@@ -11,13 +11,13 @@ enum PetStyle: String, CaseIterable, Codable {
 
     var displayName: String {
         switch self {
-        case .dot:   "Nokta"
-        case .cat:   "Kedi"
-        case .dog:   "Kopek"
-        case .bird:  "Kus"
-        case .robot: "Robot"
-        case .ghost: "Hayalet"
-        case .alien: "Uzayli"
+        case .dot:   L10n["pet.dot"]
+        case .cat:   L10n["pet.cat"]
+        case .dog:   L10n["pet.dog"]
+        case .bird:  L10n["pet.bird"]
+        case .robot: L10n["pet.robot"]
+        case .ghost: L10n["pet.ghost"]
+        case .alien: L10n["pet.alien"]
         }
     }
 

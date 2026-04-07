@@ -23,7 +23,7 @@ struct SessionCard: View {
 
             if !isCompact {
                 if session.isIdle {
-                    Text("15 dk+ hareketsiz")
+                    Text(L10n["session.idle"])
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.4))
                 } else if let statusText = session.lastStatusText {

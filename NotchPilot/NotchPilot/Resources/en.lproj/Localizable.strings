@@ -157,8 +157,5 @@
 "theme.system" = "System";
 
 /* Prompt */
-"prompt.description" = "Type prompt, will be sent to terminal";
-"prompt.placeholder" = "Prompt...";
 
 /* Notification */
-"notification.claude.thinking" = "Claude is thinking...";
