@@ -302,9 +302,12 @@ final class NotchWindowController {
         let notchWidth = notchRect.width
         let expandedWidth = min(notchWidth * 3, 600)
         let centerX = notchRect.midX
+        // NSView coordinates: origin is bottom-left
+        // Panel height is 750, content starts from top (y=750 in NSView)
+        // Expanded content spans from top down ~500pt
         return CGRect(
             x: centerX - expandedWidth / 2,
-            y: 0,
+            y: 250, // 750 - 500 = bottom boundary in NSView coords
             width: expandedWidth,
             height: 500
         )
