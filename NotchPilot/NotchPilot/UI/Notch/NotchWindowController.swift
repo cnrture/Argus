@@ -243,17 +243,28 @@ final class NotchWindowController {
         let isSelf = frontApp?.bundleIdentifier == Bundle.main.bundleIdentifier
 
         var isFS = false
-        if !isSelf {
-            // Frontmost app'in presentation options'ını kontrol et
-            if let app = frontApp {
-                // Menu bar gizliyse fullscreen'deyiz
-                let opts = NSApp.presentationOptions
-                isFS = opts.contains(.autoHideMenuBar) || opts.contains(.hideMenuBar)
+        if !isSelf, let screen = NSScreen.main {
+            // Yöntem 1: Menu bar gizli mi?
+            let menuBarVisible = screen.frame.height != screen.visibleFrame.height
+                || screen.visibleFrame.origin.y != screen.frame.origin.y
+            if !menuBarVisible {
+                isFS = true
             }
-            // Fallback: visibleFrame kontrolü
-            if !isFS, let screen = NSScreen.main {
-                isFS = screen.frame.height == screen.visibleFrame.height
-                    && screen.frame.width == screen.visibleFrame.width
+
+            // Yöntem 2: CGWindowListCopyWindowInfo ile frontmost app'ın penceresi ekranı kaplıyor mu?
+            if !isFS, let pid = frontApp?.processIdentifier {
+                if let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] {
+                    for win in windows {
+                        guard let ownerPID = win[kCGWindowOwnerPID as String] as? Int32,
+                              ownerPID == pid,
+                              let bounds = win[kCGWindowBounds as String] as? [String: CGFloat],
+                              let winW = bounds["Width"], let winH = bounds["Height"] else { continue }
+                        if winW >= screen.frame.width && winH >= screen.frame.height {
+                            isFS = true
+                            break
+                        }
+                    }
+                }
             }
         }
 
@@ -262,11 +273,9 @@ final class NotchWindowController {
 
         let showInFS = settingsStore?.showInFullscreen ?? true
 
-        if isFS && !wasFullscreen {
-            if !showInFS {
-                panel?.alphaValue = 0
-            }
-        } else if !isFS && wasFullscreen {
+        if isFS && !showInFS {
+            panel?.alphaValue = 0
+        } else if !isFS {
             panel?.alphaValue = 1
         }
     }
