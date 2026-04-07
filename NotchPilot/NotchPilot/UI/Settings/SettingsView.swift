@@ -285,6 +285,44 @@ private struct AppearanceTab: View {
                         .buttonStyle(.plain)
                     }
                 }
+
+                Toggle("Notch kenar cizgisi", isOn: $store.showBorder)
+            }
+
+            SettingsSection(title: "Durum Ikonu", icon: "pawprint.fill", color: .mint) {
+                HStack(spacing: 10) {
+                    ForEach(PetStyle.allCases, id: \.self) { pet in
+                        Button(action: { store.petStyle = pet }) {
+                            VStack(spacing: 4) {
+                                if pet == .dot {
+                                    Circle()
+                                        .fill(.green)
+                                        .frame(width: 16, height: 16)
+                                } else {
+                                    PixelArtView(
+                                        pixels: pet.pixels(for: .working),
+                                        palette: pet.palette(for: .working, accent: store.accentColor),
+                                        pixelSize: 3
+                                    )
+                                    .frame(width: 24, height: 24)
+                                }
+                                Text(pet.displayName)
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(width: 50, height: 50)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(store.petStyle == pet ? store.accentColor.opacity(0.15) : .clear)
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(store.petStyle == pet ? store.accentColor : .clear, lineWidth: 1.5)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             }
         }
     }

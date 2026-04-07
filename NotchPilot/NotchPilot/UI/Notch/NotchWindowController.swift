@@ -76,6 +76,7 @@ final class NotchWindowController {
 
         let contentView = NotchContainerView(
             appState: appState,
+            settingsStore: settingsStore,
             notchRect: deviceNotchRect,
             screenSize: screenFrame.size,
             onExpandChange: { [weak self] expanded in

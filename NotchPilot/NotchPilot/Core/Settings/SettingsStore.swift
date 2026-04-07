@@ -36,6 +36,12 @@ final class SettingsStore {
     var accentColorName: String {
         didSet { UserDefaults.standard.set(accentColorName, forKey: "accentColor") }
     }
+    var petStyle: PetStyle {
+        didSet { UserDefaults.standard.set(petStyle.rawValue, forKey: "petStyle") }
+    }
+    var showBorder: Bool {
+        didSet { UserDefaults.standard.set(showBorder, forKey: "showBorder") }
+    }
 
     // Sound
     var soundEnabled: Bool {
@@ -71,6 +77,18 @@ final class SettingsStore {
     // Callback for when screen selection changes
     var onScreenChanged: (() -> Void)?
 
+    var accentColor: Color {
+        switch accentColorName {
+        case "blue":   .blue
+        case "purple": .purple
+        case "green":  .green
+        case "red":    .red
+        case "pink":   .pink
+        case "cyan":   .cyan
+        default:       .orange
+        }
+    }
+
     init() {
         let defaults = UserDefaults.standard
         launchAtLogin = defaults.bool(forKey: "launchAtLogin")
@@ -79,6 +97,8 @@ final class SettingsStore {
         idleTimeout = defaults.object(forKey: "idleTimeout") as? TimeInterval ?? 900
         theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "system") ?? .system
         accentColorName = defaults.string(forKey: "accentColor") ?? "orange"
+        petStyle = PetStyle(rawValue: defaults.string(forKey: "petStyle") ?? "dot") ?? .dot
+        showBorder = defaults.object(forKey: "showBorder") as? Bool ?? true
         soundEnabled = defaults.object(forKey: "soundEnabled") as? Bool ?? true
         soundVolume = defaults.object(forKey: "soundVolume") as? Float ?? 0.7
         autoSetupHooks = defaults.object(forKey: "autoSetupHooks") as? Bool ?? true

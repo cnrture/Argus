@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NotchContainerView: View {
     let appState: AppState
+    let settingsStore: SettingsStore?
     let notchRect: CGRect
     let screenSize: CGSize
     var onExpandChange: ((Bool) -> Void)?
@@ -40,7 +41,10 @@ struct NotchContainerView: View {
             CompactView(
                 session: session,
                 sessionCount: appState.sessions.count,
-                notchWidth: notchRect.width
+                notchWidth: notchRect.width,
+                petStyle: settingsStore?.petStyle ?? .dot,
+                accentColor: settingsStore?.accentColor ?? .orange,
+                showBorder: settingsStore?.showBorder ?? true
             )
             .opacity(appState.isHovered ? 1.0 : 0.45)
             .animation(.easeInOut(duration: 0.2), value: appState.isHovered)
