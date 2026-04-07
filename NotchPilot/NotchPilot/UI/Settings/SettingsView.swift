@@ -10,12 +10,12 @@ private enum SettingsTab: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .general:    "Genel"
-        case .appearance: "Görünüm"
-        case .pets:       "Petler"
-        case .sounds:     "Sesler"
-        case .shortcuts:  "Kısayollar"
-        case .hooks:      "Hooks"
+        case .general:    L10n["settings.tab.general"]
+        case .appearance: L10n["settings.tab.appearance"]
+        case .pets:       L10n["settings.tab.pets"]
+        case .sounds:     L10n["settings.tab.sounds"]
+        case .shortcuts:  L10n["settings.tab.shortcuts"]
+        case .hooks:      L10n["settings.tab.hooks"]
         }
     }
 
