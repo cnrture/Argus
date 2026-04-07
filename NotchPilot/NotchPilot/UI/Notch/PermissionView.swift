@@ -8,9 +8,7 @@ struct PermissionView: View {
     var onDeny: () -> Void
     var onAutoApprove: (String) -> Void
 
-    @State private var autoApproveChecked = false
-    @State private var showAllowButton = false
-    @State private var showDenyButton = false
+    @State private var showButtons = false
 
     private var expandedWidth: CGFloat {
         min(notchWidth * 3, 600)
@@ -42,73 +40,24 @@ struct PermissionView: View {
                     .padding(.horizontal, 16)
             }
 
-            // Auto-approve checkbox
-            Toggle(isOn: $autoApproveChecked) {
-                Text("Bu oturumda \(permission.toolName) için hep izin ver")
-                    .font(.system(size: 11))
-                    .foregroundStyle(.white.opacity(0.6))
-            }
-            .toggleStyle(.checkbox)
-            .padding(.horizontal, 16)
-
             // Action buttons with staggered reveal
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 Spacer()
 
-                // Deny button
-                Button(action: handleDeny) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 10, weight: .bold))
-                        Text("Reddet")
-                            .font(.system(size: 12, weight: .medium))
-                        Text("(⌘N)")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white.opacity(0.4))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.red.opacity(0.15))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(.red.opacity(0.3), lineWidth: 0.5)
-                    )
+                permButton("Reddet", icon: "xmark", shortcut: "⌘N", color: .red) {
+                    handleDeny()
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(.red)
-                .opacity(showDenyButton ? 1 : 0)
-                .offset(y: showDenyButton ? 0 : 5)
 
-                // Allow button
-                Button(action: handleAllow) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 10, weight: .bold))
-                        Text("İzin Ver")
-                            .font(.system(size: 12, weight: .medium))
-                        Text("(⌘Y)")
-                            .font(.system(size: 10))
-                            .foregroundStyle(.white.opacity(0.4))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(.green.opacity(0.15))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(.green.opacity(0.3), lineWidth: 0.5)
-                    )
+                permButton("İzin Ver", icon: "checkmark", shortcut: "⌘Y", color: .green) {
+                    handleAllow()
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(.green)
-                .opacity(showAllowButton ? 1 : 0)
-                .offset(y: showAllowButton ? 0 : 5)
+
+                permButton("Hepsine İzin Ver", icon: "checkmark.circle.fill", shortcut: nil, color: .blue) {
+                    handleAllowAll()
+                }
             }
+            .opacity(showButtons ? 1 : 0)
+            .offset(y: showButtons ? 0 : 5)
             .padding(.horizontal, 16)
             .padding(.bottom, 14)
         }
@@ -122,14 +71,32 @@ struct PermissionView: View {
                 .stroke(.orange.opacity(0.2), lineWidth: 0.5)
         )
         .onAppear {
-            // Staggered button reveal: 50ms delay
             withAnimation(.easeOut(duration: 0.2).delay(0.1)) {
-                showDenyButton = true
-            }
-            withAnimation(.easeOut(duration: 0.2).delay(0.15)) {
-                showAllowButton = true
+                showButtons = true
             }
         }
+    }
+
+    private func permButton(_ title: String, icon: String, shortcut: String?, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .bold))
+                Text(title)
+                    .font(.system(size: 11, weight: .medium))
+                if let shortcut {
+                    Text("(\(shortcut))")
+                        .font(.system(size: 9))
+                        .foregroundStyle(.white.opacity(0.3))
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 7)
+            .background(RoundedRectangle(cornerRadius: 8).fill(color.opacity(0.15)))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(color.opacity(0.3), lineWidth: 0.5))
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(color)
     }
 
     @ViewBuilder
@@ -174,13 +141,15 @@ struct PermissionView: View {
     }
 
     private func handleAllow() {
-        if autoApproveChecked {
-            onAutoApprove(permission.toolName)
-        }
         onAllow()
     }
 
     private func handleDeny() {
         onDeny()
+    }
+
+    private func handleAllowAll() {
+        onAutoApprove(permission.toolName)
+        onAllow()
     }
 }
