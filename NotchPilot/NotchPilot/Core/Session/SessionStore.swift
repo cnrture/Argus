@@ -28,6 +28,15 @@ final class SessionStore {
     // MARK: - Event Processing
 
     func process(event: HookEvent, appState: AppState, respond: @escaping (SocketResponse) -> Void) {
+        // Session yoksa otomatik oluştur (app açıkken başlamış session'lar için)
+        if event.event != .sessionStart && event.event != .notification && sessions[event.sessionId] == nil {
+            let title = SessionTitleResolver.resolve(cwd: event.cwd)
+            let session = Session(id: event.sessionId, title: title)
+            sessions[event.sessionId] = session
+            appState.activeSessionId = event.sessionId
+            appState.panelState = .compact
+        }
+
         switch event.event {
         case .sessionStart:
             handleSessionStart(event: event, appState: appState)
