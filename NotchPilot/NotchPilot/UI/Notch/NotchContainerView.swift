@@ -56,7 +56,12 @@ struct NotchContainerView: View {
                 notchWidth: notchRect.width,
                 petStyle: settingsStore?.petStyle ?? .dot,
                 accentColor: settingsStore?.accentColor ?? .orange,
-                showBorder: settingsStore?.showBorder ?? true
+                showBorder: settingsStore?.showBorder ?? true,
+                widthMultiplier: CGFloat(settingsStore?.barWidth.multiplier ?? 1.5),
+                barHeightValue: CGFloat(settingsStore?.barHeight ?? 32),
+                cornerRadiusValue: CGFloat(settingsStore?.cornerRadius ?? 14),
+                fontSizeValue: CGFloat(settingsStore?.fontSize ?? 12),
+                horizontalOffset: CGFloat((settingsStore?.barOffset ?? 0) * 100)
             )
             .opacity(appState.isHovered ? 1.0 : (settingsStore?.idleOpacity ?? 0.45))
             .animation(.easeInOut(duration: 0.2), value: appState.isHovered)

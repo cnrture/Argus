@@ -300,6 +300,65 @@ private struct AppearanceTab: View {
                 }
             }
 
+            SettingsSection(title: "Compact Bar", icon: "rectangle.topthird.inset.filled", color: .teal) {
+                HStack {
+                    Text("Genislik")
+                        .font(.system(size: 12))
+                    Spacer()
+                    Picker("", selection: $store.barWidth) {
+                        ForEach(BarWidth.allCases, id: \.self) { w in
+                            Text(w.displayName).tag(w)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 180)
+                }
+
+                HStack(spacing: 12) {
+                    Text("Yukseklik")
+                        .font(.system(size: 12))
+                    Slider(value: $store.barHeight, in: 24...44, step: 2)
+                        .tint(.teal)
+                    Text("\(Int(store.barHeight))pt")
+                        .font(.system(size: 11, design: .monospaced))
+                        .frame(width: 36, alignment: .trailing)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack(spacing: 12) {
+                    Text("Kose yuvarlakligi")
+                        .font(.system(size: 12))
+                    Slider(value: $store.cornerRadius, in: 4...24, step: 1)
+                        .tint(.teal)
+                    Text("\(Int(store.cornerRadius))pt")
+                        .font(.system(size: 11, design: .monospaced))
+                        .frame(width: 36, alignment: .trailing)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack(spacing: 12) {
+                    Text("Font boyutu")
+                        .font(.system(size: 12))
+                    Slider(value: $store.fontSize, in: 9...16, step: 0.5)
+                        .tint(.teal)
+                    Text("\(String(format: "%.1f", store.fontSize))")
+                        .font(.system(size: 11, design: .monospaced))
+                        .frame(width: 36, alignment: .trailing)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack(spacing: 12) {
+                    Text("Yatay pozisyon")
+                        .font(.system(size: 12))
+                    Slider(value: $store.barOffset, in: -1...1, step: 0.05)
+                        .tint(.teal)
+                    Text(store.barOffset == 0 ? "Orta" : store.barOffset < 0 ? "Sol" : "Sag")
+                        .font(.system(size: 11))
+                        .frame(width: 36, alignment: .trailing)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             SettingsSection(title: "Durum Ikonu", icon: "pawprint.fill", color: .mint) {
                 HStack(spacing: 10) {
                     ForEach(PetStyle.allCases, id: \.self) { pet in
@@ -498,6 +557,19 @@ private struct HooksTab: View {
             SettingsSection(title: "Ajan Durumlari", icon: "cpu", color: .purple) {
                 ForEach(AgentSource.allCases, id: \.self) { agent in
                     HStack(spacing: 10) {
+                        Toggle("", isOn: Binding(
+                            get: { store.enabledAgents.contains(agent.rawValue) },
+                            set: { enabled in
+                                if enabled {
+                                    store.enabledAgents.insert(agent.rawValue)
+                                } else {
+                                    store.enabledAgents.remove(agent.rawValue)
+                                }
+                            }
+                        ))
+                        .labelsHidden()
+                        .tint(agent.color)
+
                         Image(systemName: agent.icon)
                             .foregroundStyle(agent.color)
                             .frame(width: 20)
@@ -510,11 +582,6 @@ private struct HooksTab: View {
                         let installed = agentStatus[agent] ?? false
                         Image(systemName: installed ? "checkmark.circle.fill" : "xmark.circle")
                             .foregroundStyle(installed ? .green : .secondary)
-
-                        Text(agent.configPath.replacingOccurrences(of: NSHomeDirectory(), with: "~"))
-                            .font(.system(size: 9, design: .monospaced))
-                            .foregroundStyle(.tertiary)
-                            .lineLimit(1)
                     }
                 }
             }
@@ -523,7 +590,8 @@ private struct HooksTab: View {
     }
 
     private func installAll() {
-        _ = hookInstaller.installHooks()
+        let agents = AgentSource.allCases.filter { store.enabledAgents.contains($0.rawValue) }
+        _ = hookInstaller.installHooks(for: agents)
         refreshStatus()
     }
 
