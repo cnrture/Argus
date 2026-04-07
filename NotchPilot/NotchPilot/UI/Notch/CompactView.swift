@@ -28,19 +28,6 @@ struct CompactView: View {
             // Sol: Pet
             StatusPet(status: session.status, style: petStyle, accent: accentColor)
 
-            // Orta: Metin
-            if let statusText = session.lastStatusText {
-                Text(statusText)
-                    .font(.system(size: fontSizeValue - 1))
-                    .foregroundStyle(.white.opacity(0.7))
-                    .lineLimit(1)
-            } else {
-                Text(session.title)
-                    .font(.system(size: fontSizeValue, weight: .medium))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
-            }
-
             Spacer()
 
             // Sag: Durum gostergesi
