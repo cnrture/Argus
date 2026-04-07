@@ -95,7 +95,11 @@ enum AgentSource: String, Codable, CaseIterable, Equatable {
                 "notification": "Notification",
                 "user-prompt-submit": "UserPromptSubmit",
                 "pre-compact": "PreCompact",
+                "post-compact": "PostCompact",
+                "subagent-start": "SubagentStart",
                 "subagent-stop": "SubagentStop",
+                "stop-failure": "StopFailure",
+                "permission-denied": "PermissionDenied",
             ]
         case .codex:
             return [

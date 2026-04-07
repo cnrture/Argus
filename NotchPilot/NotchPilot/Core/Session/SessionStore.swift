@@ -63,14 +63,27 @@ final class SessionStore {
         case .permissionRequest:
             handlePermissionRequest(event: event, appState: appState, respond: respond)
 
+        case .stopFailure:
+            handleStopFailure(event: event, appState: appState)
+
         case .notification:
-            break
+            handleNotification(event: event, appState: appState)
+
+        case .permissionDenied:
+            sessions[event.sessionId]?.lastActivity = Date()
 
         case .userPromptSubmit:
             handleUserPromptSubmit(event: event, appState: appState)
 
         case .preCompact:
             handlePreCompact(event: event, appState: appState)
+
+        case .postCompact:
+            transition(sessionId: event.sessionId, to: .idle)
+
+        case .subagentStart:
+            sessions[event.sessionId]?.lastActivity = Date()
+            sessions[event.sessionId]?.lastStatusText = "Alt-ajan basladi"
 
         case .subagentStop:
             handleSubagentStop(event: event, appState: appState)
@@ -244,6 +257,21 @@ final class SessionStore {
             let clean = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
             let truncated = clean.count > 60 ? String(clean.prefix(60)) + "..." : clean
             sessions[event.sessionId]?.lastStatusText = truncated
+        }
+    }
+
+    private func handleStopFailure(event: HookEvent, appState: AppState) {
+        transition(sessionId: event.sessionId, to: .error)
+        let errorType = event.data?.errorType ?? "unknown"
+        let errorMessage = event.data?.errorMessage ?? "Bilinmeyen hata"
+        let title = sessions[event.sessionId]?.title ?? "Claude Code"
+        appState.errorInfo = (type: errorType, message: errorMessage, sessionTitle: title)
+    }
+
+    private func handleNotification(event: HookEvent, appState: AppState) {
+        let notifType = event.data?.notificationType
+        if notifType == "idle_prompt" {
+            appState.idleSessionId = event.sessionId
         }
     }
 

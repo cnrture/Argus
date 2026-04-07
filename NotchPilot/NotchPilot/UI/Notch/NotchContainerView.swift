@@ -23,7 +23,20 @@ struct NotchContainerView: View {
         ZStack(alignment: .top) {
             Color.clear
 
-            if let completionSession = appState.completionSession {
+            // Error card (highest priority)
+            if let error = appState.errorInfo {
+                ErrorCardView(
+                    errorType: error.type,
+                    errorMessage: error.message,
+                    sessionTitle: error.sessionTitle,
+                    notchWidth: notchRect.width,
+                    onDismiss: { appState.errorInfo = nil }
+                )
+                .offset(y: notchRect.height)
+                .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
+            }
+            // Completion card
+            else if let completionSession = appState.completionSession {
                 CompletionCardView(
                     session: completionSession,
                     notchWidth: notchRect.width,
@@ -32,7 +45,22 @@ struct NotchContainerView: View {
                 )
                 .offset(y: notchRect.height)
                 .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
-            } else if appState.panelState != .hidden {
+            }
+            // Idle prompt
+            else if let idleId = appState.idleSessionId, let session = appState.sessions[idleId] {
+                IdlePromptView(
+                    sessionTitle: session.title,
+                    notchWidth: notchRect.width,
+                    onJump: {
+                        onJumpToSession?(idleId)
+                        appState.idleSessionId = nil
+                    },
+                    onDismiss: { appState.idleSessionId = nil }
+                )
+                .offset(y: notchRect.height)
+                .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
+            }
+            else if appState.panelState != .hidden {
                 if appState.isExpanded {
                     expandedContent
                         .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))

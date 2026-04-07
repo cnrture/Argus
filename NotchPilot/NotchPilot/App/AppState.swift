@@ -16,6 +16,9 @@ final class AppState {
     var isFullscreen: Bool = false
     var isBootAnimating: Bool = false
     var completionSession: SessionInfo?
+    var errorInfo: (type: String, message: String, sessionTitle: String)?
+    var idleSessionId: String?
+    var showContinueForSession: String?
 
     var hasActiveSessions: Bool {
         !sessions.isEmpty

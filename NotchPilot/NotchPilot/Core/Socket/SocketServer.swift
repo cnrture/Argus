@@ -22,12 +22,16 @@ enum HookEventType: String, Codable {
     case sessionStart = "session-start"
     case sessionEnd = "session-end"
     case stop
+    case stopFailure = "stop-failure"
     case preToolUse = "pre-tool-use"
     case postToolUse = "post-tool-use"
     case permissionRequest = "permission-request"
+    case permissionDenied = "permission-denied"
     case notification
     case userPromptSubmit = "user-prompt-submit"
     case preCompact = "pre-compact"
+    case postCompact = "post-compact"
+    case subagentStart = "subagent-start"
     case subagentStop = "subagent-stop"
 }
 
@@ -42,6 +46,14 @@ struct HookEventData: Codable {
     let content: String?
     let lastAssistantMessage: String?
     let transcriptPath: String?
+    // StopFailure
+    let errorType: String?
+    let errorMessage: String?
+    // Notification
+    let notificationType: String?
+    let title: String?
+    // Stop
+    let stopHookActive: Bool?
 }
 
 struct SocketResponse: Codable {
