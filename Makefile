@@ -21,13 +21,15 @@ archive:
 		-project Argus.xcodeproj \
 		-scheme $(SCHEME) \
 		-archivePath ../$(ARCHIVE_PATH) \
-		-configuration Release
+		-configuration Release \
+		CODE_SIGN_STYLE=Manual \
+		CODE_SIGN_IDENTITY="Developer ID Application" \
+		DEVELOPMENT_TEAM=39Z244SGXG
 
 export: archive
-	cd Argus && xcodebuild -exportArchive \
-		-archivePath ../$(ARCHIVE_PATH) \
-		-exportPath ../$(EXPORT_PATH) \
-		-exportOptionsPlist ExportOptions.plist
+	rm -rf $(EXPORT_PATH)
+	mkdir -p $(EXPORT_PATH)
+	cp -R $(ARCHIVE_PATH)/Products/Applications/Argus.app $(EXPORT_PATH)/Argus.app
 
 sign:
 	codesign --force --deep --sign "Developer ID Application" \

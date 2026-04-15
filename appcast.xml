@@ -7,15 +7,15 @@
         <language>en</language>
             <item>
             <title>Version 1.0</title>
-            <pubDate>Wed, 15 Apr 2026 10:09:39 +0000</pubDate>
+            <pubDate>Wed, 15 Apr 2026 11:27:20 +0000</pubDate>
             <sparkle:version>1.0</sparkle:version>
             <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <description><![CDATA[Argus 1.0]]></description>
             <enclosure
                 url="https://github.com/cnrture/Argus/releases/download/v1.0/Argus.zip"
-                sparkle:edSignature="ea0b+FFMjPRKGDAjfJ3IWVT9OzLgFbD4DR6GK8UtpGTKU9x3evIgDBRa+ZGbwpAwTO1twXBdBg0wpE7ip1//CQ=="
-                length="1728008"
+                sparkle:edSignature="aW28YZlja+giOj0nWCyttSrEqFDRr+ntMADJ5SdaPlzF2bvFYPeRd5R7bg1Fty3F11ntL2OQkum02USuNuveDw=="
+                length="1751245"
                 type="application/octet-stream" />
         </item>
     </channel>

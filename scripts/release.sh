@@ -106,13 +106,48 @@ xcodebuild archive \
 [[ -d "${ARCHIVE_PATH}" ]] || fail "archive not created at ${ARCHIVE_PATH}"
 
 # ---- export ----
+# Xcode 26 dropped the `developer-id` method from -exportArchive's plist
+# schema. The archive is already signed correctly with Developer ID above,
+# so we copy the .app directly out of the xcarchive instead.
 info "exporting .app from archive"
-xcodebuild -exportArchive \
-    -archivePath "${ARCHIVE_PATH}" \
-    -exportPath "${EXPORT_DIR}" \
-    -exportOptionsPlist "${EXPORT_OPTIONS}"
+rm -rf "${EXPORT_DIR}"
+mkdir -p "${EXPORT_DIR}"
+cp -R "${ARCHIVE_PATH}/Products/Applications/${APP_NAME}.app" "${APP_BUNDLE}"
 
 [[ -d "${APP_BUNDLE}" ]] || fail ".app not exported at ${APP_BUNDLE}"
+
+# Re-sign nested binaries inside Sparkle.framework with Developer ID +
+# secure timestamp. Xcode's archive phase doesn't re-sign these because we
+# skipped -exportArchive. Order matters: deepest binaries first.
+info "re-signing Sparkle framework internals with Developer ID"
+SPARKLE_FW="${APP_BUNDLE}/Contents/Frameworks/Sparkle.framework"
+if [[ -d "${SPARKLE_FW}" ]]; then
+    SPARKLE_VERSION_DIR="${SPARKLE_FW}/Versions/B"
+    # Nested binaries and helpers
+    for target in \
+        "${SPARKLE_VERSION_DIR}/Autoupdate" \
+        "${SPARKLE_VERSION_DIR}/Updater.app/Contents/MacOS/Updater" \
+        "${SPARKLE_VERSION_DIR}/Updater.app" \
+        "${SPARKLE_VERSION_DIR}/XPCServices/Installer.xpc/Contents/MacOS/Installer" \
+        "${SPARKLE_VERSION_DIR}/XPCServices/Installer.xpc" \
+        "${SPARKLE_VERSION_DIR}/XPCServices/Downloader.xpc/Contents/MacOS/Downloader" \
+        "${SPARKLE_VERSION_DIR}/XPCServices/Downloader.xpc" \
+        "${SPARKLE_FW}"; do
+        if [[ -e "${target}" ]]; then
+            codesign --force --sign "${SIGNING_IDENTITY}" \
+                --timestamp --options runtime \
+                "${target}"
+        fi
+    done
+fi
+
+# Finally re-sign the app bundle itself so the outer signature covers the
+# updated framework contents.
+info "re-signing app bundle"
+codesign --force --sign "${SIGNING_IDENTITY}" \
+    --timestamp --options runtime \
+    --entitlements "${XCODE_PROJECT_DIR}/Argus/Argus.entitlements" \
+    "${APP_BUNDLE}"
 
 # ---- verify signature ----
 info "verifying code signature"
