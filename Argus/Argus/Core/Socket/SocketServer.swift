@@ -101,19 +101,24 @@ struct PermissionDecision: Codable {
 }
 
 // Simple any-value wrapper for JSON
-enum AnyCodableValue: Codable, Equatable {
+indirect enum AnyCodableValue: Codable, Equatable {
     case string(String)
     case int(Int)
     case double(Double)
     case bool(Bool)
+    case array([AnyCodableValue])
+    case object([String: AnyCodableValue])
     case null
 
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let v = try? container.decode(String.self) { self = .string(v) }
+        if container.decodeNil() { self = .null }
+        else if let v = try? container.decode(Bool.self) { self = .bool(v) }
         else if let v = try? container.decode(Int.self) { self = .int(v) }
         else if let v = try? container.decode(Double.self) { self = .double(v) }
-        else if let v = try? container.decode(Bool.self) { self = .bool(v) }
+        else if let v = try? container.decode(String.self) { self = .string(v) }
+        else if let v = try? container.decode([AnyCodableValue].self) { self = .array(v) }
+        else if let v = try? container.decode([String: AnyCodableValue].self) { self = .object(v) }
         else { self = .null }
     }
 
@@ -124,12 +129,24 @@ enum AnyCodableValue: Codable, Equatable {
         case .int(let v):    try container.encode(v)
         case .double(let v): try container.encode(v)
         case .bool(let v):   try container.encode(v)
+        case .array(let v):  try container.encode(v)
+        case .object(let v): try container.encode(v)
         case .null:          try container.encodeNil()
         }
     }
 
     var stringValue: String? {
         if case .string(let v) = self { return v }
+        return nil
+    }
+
+    var arrayValue: [AnyCodableValue]? {
+        if case .array(let v) = self { return v }
+        return nil
+    }
+
+    var objectValue: [String: AnyCodableValue]? {
+        if case .object(let v) = self { return v }
         return nil
     }
 }

@@ -277,9 +277,16 @@ extension AppDelegate: NotchWindowControllerDelegate {
     }
 
     func notchWindowController(_ controller: NotchWindowController, didAnswerQuestion eventId: String, answer: String) {
-        sessionStore.respondToQuestion(eventId: eventId, answer: answer)
-        if let activeId = appState.activeSessionId {
-            sessionStore.sessions[activeId]?.pendingQuestion = nil
+        let activeId = appState.activeSessionId
+        let isPermissionQuestion = appState.activeQuestion?.isPermissionRequest ?? false
+
+        if isPermissionQuestion {
+            sessionStore.respondToAskUserQuestion(eventId: eventId, answer: answer, sessionId: activeId)
+        } else {
+            sessionStore.respondToQuestion(eventId: eventId, answer: answer)
+            if let activeId {
+                sessionStore.sessions[activeId]?.pendingQuestion = nil
+            }
         }
         syncAppState()
     }

@@ -203,6 +203,31 @@ final class SessionStore {
     private func handlePermissionRequest(event: HookEvent, appState: AppState, respond: @escaping (SocketResponse) -> Void) {
         guard let toolName = event.data?.toolName else { return }
 
+        // AskUserQuestion: permission değil, kullanıcıya sorulan bir soru.
+        // tool_input'tan soruyu ve seçenekleri çıkarıp QuestionView'a yönlendir.
+        if toolName == "AskUserQuestion" {
+            if let question = makeAskUserQuestionEvent(eventId: event.id, toolInput: event.data?.toolInput) {
+                transition(sessionId: event.sessionId, to: .waiting)
+                appState.activeSessionId = event.sessionId
+                sessions[event.sessionId]?.pendingQuestion = question
+                pendingResponders[event.id] = respond
+                return
+            }
+            // Parse edilemediyse oturumu asılı bırakmamak için reddet.
+            let response = SocketResponse(
+                id: event.id,
+                response: ResponsePayload(
+                    hookSpecificOutput: HookSpecificOutput(
+                        hookEventName: "PermissionRequest",
+                        decision: PermissionDecision(behavior: "deny", reason: "AskUserQuestion input parse edilemedi"),
+                        selectedOption: nil
+                    )
+                )
+            )
+            respond(response)
+            return
+        }
+
         // Auto-approve internal tools (no UI needed)
         if Self.autoApproveTools.contains(toolName) {
             let response = SocketResponse(
@@ -357,6 +382,28 @@ final class SessionStore {
         pendingResponders.removeValue(forKey: eventId)
     }
 
+    /// AskUserQuestion permission-request'ine PermissionDecision + selectedOption formatında yanıt ver.
+    func respondToAskUserQuestion(eventId: String, answer: String, sessionId: String?) {
+        let response = SocketResponse(
+            id: eventId,
+            response: ResponsePayload(
+                hookSpecificOutput: HookSpecificOutput(
+                    hookEventName: "PermissionRequest",
+                    decision: PermissionDecision(behavior: "allow"),
+                    selectedOption: answer
+                )
+            )
+        )
+
+        pendingResponders[eventId]?(response)
+        pendingResponders.removeValue(forKey: eventId)
+
+        if let sessionId {
+            sessions[sessionId]?.pendingQuestion = nil
+            transition(sessionId: sessionId, to: .working)
+        }
+    }
+
     // MARK: - Sync
 
     private func syncToAppState(_ appState: AppState) {
@@ -400,5 +447,35 @@ final class SessionStore {
         guard let input else { return "" }
         let sorted = input.sorted { $0.key < $1.key }
         return sorted.map { "\($0.key)=\($0.value)" }.joined(separator: ",")
+    }
+
+    /// AskUserQuestion tool_input şeması: { questions: [{ question, options: [{label, description?}] }, ...] }
+    /// Birden fazla soru gelebilir; şu an için ilk soruyu gösteriyoruz.
+    private func makeAskUserQuestionEvent(eventId: String, toolInput: [String: AnyCodableValue]?) -> QuestionEvent? {
+        guard let toolInput,
+              let questionsArray = toolInput["questions"]?.arrayValue,
+              let firstObj = questionsArray.first?.objectValue,
+              let questionText = firstObj["question"]?.stringValue,
+              !questionText.isEmpty
+        else { return nil }
+
+        var options: [String] = []
+        if let optsArray = firstObj["options"]?.arrayValue {
+            for opt in optsArray {
+                if let obj = opt.objectValue, let label = obj["label"]?.stringValue {
+                    options.append(label)
+                } else if let str = opt.stringValue {
+                    options.append(str)
+                }
+            }
+        }
+
+        return QuestionEvent(
+            id: eventId,
+            question: questionText,
+            options: options,
+            receivedAt: Date(),
+            isPermissionRequest: true
+        )
     }
 }
