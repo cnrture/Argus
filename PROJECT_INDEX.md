@@ -1,141 +1,133 @@
 # Project Index: Argus
 
-Generated: 2026-04-07
+Generated: 2026-04-15
+
+Native macOS app that turns the MacBook notch into a real-time control panel for AI coding agents (Claude Code, Codex, Gemini CLI, Cursor, Copilot, OpenCode, CodeBuddy, Droid, Qoder, Factory). Free, open-source alternative to Vibe Island.
 
 ## Project Structure
 
 ```
 Argus/
-├── Makefile                          # Build automation (xcodebuild)
-├── Casks/argus.rb              # Homebrew Cask formula
-├── Argus/
-│   ├── Argus.xcodeproj/        # Xcode project (2 schemes)
-│   ├── ExportOptions.plist          # Archive export config
-│   ├── Argus/                  # Main app target
-│   │   ├── App/                     # App entry, delegate, state
-│   │   ├── Core/                    # Business logic
-│   │   │   ├── Events/             # Mouse/keyboard event monitors
-│   │   │   ├── Hooks/              # Hook install/merge/repair
-│   │   │   ├── Jump/               # Window focus & smart suppress
-│   │   │   ├── Screen/             # Notch detection, screen selection
-│   │   │   ├── Session/            # Session lifecycle & scanning
-│   │   │   ├── Settings/           # SettingsStore, L10n, UpdateManager
-│   │   │   ├── Socket/             # Unix socket server, JSONL parser
-│   │   │   ├── Sound/              # Sound manager & triggers
-│   │   │   └── Voice/              # Speech recognition commands
-│   │   ├── Models/                  # Data types (Session, HookEvent, AgentSource, etc.)
-│   │   ├── UI/                      # SwiftUI views
-│   │   │   ├── Notch/              # Compact bar, expanded panel, permission/question/plan views
-│   │   │   ├── MenuBar/           # Menu bar extra view
-│   │   │   ├── Onboarding/        # First-launch onboarding
-│   │   │   ├── Pet/               # Desk pet (cat/dog sprite animation)
-│   │   │   ├── Settings/          # Settings window
-│   │   │   └── Shared/            # Reusable components (StatusDot, GlowEffect, MarkdownText)
-│   │   ├── Resources/              # Localizable.strings (9 langs), pet sprites
-│   │   └── Assets.xcassets/        # App icon, accent color
-│   └── argus-bridge/          # CLI bridge target (3 files)
-│       ├── main.swift              # Entry point — reads stdin, sends to socket
-│       ├── EventRouter.swift       # Builds message JSON, determines blocking events
-│       └── SocketClient.swift      # Unix socket client connection
+├── Argus.xcodeproj/              # Xcode project (schemes: Argus, argus-bridge)
+├── Argus/                        # Main app target (SwiftUI/AppKit)
+│   ├── App/                      # Entry + app-level state
+│   ├── Models/                   # Session, HookEvent, Permission/Question/Plan events, AgentSource, DiffPreview
+│   ├── Core/
+│   │   ├── Socket/               # SocketServer (AF_UNIX), JSONLParser
+│   │   ├── Session/              # SessionStore, SessionScanner, SessionTitleResolver, ToolUseIdCache
+│   │   ├── Hooks/                # HookInstaller, HookConfigMerger
+│   │   ├── Events/               # EventMonitor(s)
+│   │   ├── Screen/               # NotchDetector, ScreenObserver, ScreenSelector
+│   │   ├── Sound/                # SoundManager, SoundPack (8-bit)
+│   │   ├── Voice/                # VoiceCommandManager
+│   │   ├── Jump/                 # WindowJumper, SmartSuppress
+│   │   └── Settings/             # SettingsStore, L10n, UpdateManager (Sparkle)
+│   ├── UI/
+│   │   ├── Notch/                # NotchWindow(Controller), Compact/Expanded views, Permission/Question/Plan/Error/Completion/IdlePrompt
+│   │   ├── MenuBar/              # MenuBarView
+│   │   ├── Settings/             # SettingsView
+│   │   ├── Onboarding/           # OnboardingView
+│   │   ├── Pet/                  # DeskPet, SpriteSheetAnimator
+│   │   └── Shared/               # StatusDot, StatusPet, GlowEffect, MarkdownText, SessionCard
+│   ├── Resources/                # Localizable.strings (tr, en, ko, pt-BR, de, es, fr, ja, zh-Hans)
+│   ├── Assets.xcassets/          # AppIcon, AccentColor
+│   └── Info.plist
+├── argus-bridge/                 # Standalone CLI (zero deps)
+│   ├── main.swift                # Entry: argus-bridge <event-type> [--source] [--session-id]
+│   ├── SocketClient.swift        # Writes JSONL to ~/.argus/argus.sock
+│   └── EventRouter.swift
+└── ExportOptions.plist
+Casks/argus.rb                    # Homebrew cask
+scripts/                          # release.sh, update-appcast.sh, setup-sparkle-tools.sh, backup-sparkle-key.sh
+.github/workflows/release.yml     # Release pipeline
+Makefile                          # build, bridge, archive, dmg, clean, release
 ```
 
 ## Entry Points
 
-- **App**: `Argus/App/ArgusApp.swift` — `@main` SwiftUI app, delegates to `AppDelegate`
-- **CLI Bridge**: `argus-bridge/main.swift` — `argus-bridge <event-type> [--source <agent>] [--session-id <id>]`
-- **Bootstrap**: `App/AppDelegate.swift` — Creates window, starts socket server, installs hooks, scans sessions
+- **App**: `Argus/Argus/App/ArgusApp.swift` → `AppDelegate` (bootstraps window, socket, hooks, session scan, desk pet, voice)
+- **CLI bridge**: `Argus/argus-bridge/main.swift` (stdin JSON → Unix socket `~/.argus/argus.sock`)
+- **UI root**: `NotchWindowController` → `NotchContainerView` (Compact ↔ Expanded)
 
 ## Core Modules
 
-### Socket Communication
-- `Core/Socket/SocketServer.swift` — AF_UNIX listener at `~/.argus/argus.sock`, GCD-based accept/read
-- `Core/Socket/JSONLParser.swift` — Parses newline-delimited JSON messages into typed events
-- Event protocol: Bridge sends `HookEvent` JSON → Server parses → `SessionStore.process()` → UI update or blocking response
+### App (`Argus/App/`)
+- `AppDelegate.swift` — lifecycle bootstrap, 5-min hook repair timer, existing-session scan
+- `ArgusApp.swift` — `@main` SwiftUI App
+- `AppState.swift` — `@Observable` bridge between business logic and views
 
-### Session Management
-- `Core/Session/SessionStore.swift` — Central event processor, state machine (`idle↔working↔waiting↔error↔ended`), permission/question response handling
-- `Core/Session/SessionScanner.swift` — Discovers running `claude` processes via `pgrep`, resolves CWD via `lsof`
-- `Core/Session/SessionTitleResolver.swift` — Generates session titles from CWD path
-- `Core/Session/ToolUseIdCache.swift` — Correlates `PreToolUse` events with `PermissionRequest` via tool_use_id
+### Models (`Argus/Models/`)
+- `Session.swift` — session lifecycle (`idle → working → waiting → idle`)
+- `HookEvent.swift` — pointer (actual types live in `SocketServer.swift`)
+- `AgentSource.swift` — 10 agent enum (claude, codex, gemini, cursor, copilot, opencode, codebuddy, droid, qoder, factory) with config paths, event mappings, hook formats
+- `PermissionEvent`, `QuestionEvent`, `PlanEvent`, `DiffPreview`
 
-### Hook System
-- `Core/Hooks/HookInstaller.swift` — Install/uninstall/verify-repair per agent, bridge binary deployment to `~/.argus/bin/`
-- `Core/Hooks/HookConfigMerger.swift` — Non-destructive JSON merge supporting 3 formats: `.claude`, `.nested`, `.flat`
+### Core
+- **Socket**: `SocketServer` (AF_UNIX SOCK_STREAM, keeps connection open for blocking events), `JSONLParser`
+- **Session**: `SessionStore` (event processing + state machine), `SessionScanner` (existing PID discovery), `SessionTitleResolver`, `ToolUseIdCache`
+- **Hooks**: `HookInstaller` (install/uninstall/verify/repair), `HookConfigMerger` (3 formats: `.claude`, `.nested`, `.flat`; backs up with `.argus-backup` suffix)
+- **Screen**: `NotchDetector`, `ScreenObserver`, `ScreenSelector`
+- **Jump**: `WindowJumper` (jump to owning terminal/IDE), `SmartSuppress` (prevents redundant sounds)
+- **Settings**: `SettingsStore` (UserDefaults + `didSet`), `L10n` (runtime language switch), `UpdateManager` (Sparkle)
 
-### Multi-Agent
-- `Models/AgentSource.swift` — 10 agents: Claude, Codex, Gemini, Cursor, Copilot, OpenCode, CodeBuddy, Droid, Qoder, Factory
-- Each defines: `configPath`, `hookFormat`, `eventMapping` (internal→native event names), `timeoutMultiplier`
+### UI — Notch
+- `NotchWindow` (transparent NSPanel at top of screen), `PassThroughHostingView` (pass-through mouse except hit-test rect)
+- Panel states: `hidden → compact → expanded`; fullscreen 5pt hover trigger
+- Views: `CompactView`, `ExpandedOverviewView`, `PermissionView`, `QuestionView`, `PlanReviewView`, `CompletionCardView`, `ErrorCardView`, `IdlePromptView`, `DiffPreviewView`, `NotchShape`
 
-### Window & UI
-- `UI/Notch/NotchWindowController.swift` — Transparent NSPanel, hover detection, expand/collapse, fullscreen support, keyboard shortcuts
-- `UI/Notch/NotchContainerView.swift` — Root SwiftUI view composing compact bar and expanded panel
-- `UI/Notch/PassThroughHostingView.swift` — NSHostingView subclass with configurable hit-test rect
-- `Core/Screen/NotchDetector.swift` — `NSScreen` extension for physical notch detection via `safeAreaInsets`
+## Data Flow
 
-### Platform Features
-- `Core/Sound/SoundManager.swift` — Singleton, priority: custom file → bundle .wav → macOS system sound → beep
-- `Core/Voice/VoiceCommandManager.swift` — On-device `SFSpeechRecognizer` (tr-TR/en-US), recognizes "izin ver"/"allow"/"deny"/"reddet"
-- `Core/Jump/WindowJumper.swift` — PID→parent chain traversal to find owning .app bundle, activates terminal/IDE
-- `Core/Jump/SmartSuppress.swift` — Suppresses notifications when frontmost app matches session owner
-- `Core/Settings/UpdateManager.swift` — Sparkle auto-update integration
+```
+AI Agent Hook → argus-bridge (CLI) → Unix Socket (~/.argus/argus.sock, chmod 600)
+              → SocketServer → JSONLParser → HookEvent
+              → SessionStore (state machine) → AppState → SwiftUI views
+For blocking events (permission): socket stays open until user responds via UI.
+```
 
-## Key Data Types
+## Build & Commands (Makefile)
 
-| Type | File | Purpose |
-|------|------|---------|
-| `HookEvent` | Socket/SocketServer.swift | Inbound event from bridge (16 event types) |
-| `HookEventType` | Socket/SocketServer.swift | Enum: session-start, permission-request, stop, pre-tool-use, etc. |
-| `Session` | Models/Session.swift | Runtime session with status FSM, pending events, auto-approve rules |
-| `SessionInfo` | App/AppState.swift | Lightweight UI-bindable snapshot of Session |
-| `AppState` | App/AppState.swift | `@Observable` root state: panel state, sessions, active events |
-| `AgentSource` | Models/AgentSource.swift | Enum of 10 supported AI agents with config metadata |
-| `PermissionEvent` | Models/PermissionEvent.swift | Pending permission with tool name, input, tool_use_id |
-| `QuestionEvent` | Models/QuestionEvent.swift | Multiple-choice or free-text question from agent |
-| `PlanEvent` | Models/PlanEvent.swift | Plan review with markdown content |
-| `SocketResponse` | Socket/SocketServer.swift | Outbound response (permission decision or question answer) |
-
-## Configuration
-
-| File | Purpose |
-|------|---------|
-| `Makefile` | Build/archive/sign/notarize/DMG commands |
-| `Info.plist` | Microphone/speech permissions, Sparkle feed URL |
-| `Argus.entitlements` | App sandbox disabled (needs filesystem + process access) |
-| `ExportOptions.plist` | Xcode archive export configuration |
-| `Casks/argus.rb` | Homebrew Cask formula |
+- `make build` — Debug build (xcodebuild, scheme `Argus`)
+- `make bridge` — Release build of CLI (scheme `argus-bridge`)
+- `make archive` — Release archive (manual signing, Developer ID, team `39Z244SGXG`)
+- `make export` — Copy app out of archive
+- `make sign` / `make notarize` — Codesign + notarytool + stapler
+- `make dmg` — `hdiutil create` UDZO DMG
+- `make release` — `scripts/release.sh`
+- `make clean` — `xcodebuild clean` + `rm -rf build/ release/`
 
 ## Dependencies (SPM)
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| KeyboardShortcuts | 2.4.0 | Global hotkeys (Cmd+Y/N, Cmd+1/2/3, Cmd+Shift+P) |
-| LaunchAtLogin-Modern | 1.1.0 | Login item registration |
-| Sparkle | 2.9.1 | Auto-update framework |
+- `KeyboardShortcuts` (sindresorhus) — Cmd+Y/N (permissions), Cmd+1/2/3 (questions)
+- `LaunchAtLogin-Modern` (sindresorhus)
+- `Sparkle` — auto-update
+
+## Configuration
+
+- `Argus/Info.plist` — app metadata
+- `Argus/ExportOptions.plist` — archive export
+- `Casks/argus.rb` — Homebrew cask
+- `.github/workflows/release.yml` — release pipeline
 
 ## Localization
 
-9 languages via `Localizable.strings`: tr, en, ko, pt-BR, de, es, fr, ja, zh-Hans.
-Runtime switching via `L10n` subscript helper — reads from language-specific bundle.
+`Resources/*.lproj/Localizable.strings` + `L10n.swift` helper. Languages: tr, en, ko, pt-BR, de, es, fr, ja, zh-Hans.
 
-## Runtime Paths
+## Key Patterns
 
-| Path | Purpose |
-|------|---------|
-| `~/.argus/argus.sock` | Unix socket (chmod 600) |
-| `~/.argus/bin/argus-bridge` | Bridge binary (chmod 755) |
-| `~/.claude/settings.json` | Claude Code hook config |
-| `~/.codex/hooks.json` | Codex hook config |
-| `~/.gemini/settings.json` | Gemini CLI hook config |
-| `~/.cursor/hooks.json` | Cursor hook config |
+- No visible windows, no dock icon, no standard menu bar — lives entirely in notch panel
+- `@Observable` (Swift Observation), not `ObservableObject`/Combine
+- `SettingsStore` persists via `UserDefaults` with `didSet`
+- 5-second timer cleans up sessions whose PIDs have exited
+- Hook configs backed up before first modification; merger never touches existing hooks
 
-## Build & Run
+## Requirements
 
-```bash
-make build          # Debug build
-make bridge         # Build CLI bridge (Release)
-make clean          # Clean all artifacts
-make archive        # Release archive
-make dmg            # Create distributable DMG
-```
+- macOS 15.0 (Sequoia)+
+- Xcode with Swift 6 toolchain
+- Apple Silicon or Intel
 
-Requirements: macOS 15.0+, Xcode with Swift 6 toolchain.
+## Quick Start
+
+1. `make build` — debug build
+2. Run from Xcode or `open build/...` — approves hook install on first launch
+3. Invoke an AI agent (e.g. Claude Code); events appear in the notch panel
