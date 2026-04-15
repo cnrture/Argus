@@ -10,11 +10,35 @@
 		A0AD4B212F8483590033B8E4 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = A0AD4A922F8480020033B8E4 /* KeyboardShortcuts */; };
 		A0AD4B222F8483590033B8E4 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = A0AD4A932F8480030033B8E4 /* LaunchAtLogin */; };
 		A0AD4F9C2F8530990033B8E4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A0AD4BC12F84A0010033B8E4 /* Sparkle */; };
+		A0F558F72F8FA997000D407C /* argus-bridge in CopyFiles */ = {isa = PBXBuildFile; fileRef = A0AD4BB02F8490000033B8E4 /* argus-bridge */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A0F558F42F8FA953000D407C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A0AD4A652F8477840033B8E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A0AD4BB32F8490030033B8E4;
+			remoteInfo = "argus-bridge";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A0F558F62F8FA96F000D407C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				A0F558F72F8FA997000D407C /* argus-bridge in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A0AD4A6D2F8477840033B8E4 /* Argus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Argus.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A0AD4BB02F8490000033B8E4 /* notchpilot-bridge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "argus-bridge"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A0AD4BB02F8490000033B8E4 /* argus-bridge */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "argus-bridge"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,7 +60,7 @@
 			path = Argus;
 			sourceTree = "<group>";
 		};
-		A0AD4BB12F8490010033B8E4 /* notchpilot-bridge */ = {
+		A0AD4BB12F8490010033B8E4 /* argus-bridge */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "argus-bridge";
 			sourceTree = "<group>";
@@ -68,7 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				A0AD4A6F2F8477840033B8E4 /* Argus */,
-				A0AD4BB12F8490010033B8E4 /* notchpilot-bridge */,
+				A0AD4BB12F8490010033B8E4 /* argus-bridge */,
 				A0AD4A6E2F8477840033B8E4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,7 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				A0AD4A6D2F8477840033B8E4 /* Argus.app */,
-				A0AD4BB02F8490000033B8E4 /* notchpilot-bridge */,
+				A0AD4BB02F8490000033B8E4 /* argus-bridge */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -92,10 +116,12 @@
 				A0AD4A692F8477840033B8E4 /* Sources */,
 				A0AD4A6A2F8477840033B8E4 /* Frameworks */,
 				A0AD4A6B2F8477840033B8E4 /* Resources */,
+				A0F558F62F8FA96F000D407C /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A0F558F52F8FA953000D407C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A0AD4A6F2F8477840033B8E4 /* Argus */,
@@ -110,7 +136,7 @@
 			productReference = A0AD4A6D2F8477840033B8E4 /* Argus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A0AD4BB32F8490030033B8E4 /* notchpilot-bridge */ = {
+		A0AD4BB32F8490030033B8E4 /* argus-bridge */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0AD4BB82F8490060033B8E4 /* Build configuration list for PBXNativeTarget "argus-bridge" */;
 			buildPhases = (
@@ -122,11 +148,11 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A0AD4BB12F8490010033B8E4 /* notchpilot-bridge */,
+				A0AD4BB12F8490010033B8E4 /* argus-bridge */,
 			);
 			name = "argus-bridge";
 			productName = "argus-bridge";
-			productReference = A0AD4BB02F8490000033B8E4 /* notchpilot-bridge */;
+			productReference = A0AD4BB02F8490000033B8E4 /* argus-bridge */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -175,7 +201,7 @@
 			projectRoot = "";
 			targets = (
 				A0AD4A6C2F8477840033B8E4 /* Argus */,
-				A0AD4BB32F8490030033B8E4 /* notchpilot-bridge */,
+				A0AD4BB32F8490030033B8E4 /* argus-bridge */,
 			);
 		};
 /* End PBXProject section */
@@ -206,6 +232,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A0F558F52F8FA953000D407C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A0AD4BB32F8490030033B8E4 /* argus-bridge */;
+			targetProxy = A0F558F42F8FA953000D407C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A0AD4A762F8477850033B8E4 /* Debug */ = {
