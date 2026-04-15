@@ -17,7 +17,6 @@ final class SoundManager {
         .planReady:        "Purr",
         .taskCompleted:    "Glass",
         .error:            "Basso",
-        .idle:             "Tink",
     ]
 
     func configure(enabled: Bool, volume: Float) {

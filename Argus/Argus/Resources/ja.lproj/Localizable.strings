@@ -74,7 +74,6 @@
 "sound.planReady" = "プラン準備完了";
 "sound.taskCompleted" = "タスク完了";
 "sound.error" = "エラー発生";
-"sound.idle" = "アイドル";
 
 /* Shortcuts */
 "settings.section.permissionShortcuts" = "許可ショートカット";
@@ -115,7 +114,6 @@
 
 /* Status */
 "status.completed" = "完了";
-"status.waitingForResponse" = "応答待ち";
 
 /* Actions */
 "action.jumpToTerminal" = "ターミナルに移動";

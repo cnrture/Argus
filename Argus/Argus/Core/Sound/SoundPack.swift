@@ -8,7 +8,6 @@ enum SoundTrigger: String, CaseIterable, Codable {
     case planReady = "plan-ready"
     case taskCompleted = "task-completed"
     case error = "error"
-    case idle = "idle"
 
     var displayName: String {
         switch self {
@@ -19,7 +18,6 @@ enum SoundTrigger: String, CaseIterable, Codable {
         case .planReady:        L10n["sound.planReady"]
         case .taskCompleted:    L10n["sound.taskCompleted"]
         case .error:            L10n["sound.error"]
-        case .idle:             L10n["sound.idle"]
         }
     }
 
@@ -39,7 +37,7 @@ struct SoundEventConfig: Identifiable, Codable {
             SoundEventConfig(
                 id: trigger.rawValue,
                 eventType: trigger,
-                enabled: trigger != .idle,
+                enabled: true,
                 customSoundURL: nil
             )
         }

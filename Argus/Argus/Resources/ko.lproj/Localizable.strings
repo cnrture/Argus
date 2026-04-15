@@ -74,7 +74,6 @@
 "sound.planReady" = "계획 준비 완료";
 "sound.taskCompleted" = "작업 완료";
 "sound.error" = "오류 발생";
-"sound.idle" = "유휴";
 
 /* Shortcuts */
 "settings.section.permissionShortcuts" = "권한 단축키";
@@ -115,7 +114,6 @@
 
 /* Status */
 "status.completed" = "완료됨";
-"status.waitingForResponse" = "응답 대기 중";
 
 /* Actions */
 "action.jumpToTerminal" = "터미널로 이동";

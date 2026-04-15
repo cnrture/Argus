@@ -249,11 +249,6 @@ extension AppDelegate: SocketServerDelegate {
         case .stopFailure:
             sound.play(.error, configs: configs)
             // ErrorCard is set by SessionStore
-        case .notification:
-            if event.data?.notificationType == "idle_prompt" {
-                let suppress = shouldSuppress(sessionId: event.sessionId)
-                if !suppress { sound.play(.idle, configs: configs) }
-            }
         default:
             break
         }

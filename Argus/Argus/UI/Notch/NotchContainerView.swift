@@ -22,7 +22,6 @@ struct NotchContainerView: View {
     private var shouldMaskMenuBar: Bool {
         appState.errorInfo != nil ||
         appState.completionSession != nil ||
-        appState.idleSessionId != nil ||
         (appState.panelState != .hidden && appState.isExpanded)
     }
 
@@ -61,20 +60,6 @@ struct NotchContainerView: View {
                 )
                 .padding(.top, notchRect.height)
                 .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
-            }
-            // Idle prompt
-            else if let idleId = appState.idleSessionId, let session = appState.sessions[idleId] {
-                IdlePromptView(
-                    sessionTitle: session.title,
-                    notchWidth: notchRect.width,
-                    onJump: {
-                        onJumpToSession?(idleId)
-                        appState.idleSessionId = nil
-                    },
-                    onDismiss: { appState.idleSessionId = nil }
-                )
-                .padding(.top, notchRect.height)
-                .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
             }
             else if appState.panelState != .hidden {
                 if appState.isExpanded {

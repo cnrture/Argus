@@ -78,7 +78,7 @@ final class SessionStore {
             handleStopFailure(event: event, appState: appState)
 
         case .notification:
-            handleNotification(event: event, appState: appState)
+            break
 
         case .permissionDenied:
             sessions[event.sessionId]?.lastActivity = Date()
@@ -281,13 +281,6 @@ final class SessionStore {
         let errorMessage = event.data?.errorMessage ?? "Bilinmeyen hata"
         let title = sessions[event.sessionId]?.title ?? "Claude Code"
         appState.errorInfo = (type: errorType, message: errorMessage, sessionTitle: title)
-    }
-
-    private func handleNotification(event: HookEvent, appState: AppState) {
-        let notifType = event.data?.notificationType
-        if notifType == "idle_prompt" {
-            appState.idleSessionId = event.sessionId
-        }
     }
 
     private func handlePreCompact(event: HookEvent, appState: AppState) {

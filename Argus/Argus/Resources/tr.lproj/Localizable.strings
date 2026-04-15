@@ -74,7 +74,6 @@
 "sound.planReady" = "Plan Hazır";
 "sound.taskCompleted" = "Görev Tamamlandı";
 "sound.error" = "Hata Oluştu";
-"sound.idle" = "Hareketsiz";
 
 /* Shortcuts */
 "settings.section.permissionShortcuts" = "İzin Kısayolları";
@@ -115,7 +114,6 @@
 
 /* Status */
 "status.completed" = "Tamamlandı";
-"status.waitingForResponse" = "Yanıt Bekleniyor";
 
 /* Actions */
 "action.jumpToTerminal" = "Terminal'e Git";

@@ -74,7 +74,6 @@
 "sound.planReady" = "计划就绪";
 "sound.taskCompleted" = "任务完成";
 "sound.error" = "发生错误";
-"sound.idle" = "空闲";
 
 /* Shortcuts */
 "settings.section.permissionShortcuts" = "权限快捷键";
@@ -115,7 +114,6 @@
 
 /* Status */
 "status.completed" = "已完成";
-"status.waitingForResponse" = "等待响应";
 
 /* Actions */
 "action.jumpToTerminal" = "跳转到终端";

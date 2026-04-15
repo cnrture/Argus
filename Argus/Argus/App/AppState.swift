@@ -17,7 +17,6 @@ final class AppState {
     var isBootAnimating: Bool = false
     var completionSession: SessionInfo?
     var errorInfo: (type: String, message: String, sessionTitle: String)?
-    var idleSessionId: String?
     var showContinueForSession: String?
 
     var hasActiveSessions: Bool {

@@ -74,7 +74,6 @@
 "sound.planReady" = "Plan prêt";
 "sound.taskCompleted" = "Tâche terminée";
 "sound.error" = "Erreur survenue";
-"sound.idle" = "Inactif";
 
 /* Shortcuts */
 "settings.section.permissionShortcuts" = "Raccourcis de permission";
@@ -115,7 +114,6 @@
 
 /* Status */
 "status.completed" = "Terminé";
-"status.waitingForResponse" = "En attente de réponse";
 
 /* Actions */
 "action.jumpToTerminal" = "Aller au Terminal";
