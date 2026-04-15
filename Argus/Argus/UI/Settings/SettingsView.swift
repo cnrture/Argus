@@ -153,6 +153,7 @@ private struct SidebarButton: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(isSelected ? color.opacity(0.08) : .clear)
             )
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
