@@ -55,11 +55,11 @@ struct ErrorCardView: View {
         }
         .frame(width: cardWidth)
         .background(
-            NotchShape(topCornerRadius: 14, bottomCornerRadius: 20)
+            NotchShape(topCornerRadius: 0, bottomCornerRadius: 20)
                 .fill(.black.opacity(0.95))
         )
         .overlay(
-            NotchShape(topCornerRadius: 14, bottomCornerRadius: 20)
+            NotchShape(topCornerRadius: 0, bottomCornerRadius: 20)
                 .stroke(.red.opacity(0.3), lineWidth: 0.5)
         )
         .shadow(color: .red.opacity(0.15), radius: 12, y: 4)

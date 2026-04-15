@@ -19,9 +19,25 @@ struct NotchContainerView: View {
     private let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
     private let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
 
+    private var shouldMaskMenuBar: Bool {
+        appState.errorInfo != nil ||
+        appState.completionSession != nil ||
+        appState.idleSessionId != nil ||
+        (appState.panelState != .hidden && appState.isExpanded)
+    }
+
     var body: some View {
         ZStack(alignment: .top) {
             Color.clear
+
+            // Menu bar mask: notch yüksekliğinde siyah şerit, notch'un iki yanını kapatır
+            if shouldMaskMenuBar {
+                Rectangle()
+                    .fill(Color.black)
+                    .frame(width: screenSize.width, height: notchRect.height)
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    .transition(.opacity)
+            }
 
             // Error card (highest priority)
             if let error = appState.errorInfo {

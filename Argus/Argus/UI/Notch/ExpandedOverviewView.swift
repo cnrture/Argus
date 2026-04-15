@@ -65,14 +65,14 @@ struct ExpandedOverviewView: View {
         .frame(width: expandedWidth)
         .background(
             NotchShape(
-                topCornerRadius: 19,
+                topCornerRadius: 0,
                 bottomCornerRadius: 24
             )
             .fill(.black.opacity(0.95))
         )
         .overlay(
             NotchShape(
-                topCornerRadius: 19,
+                topCornerRadius: 0,
                 bottomCornerRadius: 24
             )
             .stroke(.white.opacity(0.08), lineWidth: 0.5)

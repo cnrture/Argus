@@ -51,11 +51,11 @@ struct IdlePromptView: View {
         .padding(.vertical, 10)
         .frame(width: cardWidth)
         .background(
-            NotchShape(topCornerRadius: 6, bottomCornerRadius: 14)
+            NotchShape(topCornerRadius: 0, bottomCornerRadius: 14)
                 .fill(.black.opacity(0.95))
         )
         .overlay(
-            NotchShape(topCornerRadius: 6, bottomCornerRadius: 14)
+            NotchShape(topCornerRadius: 0, bottomCornerRadius: 14)
                 .stroke(.orange.opacity(0.2), lineWidth: 0.5)
         )
         .onAppear { pulse = true }
