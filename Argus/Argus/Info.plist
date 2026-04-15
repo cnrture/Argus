@@ -14,6 +14,8 @@
 		</dict>
 	</array>
 	<key>SUFeedURL</key>
-	<string>https://raw.githubusercontent.com/cnrture/Argus/main/appcast.xml</string>
+	<string>https://argus.candroid.dev/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>CvhShcrbAZWrhiKUFl036WSfyr9oT83FzXZTgqmikcE=</string>
 </dict>
 </plist>

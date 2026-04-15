@@ -4,7 +4,7 @@ ARCHIVE_PATH = build/Argus.xcarchive
 EXPORT_PATH = build/export
 DMG_PATH = build/Argus.dmg
 
-.PHONY: build archive export sign notarize dmg clean bridge
+.PHONY: build archive export sign notarize dmg clean bridge release
 
 build:
 	cd Argus && xcodebuild -project Argus.xcodeproj \
@@ -48,7 +48,10 @@ dmg: export
 		-ov -format UDZO $(DMG_PATH)
 	@echo "DMG created at $(DMG_PATH)"
 
+release:
+	./scripts/release.sh
+
 clean:
-	rm -rf build/
+	rm -rf build/ release/
 	cd Argus && xcodebuild clean \
 		-project Argus.xcodeproj -scheme $(SCHEME)
