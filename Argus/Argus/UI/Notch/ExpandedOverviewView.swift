@@ -47,6 +47,9 @@ struct ExpandedOverviewView: View {
                     Label(L10n["action.settings"], systemImage: "gearshape")
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.6))
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
 
@@ -56,11 +59,14 @@ struct ExpandedOverviewView: View {
                     Label(L10n["action.quit"], systemImage: "power")
                         .font(.system(size: 11))
                         .foregroundStyle(.white.opacity(0.4))
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 12)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 10)
         }
         .frame(width: expandedWidth)
         .background(

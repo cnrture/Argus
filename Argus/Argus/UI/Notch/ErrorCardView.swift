@@ -49,6 +49,7 @@ struct ErrorCardView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 6)
                     .background(RoundedRectangle(cornerRadius: 6).fill(.white.opacity(0.08)))
+                    .contentShape(RoundedRectangle(cornerRadius: 6))
             }
             .buttonStyle(.plain)
             .padding(.bottom, 12)

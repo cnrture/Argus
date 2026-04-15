@@ -323,6 +323,7 @@ private struct AppearanceTab: View {
                                         .stroke(.white, lineWidth: store.accentColorName == item.name ? 2 : 0)
                                 )
                                 .shadow(color: item.color.opacity(0.4), radius: store.accentColorName == item.name ? 4 : 0)
+                                .contentShape(Circle())
                         }
                         .buttonStyle(.plain)
                     }
@@ -445,6 +446,7 @@ private struct PetsTab: View {
                             .frame(width: 50, height: 50)
                             .background(RoundedRectangle(cornerRadius: 8).fill(store.petStyle == pet ? store.accentColor.opacity(0.15) : .clear))
                             .overlay(RoundedRectangle(cornerRadius: 8).stroke(store.petStyle == pet ? store.accentColor : .clear, lineWidth: 1.5))
+                            .contentShape(RoundedRectangle(cornerRadius: 8))
                         }
                         .buttonStyle(.plain)
                     }
@@ -488,6 +490,7 @@ private struct PetsTab: View {
                                 .padding(6)
                                 .background(RoundedRectangle(cornerRadius: 8).fill(store.dogBreed == dog.name ? store.accentColor.opacity(0.15) : .clear))
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(store.dogBreed == dog.name ? store.accentColor : .clear, lineWidth: 1.5))
+                                .contentShape(RoundedRectangle(cornerRadius: 8))
                             }
                             .buttonStyle(.plain)
                         }
@@ -509,6 +512,7 @@ private struct PetsTab: View {
                                 .padding(6)
                                 .background(RoundedRectangle(cornerRadius: 8).fill(store.catColor == cat.name ? store.accentColor.opacity(0.15) : .clear))
                                 .overlay(RoundedRectangle(cornerRadius: 8).stroke(store.catColor == cat.name ? store.accentColor : .clear, lineWidth: 1.5))
+                                .contentShape(RoundedRectangle(cornerRadius: 8))
                             }
                             .buttonStyle(.plain)
                         }

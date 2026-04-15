@@ -81,6 +81,7 @@ struct PlanReviewView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(.red.opacity(0.3), lineWidth: 0.5)
                     )
+                    .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.red)
@@ -109,6 +110,7 @@ struct PlanReviewView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(.green.opacity(0.3), lineWidth: 0.5)
                     )
+                    .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.green)

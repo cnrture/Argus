@@ -44,6 +44,7 @@ struct IdlePromptView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(RoundedRectangle(cornerRadius: 5).fill(.orange.opacity(0.12)))
+                .contentShape(RoundedRectangle(cornerRadius: 5))
             }
             .buttonStyle(.plain)
         }

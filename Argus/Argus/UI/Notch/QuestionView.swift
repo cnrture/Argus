@@ -82,6 +82,7 @@ struct QuestionView: View {
                     .padding(.vertical, 10)
                     .background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.06)))
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.1), lineWidth: 0.5))
+                    .contentShape(RoundedRectangle(cornerRadius: 8))
                 }
                 .buttonStyle(.plain)
             }
@@ -108,6 +109,7 @@ struct QuestionView: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
                     .background(RoundedRectangle(cornerRadius: 6).fill(.orange.opacity(0.3)))
+                    .contentShape(RoundedRectangle(cornerRadius: 6))
             }
             .buttonStyle(.plain)
             .disabled(freeTextAnswer.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)

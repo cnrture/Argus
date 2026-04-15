@@ -94,6 +94,7 @@ struct PermissionView: View {
             .padding(.vertical, 7)
             .background(RoundedRectangle(cornerRadius: 8).fill(color.opacity(0.15)))
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(color.opacity(0.3), lineWidth: 0.5))
+            .contentShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
         .foregroundStyle(color)

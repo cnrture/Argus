@@ -51,11 +51,13 @@ struct MenuBarView: View {
                 HStack {
                     Image(systemName: settingsStore.soundEnabled ? "speaker.wave.2" : "speaker.slash")
                     Text(settingsStore.soundEnabled ? "Sesi Kapat" : "Sesi Aç")
+                    Spacer()
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
 
             Button(action: onOpenSettings) {
                 HStack {
@@ -65,10 +67,11 @@ struct MenuBarView: View {
                     Text("⌘,")
                         .foregroundStyle(.secondary)
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 4)
 
             Divider().padding(.vertical, 4)
 
@@ -79,10 +82,12 @@ struct MenuBarView: View {
                     Text("⌘Q")
                         .foregroundStyle(.secondary)
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 12)
-            .padding(.bottom, 8)
+            .padding(.bottom, 4)
         }
         .frame(width: 240)
     }
