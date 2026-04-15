@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>Argus</title>
+        <link>https://argus.candroid.dev/appcast.xml</link>
+        <description>Argus release feed</description>
+        <language>en</language>
+            <item>
+            <title>Version 1.0</title>
+            <pubDate>Wed, 15 Apr 2026 10:09:39 +0000</pubDate>
+            <sparkle:version>1.0</sparkle:version>
+            <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[Argus 1.0]]></description>
+            <enclosure
+                url="https://github.com/cnrture/Argus/releases/download/v1.0/Argus.zip"
+                sparkle:edSignature="ea0b+FFMjPRKGDAjfJ3IWVT9OzLgFbD4DR6GK8UtpGTKU9x3evIgDBRa+ZGbwpAwTO1twXBdBg0wpE7ip1//CQ=="
+                length="1728008"
+                type="application/octet-stream" />
+        </item>
+    </channel>
+</rss>
