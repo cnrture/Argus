@@ -244,11 +244,13 @@ extension AppDelegate: SocketServerDelegate {
                 windowController?.bounceOnComplete()
                 if let sessionInfo = appState.sessions[event.sessionId] {
                     appState.completionSession = sessionInfo
+                    windowController?.refreshForCardVisibility()
                 }
             }
         case .stopFailure:
             sound.play(.error, configs: configs)
             // ErrorCard is set by SessionStore
+            windowController?.refreshForCardVisibility()
         default:
             break
         }

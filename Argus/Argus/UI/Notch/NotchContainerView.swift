@@ -15,6 +15,7 @@ struct NotchContainerView: View {
     var onOpenSettings: (() -> Void)?
     var onQuit: (() -> Void)?
     var onJumpToSession: ((String) -> Void)?
+    var onCardDismissed: (() -> Void)?
 
     private let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
     private let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
@@ -45,7 +46,10 @@ struct NotchContainerView: View {
                     errorMessage: error.message,
                     sessionTitle: error.sessionTitle,
                     notchWidth: notchRect.width,
-                    onDismiss: { appState.errorInfo = nil }
+                    onDismiss: {
+                        appState.errorInfo = nil
+                        onCardDismissed?()
+                    }
                 )
                 .padding(.top, notchRect.height)
                 .transition(.opacity.combined(with: .scale(scale: 0.8, anchor: .top)))
@@ -55,7 +59,10 @@ struct NotchContainerView: View {
                 CompletionCardView(
                     session: completionSession,
                     notchWidth: notchRect.width,
-                    onDismiss: { appState.completionSession = nil },
+                    onDismiss: {
+                        appState.completionSession = nil
+                        onCardDismissed?()
+                    },
                     onJump: { onJumpToSession?(completionSession.id) }
                 )
                 .padding(.top, notchRect.height)

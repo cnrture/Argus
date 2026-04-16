@@ -115,6 +115,9 @@ final class NotchWindowController {
             onJumpToSession: { [weak self] sessionId in
                 self?.delegate?.notchWindowController(self!, didRequestJumpToSession: sessionId)
                 self?.collapse()
+            },
+            onCardDismissed: { [weak self] in
+                self?.refreshForCardVisibility()
             }
         )
 
@@ -379,11 +382,30 @@ final class NotchWindowController {
     }
 
     private func updateHitTestRect() {
-        if appState.isExpanded {
+        if appState.isExpanded || hasVisibleCard {
             hostingView?.hitTestRect = expandedHitTestRect(for: currentNotchRect)
         } else {
             hostingView?.hitTestRect = .zero
         }
+    }
+
+    /// Dismiss butonuyla kapanan kartlar (error, completion) için true
+    private var hasVisibleCard: Bool {
+        appState.errorInfo != nil || appState.completionSession != nil
+    }
+
+    /// Kart görünür hale geldiğinde (error/completion) hit-test rect'i ve panel
+    /// etkileşimini açmak için çağrılır. AppDelegate bu metodu tetikler.
+    func refreshForCardVisibility() {
+        guard hasVisibleCard else {
+            if !appState.isExpanded {
+                panel?.ignoresMouseEvents = true
+            }
+            updateHitTestRect()
+            return
+        }
+        panel?.ignoresMouseEvents = false
+        updateHitTestRect()
     }
 
     /// Kullanıcı yanıtı bekleyen permission/question/plan varsa true
