@@ -118,6 +118,14 @@ final class NotchWindowController {
             },
             onCardDismissed: { [weak self] in
                 self?.refreshForCardVisibility()
+            },
+            onWelcomeInstallHooks: { [weak self] in
+                guard let self else { return }
+                self.delegate?.notchWindowControllerDidRequestWelcomeHookInstall(self)
+            },
+            onWelcomeFinish: { [weak self] in
+                guard let self else { return }
+                self.delegate?.notchWindowControllerDidFinishWelcome(self)
             }
         )
 
@@ -308,6 +316,38 @@ final class NotchWindowController {
         }
     }
 
+    // MARK: - Welcome Pulse (after first-launch hero animation)
+
+    func performWelcomePulse(onComplete: (() -> Void)? = nil) {
+        guard let panel else { onComplete?(); return }
+        let original = panel.frame
+
+        // Three-beat pulse to mark arrival at the notch.
+        NSAnimationContext.runAnimationGroup({ ctx in
+            ctx.duration = 0.12
+            ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            panel.animator().setFrame(original.insetBy(dx: -6, dy: -4), display: true)
+        }) {
+            NSAnimationContext.runAnimationGroup({ ctx in
+                ctx.duration = 0.14
+                ctx.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.default)
+                panel.animator().setFrame(original, display: true)
+            }) {
+                NSAnimationContext.runAnimationGroup({ ctx in
+                    ctx.duration = 0.08
+                    panel.animator().setFrame(original.insetBy(dx: -3, dy: -2), display: true)
+                }) {
+                    NSAnimationContext.runAnimationGroup({ ctx in
+                        ctx.duration = 0.10
+                        panel.animator().setFrame(original, display: true)
+                    }) {
+                        onComplete?()
+                    }
+                }
+            }
+        }
+    }
+
     // MARK: - Bounce on Complete
 
     func bounceOnComplete() {
@@ -382,7 +422,15 @@ final class NotchWindowController {
     }
 
     private func updateHitTestRect() {
-        if appState.isExpanded || hasVisibleCard {
+        if appState.isWelcomeActive {
+            // Welcome steps view is wider than the normal expanded content; give
+            // it the whole panel so buttons are always clickable.
+            if let size = hostingView?.bounds.size {
+                hostingView?.hitTestRect = CGRect(origin: .zero, size: size)
+            } else {
+                hostingView?.hitTestRect = expandedHitTestRect(for: currentNotchRect)
+            }
+        } else if appState.isExpanded || hasVisibleCard {
             hostingView?.hitTestRect = expandedHitTestRect(for: currentNotchRect)
         } else {
             hostingView?.hitTestRect = .zero
@@ -422,6 +470,18 @@ final class NotchWindowController {
             showForPermissionInFullscreen()
         }
         expand()
+    }
+
+    // MARK: - Welcome
+
+    func expandForWelcome() {
+        panel?.alphaValue = 1
+        expand()
+        panel?.makeKeyAndOrderFront(nil)
+    }
+
+    func collapseFromWelcome() {
+        collapse()
     }
 
     // MARK: - Permission Handling
@@ -483,4 +543,11 @@ protocol NotchWindowControllerDelegate: AnyObject {
     func notchWindowController(_ controller: NotchWindowController, didRespondToPlan eventId: String, approve: Bool, feedback: String?)
     func notchWindowControllerDidRequestSettings(_ controller: NotchWindowController)
     func notchWindowController(_ controller: NotchWindowController, didRequestJumpToSession sessionId: String)
+    func notchWindowControllerDidRequestWelcomeHookInstall(_ controller: NotchWindowController)
+    func notchWindowControllerDidFinishWelcome(_ controller: NotchWindowController)
+}
+
+extension NotchWindowControllerDelegate {
+    func notchWindowControllerDidRequestWelcomeHookInstall(_ controller: NotchWindowController) {}
+    func notchWindowControllerDidFinishWelcome(_ controller: NotchWindowController) {}
 }

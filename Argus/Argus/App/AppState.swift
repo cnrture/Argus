@@ -15,6 +15,8 @@ final class AppState {
     var isExpanded: Bool = false
     var isFullscreen: Bool = false
     var isBootAnimating: Bool = false
+    var isWelcomeActive: Bool = false
+    var welcomeStep: Int = 0
     var completionSession: SessionInfo?
     var errorInfo: (type: String, message: String, sessionTitle: String)?
     var showContinueForSession: String?

@@ -16,6 +16,8 @@ struct NotchContainerView: View {
     var onQuit: (() -> Void)?
     var onJumpToSession: ((String) -> Void)?
     var onCardDismissed: (() -> Void)?
+    var onWelcomeInstallHooks: (() -> Void)?
+    var onWelcomeFinish: (() -> Void)?
 
     private let openAnimation = Animation.spring(response: 0.42, dampingFraction: 0.8, blendDuration: 0)
     private let closeAnimation = Animation.spring(response: 0.45, dampingFraction: 1.0, blendDuration: 0)
@@ -23,6 +25,7 @@ struct NotchContainerView: View {
     private var shouldMaskMenuBar: Bool {
         appState.errorInfo != nil ||
         appState.completionSession != nil ||
+        appState.isWelcomeActive ||
         (appState.panelState != .hidden && appState.isExpanded)
     }
 
@@ -39,8 +42,20 @@ struct NotchContainerView: View {
                     .transition(.opacity)
             }
 
+            // Welcome steps (highest priority when active)
+            if appState.isWelcomeActive {
+                WelcomeStepsView(
+                    appState: appState,
+                    notchWidth: notchRect.width,
+                    notchHeight: notchRect.height,
+                    accentColor: settingsStore?.accentColor ?? .orange,
+                    onInstallHooks: onWelcomeInstallHooks,
+                    onFinish: onWelcomeFinish
+                )
+                .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .top)))
+            }
             // Error card (highest priority)
-            if let error = appState.errorInfo {
+            else if let error = appState.errorInfo {
                 ErrorCardView(
                     errorType: error.type,
                     errorMessage: error.message,

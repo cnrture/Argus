@@ -10,11 +10,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let socketServer = SocketServer()
     private let voiceManager = VoiceCommandManager()
     private var deskPet: DeskPetWindowController?
-    private var onboardingWindow: NSWindow?
+    let welcomeFlow = WelcomeFlowState()
+    private var welcomeOverlay: WelcomeOverlayWindowController?
     private var hookRepairTimer: Timer?
     private var lastHookCheck: Date = .distantPast
 
-    private static let onboardingCompletedKey = "onboardingCompleted"
+    private static let hookSetupCompletedKey = "onboardingCompleted"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         windowController = NotchWindowController(appState: appState, settingsStore: settingsStore)
@@ -37,11 +38,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ = hookInstaller.installBridge()
 
         // Hook kurulumu: ilk açılış veya verify & repair
-        if !UserDefaults.standard.bool(forKey: Self.onboardingCompletedKey) {
+        if !UserDefaults.standard.bool(forKey: Self.hookSetupCompletedKey) {
             _ = hookInstaller.installBridge()
             let enabled = AgentSource.allCases.filter { settingsStore.enabledAgents.contains($0.rawValue) }
             _ = hookInstaller.installHooks(for: enabled)
-            UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
+            UserDefaults.standard.set(true, forKey: Self.hookSetupCompletedKey)
         } else {
             checkAndRepairHooks()
         }
@@ -61,8 +62,57 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Voice commands
         setupVoiceCommands()
 
-        // Boot animation
-        windowController?.performBootAnimation()
+        // First-launch welcome animation (or normal boot)
+        if WelcomeFlowState.shouldRunOnLaunch {
+            // Let fullscreen detection settle before starting hero animation.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.startWelcomeFlow()
+            }
+        } else {
+            windowController?.performBootAnimation()
+        }
+    }
+
+    private func startWelcomeFlow() {
+        appState.isWelcomeActive = true
+        appState.welcomeStep = 0
+
+        // If user is in a fullscreen app, skip the hero animation and
+        // go straight to in-notch steps — no fullscreen takeover.
+        if appState.isFullscreen {
+            welcomeFlow.phase = .steps
+            windowController?.expandForWelcome()
+            return
+        }
+
+        welcomeOverlay = WelcomeOverlayWindowController(
+            flow: welcomeFlow,
+            settingsStore: settingsStore,
+            onHandoffToNotch: { [weak self] in
+                guard let self else { return }
+                self.windowController?.performWelcomePulse { [weak self] in
+                    self?.windowController?.expandForWelcome()
+                    self?.welcomeFlow.phase = .steps
+                }
+            },
+            onComplete: { [weak self] in
+                self?.welcomeOverlay?.close()
+                self?.welcomeOverlay = nil
+            },
+            onSkip: { [weak self] in
+                self?.finishWelcomeFlow()
+                self?.welcomeOverlay?.close()
+                self?.welcomeOverlay = nil
+            }
+        )
+        welcomeOverlay?.start()
+    }
+
+    private func finishWelcomeFlow() {
+        welcomeFlow.markComplete()
+        appState.isWelcomeActive = false
+        appState.welcomeStep = 0
+        windowController?.collapseFromWelcome()
     }
 
     private var processCheckTimer: Timer?
@@ -170,52 +220,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsWindow = window
     }
 
-    // MARK: - Onboarding
-
-    private func showOnboarding() {
-        let onboardingView = OnboardingView(
-            onSetupHooks: { [weak self] in
-                self?.performHookSetup()
-            },
-            onSkip: { [weak self] in
-                UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
-                self?.onboardingWindow?.close()
-                self?.onboardingWindow = nil
-            }
-        )
-
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 340),
-            styleMask: [.titled, .closable],
-            backing: .buffered,
-            defer: false
-        )
-        window.title = "Argus"
-        window.contentView = NSHostingView(rootView: onboardingView)
-        window.center()
-        window.isReleasedWhenClosed = false
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-
-        onboardingWindow = window
-    }
-
-    private func performHookSetup() {
-        let results = hookInstaller.installHooks()
-        UserDefaults.standard.set(true, forKey: Self.onboardingCompletedKey)
-
-        for (agent, result) in results {
-            switch result {
-            case .installed, .alreadyInstalled:
-                print("[Argus] \(agent.displayName) hooks installed")
-            case .failed(let error):
-                print("[Argus] \(agent.displayName) hook install failed: \(error)")
-            }
-        }
-
-        onboardingWindow?.close()
-        onboardingWindow = nil
-    }
 }
 
 // MARK: - SocketServerDelegate
@@ -311,6 +315,17 @@ extension AppDelegate: NotchWindowControllerDelegate {
         if let session = sessionStore.sessions[sessionId] {
             WindowJumper.jumpToSession(session)
         }
+    }
+
+    func notchWindowControllerDidRequestWelcomeHookInstall(_ controller: NotchWindowController) {
+        _ = hookInstaller.installBridge()
+        let enabled = AgentSource.allCases.filter { settingsStore.enabledAgents.contains($0.rawValue) }
+        _ = hookInstaller.installHooks(for: enabled)
+        UserDefaults.standard.set(true, forKey: Self.hookSetupCompletedKey)
+    }
+
+    func notchWindowControllerDidFinishWelcome(_ controller: NotchWindowController) {
+        finishWelcomeFlow()
     }
 
     private func setupVoiceCommands() {
