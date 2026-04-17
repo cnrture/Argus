@@ -42,15 +42,13 @@ func main() -> Int32 {
         return 1
     }
 
-    // Connect to socket
+    // Connect to socket — if Argus isn't running, exit silently so the agent
+    // doesn't show hook errors on every event.
     let client = SocketClient()
     do {
         try client.connect()
     } catch {
-        if EventRouter.isBlocking(eventType) {
-            fputs("[argus-bridge] Cannot connect to Argus: \(error)\n", stderr)
-        }
-        return 1
+        return 0
     }
 
     defer { client.disconnect() }
@@ -59,8 +57,7 @@ func main() -> Int32 {
     do {
         try client.send(message)
     } catch {
-        fputs("[argus-bridge] Send failed: \(error)\n", stderr)
-        return 1
+        return 0
     }
 
     // For blocking events, wait for response
@@ -76,8 +73,7 @@ func main() -> Int32 {
                 }
             }
         } catch {
-            fputs("[argus-bridge] Read response failed: \(error)\n", stderr)
-            return 1
+            return 0
         }
     }
 
