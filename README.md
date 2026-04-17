@@ -37,7 +37,7 @@ Argus lives in the notch area of your Mac and gives you an ambient, always-visib
 ### Homebrew (recommended)
 
 ```bash
-brew install --cask argus
+brew install --cask cnrture/tap/argus
 ```
 
 ### DMG
